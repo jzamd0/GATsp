@@ -1,5 +1,5 @@
 ﻿
-namespace App
+namespace App.Gui
 {
     partial class FrmMain
     {

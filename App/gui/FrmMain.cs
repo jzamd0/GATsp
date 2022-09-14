@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace App
+namespace App.Gui
 {
     public partial class FrmMain : Form
     {
@@ -8,6 +8,5 @@ namespace App
         {
             InitializeComponent();
         }
-
     }
 }

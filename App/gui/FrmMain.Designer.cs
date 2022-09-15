@@ -65,6 +65,7 @@ namespace App.Gui
             this._mniExit = new System.Windows.Forms.ToolStripMenuItem();
             this._menuEdit = new System.Windows.Forms.ToolStripMenuItem();
             this._mniPreferences = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuView = new System.Windows.Forms.ToolStripMenuItem();
             this._menuTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniSolveTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniGenerateDistancesSep = new System.Windows.Forms.ToolStripSeparator();
@@ -74,6 +75,8 @@ namespace App.Gui
             this._mniClearGraph = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniViewSetup = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniViewResults = new System.Windows.Forms.ToolStripMenuItem();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -370,7 +373,7 @@ namespace App.Gui
             this._tabPopulation.Location = new System.Drawing.Point(4, 24);
             this._tabPopulation.Name = "_tabPopulation";
             this._tabPopulation.Padding = new System.Windows.Forms.Padding(3);
-            this._tabPopulation.Size = new System.Drawing.Size(570, 79);
+            this._tabPopulation.Size = new System.Drawing.Size(576, 101);
             this._tabPopulation.TabIndex = 1;
             this._tabPopulation.Text = "Population";
             this._tabPopulation.UseVisualStyleBackColor = true;
@@ -387,6 +390,7 @@ namespace App.Gui
             this._menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._menuFile,
             this._menuEdit,
+            this._menuView,
             this._menuTsp,
             this._menuGraph,
             this._menuHelp});
@@ -484,6 +488,15 @@ namespace App.Gui
             this._mniPreferences.Size = new System.Drawing.Size(135, 22);
             this._mniPreferences.Text = "Preferences";
             // 
+            // _menuView
+            // 
+            this._menuView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._mniViewSetup,
+            this._mniViewResults});
+            this._menuView.Name = "_menuView";
+            this._menuView.Size = new System.Drawing.Size(44, 20);
+            this._menuView.Text = "View";
+            // 
             // _menuTsp
             // 
             this._menuTsp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -498,24 +511,24 @@ namespace App.Gui
             // _mniSolveTsp
             // 
             this._mniSolveTsp.Name = "_mniSolveTsp";
-            this._mniSolveTsp.Size = new System.Drawing.Size(180, 22);
+            this._mniSolveTsp.Size = new System.Drawing.Size(174, 22);
             this._mniSolveTsp.Text = "Solve TSP";
             // 
             // _mniGenerateDistancesSep
             // 
             this._mniGenerateDistancesSep.Name = "_mniGenerateDistancesSep";
-            this._mniGenerateDistancesSep.Size = new System.Drawing.Size(177, 6);
+            this._mniGenerateDistancesSep.Size = new System.Drawing.Size(171, 6);
             // 
             // _mniGenerateDistances
             // 
             this._mniGenerateDistances.Name = "_mniGenerateDistances";
-            this._mniGenerateDistances.Size = new System.Drawing.Size(180, 22);
+            this._mniGenerateDistances.Size = new System.Drawing.Size(174, 22);
             this._mniGenerateDistances.Text = "Generate Distances";
             // 
             // _mniClearDistances
             // 
             this._mniClearDistances.Name = "_mniClearDistances";
-            this._mniClearDistances.Size = new System.Drawing.Size(180, 22);
+            this._mniClearDistances.Size = new System.Drawing.Size(174, 22);
             this._mniClearDistances.Text = "Clear Distances";
             // 
             // _menuGraph
@@ -545,6 +558,18 @@ namespace App.Gui
             this._mniAbout.Name = "_mniAbout";
             this._mniAbout.Size = new System.Drawing.Size(107, 22);
             this._mniAbout.Text = "About";
+            // 
+            // _mniViewSetup
+            // 
+            this._mniViewSetup.Name = "_mniViewSetup";
+            this._mniViewSetup.Size = new System.Drawing.Size(180, 22);
+            this._mniViewSetup.Text = "Setup";
+            // 
+            // _mniViewResults
+            // 
+            this._mniViewResults.Name = "_mniViewResults";
+            this._mniViewResults.Size = new System.Drawing.Size(180, 22);
+            this._mniViewResults.Text = "Results";
             // 
             // FrmMain
             // 
@@ -635,6 +660,9 @@ namespace App.Gui
         private System.Windows.Forms.TabPage _tabEdges;
         private System.Windows.Forms.DataGridView _dgvCoordinates;
         private System.Windows.Forms.DataGridView _dgvEdges;
+        private System.Windows.Forms.ToolStripMenuItem _menuView;
+        private System.Windows.Forms.ToolStripMenuItem _mniViewSetup;
+        private System.Windows.Forms.ToolStripMenuItem _mniViewResults;
     }
 }
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Lib
+﻿namespace Lib
 {
     public class GA
     {

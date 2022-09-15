@@ -1,7 +1,6 @@
+using App.Gui;
 using System;
 using System.Windows.Forms;
-
-using App.Gui;
 
 namespace App
 {

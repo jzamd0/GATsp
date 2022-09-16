@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace App.Gui
 {
@@ -7,6 +9,13 @@ namespace App.Gui
         public FrmMain()
         {
             InitializeComponent();
+
+            _isFirstTime = true;
+
+            _distances = new List<List<double>>();
+            _points = new List<Point>();
+            _headers = new List<string>();
+
         }
 
         private void FrmMain_Load(object sender, System.EventArgs e)

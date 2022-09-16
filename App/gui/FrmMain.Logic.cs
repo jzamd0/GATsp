@@ -12,7 +12,7 @@ namespace App.Gui
 
     public partial class FrmMain
     {
-        private bool _isFirstTime = true;
+        private bool _isFirstTime;
         private ProjectType _projectType;
 
         private List<List<double>> _distances;

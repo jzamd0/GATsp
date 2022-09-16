@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lib;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -12,10 +13,12 @@ namespace App.Gui
 
             _isFirstTime = true;
 
+            _lastLocation = Application.StartupPath;
+
             _distances = new List<List<double>>();
             _points = new List<Point>();
             _headers = new List<string>();
-
+            _edges = new List<Edge<string>>();
         }
 
         private void FrmMain_Load(object sender, System.EventArgs e)
@@ -36,27 +39,29 @@ namespace App.Gui
 
             _tabControlSetup.TabPages.Remove(_tabCoordinates);
             _tabControlTsp.TabPages.Remove(_tabGraph);
+
+            // TEMP: Disable Grpah elements.
+            _mniNewTspGraph.Enabled = false;
+            _mniOpenTspGraph.Enabled = false;
         }
 
         #region Menu File
         private void _mniNewTspGraph_Click(object sender, System.EventArgs e)
         {
-            NewProject(ProjectType.Graph);
         }
 
         private void _mniNewTspMatrix_Click(object sender, System.EventArgs e)
         {
-            NewProject(ProjectType.Matrix);
+            NewProject();
         }
 
         private void _mniOpenTspGraph_Click(object sender, System.EventArgs e)
         {
-            OpenProject(ProjectType.Graph);
         }
 
         private void _mniOpenTspMatrix_Click(object sender, System.EventArgs e)
         {
-            OpenProject(ProjectType.Matrix);
+            OpenProject();
         }
 
         private void _mniSaveTsp_Click(object sender, System.EventArgs e)

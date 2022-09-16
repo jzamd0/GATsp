@@ -38,8 +38,6 @@ namespace App.Gui
             this._tabNodes = new System.Windows.Forms.TabPage();
             this._tabEdges = new System.Windows.Forms.TabPage();
             this._dgvEdges = new System.Windows.Forms.DataGridView();
-            this._tabCoordinates = new System.Windows.Forms.TabPage();
-            this._dgvCoordinates = new System.Windows.Forms.DataGridView();
             this._pnlTsp = new System.Windows.Forms.Panel();
             this._tabControlTsp = new System.Windows.Forms.TabControl();
             this._tabDistances = new System.Windows.Forms.TabPage();
@@ -80,6 +78,8 @@ namespace App.Gui
             this._mniClearGraph = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this._dgvCoordinates = new System.Windows.Forms.DataGridView();
+            this._tabCoordinates = new System.Windows.Forms.TabPage();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -93,8 +93,6 @@ namespace App.Gui
             this._tabControlSetup.SuspendLayout();
             this._tabEdges.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvEdges)).BeginInit();
-            this._tabCoordinates.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._dgvCoordinates)).BeginInit();
             this._pnlTsp.SuspendLayout();
             this._tabControlTsp.SuspendLayout();
             this._tabDistances.SuspendLayout();
@@ -106,10 +104,13 @@ namespace App.Gui
             this._tabSummary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvSummary)).BeginInit();
             this._menuStripMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dgvCoordinates)).BeginInit();
+            this._tabCoordinates.SuspendLayout();
             this.SuspendLayout();
             // 
             // _pnlMain
             // 
+            this._pnlMain.BackColor = System.Drawing.Color.White;
             this._pnlMain.Controls.Add(this._splitMain);
             this._pnlMain.Controls.Add(this._statusMain);
             this._pnlMain.Controls.Add(this._menuStripMain);
@@ -154,7 +155,7 @@ namespace App.Gui
             // 
             this._splitTsp.Panel2.Controls.Add(this._pnlTsp);
             this._splitTsp.Size = new System.Drawing.Size(584, 182);
-            this._splitTsp.SplitterDistance = 238;
+            this._splitTsp.SplitterDistance = 237;
             this._splitTsp.TabIndex = 0;
             // 
             // _pnlSetup
@@ -165,7 +166,7 @@ namespace App.Gui
             this._pnlSetup.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pnlSetup.Location = new System.Drawing.Point(0, 0);
             this._pnlSetup.Name = "_pnlSetup";
-            this._pnlSetup.Size = new System.Drawing.Size(238, 182);
+            this._pnlSetup.Size = new System.Drawing.Size(237, 182);
             this._pnlSetup.TabIndex = 0;
             // 
             // _tabControlSetup
@@ -178,7 +179,7 @@ namespace App.Gui
             this._tabControlSetup.Location = new System.Drawing.Point(0, 0);
             this._tabControlSetup.Name = "_tabControlSetup";
             this._tabControlSetup.SelectedIndex = 0;
-            this._tabControlSetup.Size = new System.Drawing.Size(238, 182);
+            this._tabControlSetup.Size = new System.Drawing.Size(237, 182);
             this._tabControlSetup.TabIndex = 0;
             // 
             // _tabSetup
@@ -186,7 +187,7 @@ namespace App.Gui
             this._tabSetup.Location = new System.Drawing.Point(4, 24);
             this._tabSetup.Name = "_tabSetup";
             this._tabSetup.Padding = new System.Windows.Forms.Padding(3);
-            this._tabSetup.Size = new System.Drawing.Size(230, 154);
+            this._tabSetup.Size = new System.Drawing.Size(229, 154);
             this._tabSetup.TabIndex = 0;
             this._tabSetup.Text = "Setup";
             this._tabSetup.UseVisualStyleBackColor = true;
@@ -196,7 +197,7 @@ namespace App.Gui
             this._tabNodes.Location = new System.Drawing.Point(4, 24);
             this._tabNodes.Name = "_tabNodes";
             this._tabNodes.Padding = new System.Windows.Forms.Padding(3);
-            this._tabNodes.Size = new System.Drawing.Size(187, 154);
+            this._tabNodes.Size = new System.Drawing.Size(229, 154);
             this._tabNodes.TabIndex = 2;
             this._tabNodes.Text = "Nodes";
             this._tabNodes.UseVisualStyleBackColor = true;
@@ -207,7 +208,7 @@ namespace App.Gui
             this._tabEdges.Location = new System.Drawing.Point(4, 24);
             this._tabEdges.Name = "_tabEdges";
             this._tabEdges.Padding = new System.Windows.Forms.Padding(3);
-            this._tabEdges.Size = new System.Drawing.Size(187, 154);
+            this._tabEdges.Size = new System.Drawing.Size(229, 154);
             this._tabEdges.TabIndex = 2;
             this._tabEdges.Text = "Edges";
             this._tabEdges.UseVisualStyleBackColor = true;
@@ -227,37 +228,8 @@ namespace App.Gui
             this._dgvEdges.ReadOnly = true;
             this._dgvEdges.RowHeadersVisible = false;
             this._dgvEdges.RowTemplate.Height = 25;
-            this._dgvEdges.Size = new System.Drawing.Size(181, 148);
+            this._dgvEdges.Size = new System.Drawing.Size(223, 148);
             this._dgvEdges.TabIndex = 0;
-            // 
-            // _tabCoordinates
-            // 
-            this._tabCoordinates.Controls.Add(this._dgvCoordinates);
-            this._tabCoordinates.Location = new System.Drawing.Point(4, 24);
-            this._tabCoordinates.Name = "_tabCoordinates";
-            this._tabCoordinates.Padding = new System.Windows.Forms.Padding(3);
-            this._tabCoordinates.Size = new System.Drawing.Size(230, 154);
-            this._tabCoordinates.TabIndex = 1;
-            this._tabCoordinates.Text = "Coordinates";
-            this._tabCoordinates.UseVisualStyleBackColor = true;
-            // 
-            // _dgvCoordinates
-            // 
-            this._dgvCoordinates.AllowUserToAddRows = false;
-            this._dgvCoordinates.AllowUserToDeleteRows = false;
-            this._dgvCoordinates.AllowUserToResizeRows = false;
-            this._dgvCoordinates.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this._dgvCoordinates.BackgroundColor = System.Drawing.Color.White;
-            this._dgvCoordinates.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this._dgvCoordinates.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._dgvCoordinates.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dgvCoordinates.Location = new System.Drawing.Point(3, 3);
-            this._dgvCoordinates.Name = "_dgvCoordinates";
-            this._dgvCoordinates.ReadOnly = true;
-            this._dgvCoordinates.RowHeadersVisible = false;
-            this._dgvCoordinates.RowTemplate.Height = 25;
-            this._dgvCoordinates.Size = new System.Drawing.Size(224, 148);
-            this._dgvCoordinates.TabIndex = 0;
             // 
             // _pnlTsp
             // 
@@ -267,7 +239,7 @@ namespace App.Gui
             this._pnlTsp.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pnlTsp.Location = new System.Drawing.Point(0, 0);
             this._pnlTsp.Name = "_pnlTsp";
-            this._pnlTsp.Size = new System.Drawing.Size(342, 182);
+            this._pnlTsp.Size = new System.Drawing.Size(343, 182);
             this._pnlTsp.TabIndex = 0;
             // 
             // _tabControlTsp
@@ -278,7 +250,7 @@ namespace App.Gui
             this._tabControlTsp.Location = new System.Drawing.Point(0, 0);
             this._tabControlTsp.Name = "_tabControlTsp";
             this._tabControlTsp.SelectedIndex = 0;
-            this._tabControlTsp.Size = new System.Drawing.Size(342, 182);
+            this._tabControlTsp.Size = new System.Drawing.Size(343, 182);
             this._tabControlTsp.TabIndex = 1;
             // 
             // _tabDistances
@@ -287,7 +259,7 @@ namespace App.Gui
             this._tabDistances.Location = new System.Drawing.Point(4, 24);
             this._tabDistances.Name = "_tabDistances";
             this._tabDistances.Padding = new System.Windows.Forms.Padding(3);
-            this._tabDistances.Size = new System.Drawing.Size(334, 154);
+            this._tabDistances.Size = new System.Drawing.Size(335, 154);
             this._tabDistances.TabIndex = 0;
             this._tabDistances.Text = "Distances";
             this._tabDistances.UseVisualStyleBackColor = true;
@@ -307,7 +279,7 @@ namespace App.Gui
             this._dgvDistances.ReadOnly = true;
             this._dgvDistances.RowHeadersVisible = false;
             this._dgvDistances.RowTemplate.Height = 25;
-            this._dgvDistances.Size = new System.Drawing.Size(328, 148);
+            this._dgvDistances.Size = new System.Drawing.Size(329, 148);
             this._dgvDistances.TabIndex = 0;
             // 
             // _tabGraph
@@ -316,7 +288,7 @@ namespace App.Gui
             this._tabGraph.Location = new System.Drawing.Point(4, 24);
             this._tabGraph.Name = "_tabGraph";
             this._tabGraph.Padding = new System.Windows.Forms.Padding(3);
-            this._tabGraph.Size = new System.Drawing.Size(377, 154);
+            this._tabGraph.Size = new System.Drawing.Size(335, 154);
             this._tabGraph.TabIndex = 1;
             this._tabGraph.Text = "Graph";
             this._tabGraph.UseVisualStyleBackColor = true;
@@ -327,7 +299,7 @@ namespace App.Gui
             this._pbxCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pbxCanvas.Location = new System.Drawing.Point(3, 3);
             this._pbxCanvas.Name = "_pbxCanvas";
-            this._pbxCanvas.Size = new System.Drawing.Size(371, 148);
+            this._pbxCanvas.Size = new System.Drawing.Size(329, 148);
             this._pbxCanvas.TabIndex = 0;
             this._pbxCanvas.TabStop = false;
             // 
@@ -434,7 +406,7 @@ namespace App.Gui
             this._mniNewTspGraph,
             this._mniNewTspMatrix});
             this._mniNewTsp.Name = "_mniNewTsp";
-            this._mniNewTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniNewTsp.Size = new System.Drawing.Size(180, 22);
             this._mniNewTsp.Text = "New";
             // 
             // _mniNewTspGraph
@@ -454,7 +426,7 @@ namespace App.Gui
             // _mniOpenTspSep
             // 
             this._mniOpenTspSep.Name = "_mniOpenTspSep";
-            this._mniOpenTspSep.Size = new System.Drawing.Size(120, 6);
+            this._mniOpenTspSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniOpenTsp
             // 
@@ -462,7 +434,7 @@ namespace App.Gui
             this._mniOpenTspGraph,
             this._mniOpenTspMatrix});
             this._mniOpenTsp.Name = "_mniOpenTsp";
-            this._mniOpenTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniOpenTsp.Size = new System.Drawing.Size(180, 22);
             this._mniOpenTsp.Text = "Open";
             // 
             // _mniOpenTspGraph
@@ -482,31 +454,31 @@ namespace App.Gui
             // _mniSaveTspSep
             // 
             this._mniSaveTspSep.Name = "_mniSaveTspSep";
-            this._mniSaveTspSep.Size = new System.Drawing.Size(120, 6);
+            this._mniSaveTspSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniSaveTsp
             // 
             this._mniSaveTsp.Name = "_mniSaveTsp";
-            this._mniSaveTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniSaveTsp.Size = new System.Drawing.Size(180, 22);
             this._mniSaveTsp.Text = "Save";
             this._mniSaveTsp.Click += new System.EventHandler(this._mniSaveTsp_Click);
             // 
             // _mniSaveTspAs
             // 
             this._mniSaveTspAs.Name = "_mniSaveTspAs";
-            this._mniSaveTspAs.Size = new System.Drawing.Size(123, 22);
+            this._mniSaveTspAs.Size = new System.Drawing.Size(180, 22);
             this._mniSaveTspAs.Text = "Save As...";
             this._mniSaveTspAs.Click += new System.EventHandler(this._mniSaveTspAs_Click);
             // 
             // _mniExitSep
             // 
             this._mniExitSep.Name = "_mniExitSep";
-            this._mniExitSep.Size = new System.Drawing.Size(120, 6);
+            this._mniExitSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniExit
             // 
             this._mniExit.Name = "_mniExit";
-            this._mniExit.Size = new System.Drawing.Size(123, 22);
+            this._mniExit.Size = new System.Drawing.Size(180, 22);
             this._mniExit.Text = "Exit";
             this._mniExit.Click += new System.EventHandler(this._mniExit_Click);
             // 
@@ -615,6 +587,35 @@ namespace App.Gui
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
             // 
+            // _dgvCoordinates
+            // 
+            this._dgvCoordinates.AllowUserToAddRows = false;
+            this._dgvCoordinates.AllowUserToDeleteRows = false;
+            this._dgvCoordinates.AllowUserToResizeRows = false;
+            this._dgvCoordinates.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvCoordinates.BackgroundColor = System.Drawing.Color.White;
+            this._dgvCoordinates.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._dgvCoordinates.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._dgvCoordinates.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dgvCoordinates.Location = new System.Drawing.Point(3, 3);
+            this._dgvCoordinates.Name = "_dgvCoordinates";
+            this._dgvCoordinates.ReadOnly = true;
+            this._dgvCoordinates.RowHeadersVisible = false;
+            this._dgvCoordinates.RowTemplate.Height = 25;
+            this._dgvCoordinates.Size = new System.Drawing.Size(223, 148);
+            this._dgvCoordinates.TabIndex = 0;
+            // 
+            // _tabCoordinates
+            // 
+            this._tabCoordinates.Controls.Add(this._dgvCoordinates);
+            this._tabCoordinates.Location = new System.Drawing.Point(4, 24);
+            this._tabCoordinates.Name = "_tabCoordinates";
+            this._tabCoordinates.Padding = new System.Windows.Forms.Padding(3);
+            this._tabCoordinates.Size = new System.Drawing.Size(229, 154);
+            this._tabCoordinates.TabIndex = 1;
+            this._tabCoordinates.Text = "Coordinates";
+            this._tabCoordinates.UseVisualStyleBackColor = true;
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -625,6 +626,7 @@ namespace App.Gui
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "FrmMain";
             this.Text = "TSP GA Solver";
+            this.Load += new System.EventHandler(this.FrmMain_Load);
             this._pnlMain.ResumeLayout(false);
             this._pnlMain.PerformLayout();
             this._splitMain.Panel1.ResumeLayout(false);
@@ -639,8 +641,6 @@ namespace App.Gui
             this._tabControlSetup.ResumeLayout(false);
             this._tabEdges.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._dgvEdges)).EndInit();
-            this._tabCoordinates.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this._dgvCoordinates)).EndInit();
             this._pnlTsp.ResumeLayout(false);
             this._tabControlTsp.ResumeLayout(false);
             this._tabDistances.ResumeLayout(false);
@@ -653,6 +653,8 @@ namespace App.Gui
             ((System.ComponentModel.ISupportInitialize)(this._dgvSummary)).EndInit();
             this._menuStripMain.ResumeLayout(false);
             this._menuStripMain.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dgvCoordinates)).EndInit();
+            this._tabCoordinates.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -700,9 +702,7 @@ namespace App.Gui
         private System.Windows.Forms.TabPage _tabPopulation;
         private System.Windows.Forms.TabControl _tabControlSetup;
         private System.Windows.Forms.TabPage _tabSetup;
-        private System.Windows.Forms.TabPage _tabCoordinates;
         private System.Windows.Forms.TabPage _tabEdges;
-        private System.Windows.Forms.DataGridView _dgvCoordinates;
         private System.Windows.Forms.DataGridView _dgvEdges;
         private System.Windows.Forms.ToolStripMenuItem _menuView;
         private System.Windows.Forms.ToolStripMenuItem _mniViewSetup;
@@ -710,6 +710,8 @@ namespace App.Gui
         private System.Windows.Forms.ToolStripMenuItem _mniOpenTspGraph;
         private System.Windows.Forms.ToolStripMenuItem _mniOpenTspMatrix;
         private System.Windows.Forms.TabPage _tabNodes;
+        private System.Windows.Forms.TabPage _tabCoordinates;
+        private System.Windows.Forms.DataGridView _dgvCoordinates;
     }
 }
 

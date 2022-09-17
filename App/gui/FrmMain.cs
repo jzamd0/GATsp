@@ -45,10 +45,6 @@ namespace App.Gui
 
             _tabControlSetup.TabPages.Remove(_tabCoordinates);
             _tabControlTsp.TabPages.Remove(_tabGraph);
-
-            // TEMP: Disable Grpah elements.
-            _mniNewTspGraph.Enabled = false;
-            _mniOpenTspGraph.Enabled = false;
         }
 
         #region Menu File

@@ -13,6 +13,7 @@ namespace App.Gui
 
             _isFirstTime = true;
 
+            _programTitle = "TSP GA Solver";
             _lastLocation = Application.StartupPath;
 
             _distances = new List<List<double>>();
@@ -23,6 +24,8 @@ namespace App.Gui
 
         private void FrmMain_Load(object sender, System.EventArgs e)
         {
+            Text = _programTitle;
+
             _splitMain.Panel2Collapsed = true;
             _splitMain.Visible = false;
 

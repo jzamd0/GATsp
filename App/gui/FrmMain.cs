@@ -17,6 +17,7 @@ namespace App.Gui
             _distancesMinWidth = 50;
             _edgesMinWidth = 50;
             _nodesMinWidth = 50;
+            _coordinatesMinWidth = 50;
 
             LoadDataTables();
         }

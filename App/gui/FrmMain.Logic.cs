@@ -24,6 +24,7 @@ namespace App.Gui
         private int _distancesMinWidth;
         private int _edgesMinWidth;
         private int _nodesMinWidth;
+        private int _coordinatesMinWidth;
 
         private void NewProject()
         {
@@ -105,6 +106,12 @@ namespace App.Gui
                             dtEdges.Rows.Add(edge.Before.Name, edge.Next.Name, edge.Distance);
                         }
 
+                        var dtCoordinates = (DataTable)_dgvCoordinates.DataSource;
+                        foreach (var node in _data.Nodes)
+                        {
+                            dtCoordinates.Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+                        }
+
                         _lastLocation = filePath;
                         _fileTitle = fileName;
                         SetWindowTitle();
@@ -147,10 +154,17 @@ namespace App.Gui
             dtEdges.Columns.Add("Distance", typeof(double));
             _dgvEdges.DataSource = dtEdges;
 
+            var dtCoordinates = new DataTable();
+            dtCoordinates.Columns.Add("Node", typeof(string));
+            dtCoordinates.Columns.Add("X", typeof(int));
+            dtCoordinates.Columns.Add("Y", typeof(int));
+            _dgvCoordinates.DataSource = dtCoordinates;
+
             _dgvDistances.DataSource = new DataTable();
 
             SetColumnWidth(_dgvEdges, _edgesMinWidth);
             SetColumnWidth(_dgvNodes, _nodesMinWidth);
+            SetColumnWidth(_dgvCoordinates, _coordinatesMinWidth);
         }
 
         private void SetColumnWidth(DataGridView dgv, int width)
@@ -165,6 +179,7 @@ namespace App.Gui
         {
             ((DataTable)_dgvNodes.DataSource).Rows.Clear();
             ((DataTable)_dgvEdges.DataSource).Rows.Clear();
+            ((DataTable)_dgvCoordinates.DataSource).Rows.Clear();
             _dgvDistances.DataSource = new DataTable();
 
             _data = null;

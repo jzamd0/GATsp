@@ -39,8 +39,6 @@ namespace App.Gui
             this._dgvNodes = new System.Windows.Forms.DataGridView();
             this._tabEdges = new System.Windows.Forms.TabPage();
             this._dgvEdges = new System.Windows.Forms.DataGridView();
-            this._tabCoordinates = new System.Windows.Forms.TabPage();
-            this._dgvCoordinates = new System.Windows.Forms.DataGridView();
             this._pnlTsp = new System.Windows.Forms.Panel();
             this._tabControlTsp = new System.Windows.Forms.TabControl();
             this._tabDistances = new System.Windows.Forms.TabPage();
@@ -56,19 +54,13 @@ namespace App.Gui
             this._menuStripMain = new System.Windows.Forms.MenuStrip();
             this._menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this._mniNewTsp = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniNewTspGraph = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniNewTspMatrix = new System.Windows.Forms.ToolStripMenuItem();
             this._mniOpenTspSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniOpenTsp = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniOpenTspGraph = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniOpenTspMatrix = new System.Windows.Forms.ToolStripMenuItem();
             this._mniSaveTspSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniSaveTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniSaveTspAs = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExitSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniExit = new System.Windows.Forms.ToolStripMenuItem();
-            this._menuEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniPreferences = new System.Windows.Forms.ToolStripMenuItem();
             this._menuView = new System.Windows.Forms.ToolStripMenuItem();
             this._mniViewSetup = new System.Windows.Forms.ToolStripMenuItem();
             this._mniViewResults = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,6 +73,8 @@ namespace App.Gui
             this._mniClearGraph = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this._dgvCoordinates = new System.Windows.Forms.DataGridView();
+            this._tabCoordinates = new System.Windows.Forms.TabPage();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -96,8 +90,6 @@ namespace App.Gui
             ((System.ComponentModel.ISupportInitialize)(this._dgvNodes)).BeginInit();
             this._tabEdges.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvEdges)).BeginInit();
-            this._tabCoordinates.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._dgvCoordinates)).BeginInit();
             this._pnlTsp.SuspendLayout();
             this._tabControlTsp.SuspendLayout();
             this._tabDistances.SuspendLayout();
@@ -109,6 +101,8 @@ namespace App.Gui
             this._tabSummary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvSummary)).BeginInit();
             this._menuStripMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dgvCoordinates)).BeginInit();
+            this._tabCoordinates.SuspendLayout();
             this.SuspendLayout();
             // 
             // _pnlMain
@@ -258,35 +252,6 @@ namespace App.Gui
             this._dgvEdges.Size = new System.Drawing.Size(236, 166);
             this._dgvEdges.TabIndex = 0;
             // 
-            // _tabCoordinates
-            // 
-            this._tabCoordinates.Controls.Add(this._dgvCoordinates);
-            this._tabCoordinates.Location = new System.Drawing.Point(4, 24);
-            this._tabCoordinates.Name = "_tabCoordinates";
-            this._tabCoordinates.Padding = new System.Windows.Forms.Padding(3);
-            this._tabCoordinates.Size = new System.Drawing.Size(242, 172);
-            this._tabCoordinates.TabIndex = 1;
-            this._tabCoordinates.Text = "Coordinates";
-            this._tabCoordinates.UseVisualStyleBackColor = true;
-            // 
-            // _dgvCoordinates
-            // 
-            this._dgvCoordinates.AllowUserToAddRows = false;
-            this._dgvCoordinates.AllowUserToDeleteRows = false;
-            this._dgvCoordinates.AllowUserToResizeRows = false;
-            this._dgvCoordinates.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this._dgvCoordinates.BackgroundColor = System.Drawing.Color.White;
-            this._dgvCoordinates.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this._dgvCoordinates.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._dgvCoordinates.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dgvCoordinates.Location = new System.Drawing.Point(3, 3);
-            this._dgvCoordinates.Name = "_dgvCoordinates";
-            this._dgvCoordinates.ReadOnly = true;
-            this._dgvCoordinates.RowHeadersVisible = false;
-            this._dgvCoordinates.RowTemplate.Height = 25;
-            this._dgvCoordinates.Size = new System.Drawing.Size(236, 166);
-            this._dgvCoordinates.TabIndex = 0;
-            // 
             // _pnlTsp
             // 
             this._pnlTsp.BackColor = System.Drawing.SystemColors.Control;
@@ -433,7 +398,6 @@ namespace App.Gui
             // 
             this._menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._menuFile,
-            this._menuEdit,
             this._menuView,
             this._menuTsp,
             this._menuGraph,
@@ -460,100 +424,53 @@ namespace App.Gui
             // 
             // _mniNewTsp
             // 
-            this._mniNewTsp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._mniNewTspGraph,
-            this._mniNewTspMatrix});
             this._mniNewTsp.Name = "_mniNewTsp";
-            this._mniNewTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniNewTsp.Size = new System.Drawing.Size(180, 22);
             this._mniNewTsp.Text = "New";
-            // 
-            // _mniNewTspGraph
-            // 
-            this._mniNewTspGraph.Name = "_mniNewTspGraph";
-            this._mniNewTspGraph.Size = new System.Drawing.Size(130, 22);
-            this._mniNewTspGraph.Text = "TSP Graph";
-            this._mniNewTspGraph.Click += new System.EventHandler(this._mniNewTspGraph_Click);
-            // 
-            // _mniNewTspMatrix
-            // 
-            this._mniNewTspMatrix.Name = "_mniNewTspMatrix";
-            this._mniNewTspMatrix.Size = new System.Drawing.Size(130, 22);
-            this._mniNewTspMatrix.Text = "TSP Matrix";
-            this._mniNewTspMatrix.Click += new System.EventHandler(this._mniNewTspMatrix_Click);
+            this._mniNewTsp.Click += new System.EventHandler(this._mniNewTsp_Click);
             // 
             // _mniOpenTspSep
             // 
             this._mniOpenTspSep.Name = "_mniOpenTspSep";
-            this._mniOpenTspSep.Size = new System.Drawing.Size(120, 6);
+            this._mniOpenTspSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniOpenTsp
             // 
-            this._mniOpenTsp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._mniOpenTspGraph,
-            this._mniOpenTspMatrix});
             this._mniOpenTsp.Name = "_mniOpenTsp";
-            this._mniOpenTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniOpenTsp.Size = new System.Drawing.Size(180, 22);
             this._mniOpenTsp.Text = "Open";
-            // 
-            // _mniOpenTspGraph
-            // 
-            this._mniOpenTspGraph.Name = "_mniOpenTspGraph";
-            this._mniOpenTspGraph.Size = new System.Drawing.Size(139, 22);
-            this._mniOpenTspGraph.Text = "TSP Graph...";
-            this._mniOpenTspGraph.Click += new System.EventHandler(this._mniOpenTspGraph_Click);
-            // 
-            // _mniOpenTspMatrix
-            // 
-            this._mniOpenTspMatrix.Name = "_mniOpenTspMatrix";
-            this._mniOpenTspMatrix.Size = new System.Drawing.Size(139, 22);
-            this._mniOpenTspMatrix.Text = "TSP Matrix...";
-            this._mniOpenTspMatrix.Click += new System.EventHandler(this._mniOpenTspMatrix_Click);
+            this._mniOpenTsp.Click += new System.EventHandler(this._mniOpenTsp_Click);
             // 
             // _mniSaveTspSep
             // 
             this._mniSaveTspSep.Name = "_mniSaveTspSep";
-            this._mniSaveTspSep.Size = new System.Drawing.Size(120, 6);
+            this._mniSaveTspSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniSaveTsp
             // 
             this._mniSaveTsp.Name = "_mniSaveTsp";
-            this._mniSaveTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniSaveTsp.Size = new System.Drawing.Size(180, 22);
             this._mniSaveTsp.Text = "Save";
             this._mniSaveTsp.Click += new System.EventHandler(this._mniSaveTsp_Click);
             // 
             // _mniSaveTspAs
             // 
             this._mniSaveTspAs.Name = "_mniSaveTspAs";
-            this._mniSaveTspAs.Size = new System.Drawing.Size(123, 22);
+            this._mniSaveTspAs.Size = new System.Drawing.Size(180, 22);
             this._mniSaveTspAs.Text = "Save As...";
             this._mniSaveTspAs.Click += new System.EventHandler(this._mniSaveTspAs_Click);
             // 
             // _mniExitSep
             // 
             this._mniExitSep.Name = "_mniExitSep";
-            this._mniExitSep.Size = new System.Drawing.Size(120, 6);
+            this._mniExitSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniExit
             // 
             this._mniExit.Name = "_mniExit";
-            this._mniExit.Size = new System.Drawing.Size(123, 22);
+            this._mniExit.Size = new System.Drawing.Size(180, 22);
             this._mniExit.Text = "Exit";
             this._mniExit.Click += new System.EventHandler(this._mniExit_Click);
-            // 
-            // _menuEdit
-            // 
-            this._menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._mniPreferences});
-            this._menuEdit.Name = "_menuEdit";
-            this._menuEdit.Size = new System.Drawing.Size(39, 20);
-            this._menuEdit.Text = "Edit";
-            // 
-            // _mniPreferences
-            // 
-            this._mniPreferences.Name = "_mniPreferences";
-            this._mniPreferences.Size = new System.Drawing.Size(135, 22);
-            this._mniPreferences.Text = "Preferences";
-            this._mniPreferences.Click += new System.EventHandler(this._mniPreferences_Click);
             // 
             // _menuView
             // 
@@ -567,14 +484,14 @@ namespace App.Gui
             // _mniViewSetup
             // 
             this._mniViewSetup.Name = "_mniViewSetup";
-            this._mniViewSetup.Size = new System.Drawing.Size(111, 22);
+            this._mniViewSetup.Size = new System.Drawing.Size(180, 22);
             this._mniViewSetup.Text = "Setup";
             this._mniViewSetup.Click += new System.EventHandler(this._mniViewSetup_Click);
             // 
             // _mniViewResults
             // 
             this._mniViewResults.Name = "_mniViewResults";
-            this._mniViewResults.Size = new System.Drawing.Size(111, 22);
+            this._mniViewResults.Size = new System.Drawing.Size(180, 22);
             this._mniViewResults.Text = "Results";
             this._mniViewResults.Click += new System.EventHandler(this._mniViewResults_Click);
             // 
@@ -592,26 +509,26 @@ namespace App.Gui
             // _mniSolveTsp
             // 
             this._mniSolveTsp.Name = "_mniSolveTsp";
-            this._mniSolveTsp.Size = new System.Drawing.Size(174, 22);
+            this._mniSolveTsp.Size = new System.Drawing.Size(180, 22);
             this._mniSolveTsp.Text = "Solve TSP";
             this._mniSolveTsp.Click += new System.EventHandler(this._mniSolveTsp_Click);
             // 
             // _mniGenerateDistancesSep
             // 
             this._mniGenerateDistancesSep.Name = "_mniGenerateDistancesSep";
-            this._mniGenerateDistancesSep.Size = new System.Drawing.Size(171, 6);
+            this._mniGenerateDistancesSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniGenerateDistances
             // 
             this._mniGenerateDistances.Name = "_mniGenerateDistances";
-            this._mniGenerateDistances.Size = new System.Drawing.Size(174, 22);
+            this._mniGenerateDistances.Size = new System.Drawing.Size(180, 22);
             this._mniGenerateDistances.Text = "Generate Distances";
             this._mniGenerateDistances.Click += new System.EventHandler(this._mniGenerateDistances_Click);
             // 
             // _mniClearDistances
             // 
             this._mniClearDistances.Name = "_mniClearDistances";
-            this._mniClearDistances.Size = new System.Drawing.Size(174, 22);
+            this._mniClearDistances.Size = new System.Drawing.Size(180, 22);
             this._mniClearDistances.Text = "Clear Distances";
             this._mniClearDistances.Click += new System.EventHandler(this._mniClearDistances_Click);
             // 
@@ -626,7 +543,7 @@ namespace App.Gui
             // _mniClearGraph
             // 
             this._mniClearGraph.Name = "_mniClearGraph";
-            this._mniClearGraph.Size = new System.Drawing.Size(136, 22);
+            this._mniClearGraph.Size = new System.Drawing.Size(180, 22);
             this._mniClearGraph.Text = "Clear Graph";
             this._mniClearGraph.Click += new System.EventHandler(this._mniClearGraph_Click);
             // 
@@ -641,9 +558,38 @@ namespace App.Gui
             // _mniAbout
             // 
             this._mniAbout.Name = "_mniAbout";
-            this._mniAbout.Size = new System.Drawing.Size(107, 22);
+            this._mniAbout.Size = new System.Drawing.Size(180, 22);
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
+            // 
+            // _dgvCoordinates
+            // 
+            this._dgvCoordinates.AllowUserToAddRows = false;
+            this._dgvCoordinates.AllowUserToDeleteRows = false;
+            this._dgvCoordinates.AllowUserToResizeRows = false;
+            this._dgvCoordinates.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvCoordinates.BackgroundColor = System.Drawing.Color.White;
+            this._dgvCoordinates.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._dgvCoordinates.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._dgvCoordinates.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dgvCoordinates.Location = new System.Drawing.Point(3, 3);
+            this._dgvCoordinates.Name = "_dgvCoordinates";
+            this._dgvCoordinates.ReadOnly = true;
+            this._dgvCoordinates.RowHeadersVisible = false;
+            this._dgvCoordinates.RowTemplate.Height = 25;
+            this._dgvCoordinates.Size = new System.Drawing.Size(236, 166);
+            this._dgvCoordinates.TabIndex = 0;
+            // 
+            // _tabCoordinates
+            // 
+            this._tabCoordinates.Controls.Add(this._dgvCoordinates);
+            this._tabCoordinates.Location = new System.Drawing.Point(4, 24);
+            this._tabCoordinates.Name = "_tabCoordinates";
+            this._tabCoordinates.Padding = new System.Windows.Forms.Padding(3);
+            this._tabCoordinates.Size = new System.Drawing.Size(242, 172);
+            this._tabCoordinates.TabIndex = 1;
+            this._tabCoordinates.Text = "Coordinates";
+            this._tabCoordinates.UseVisualStyleBackColor = true;
             // 
             // FrmMain
             // 
@@ -672,8 +618,6 @@ namespace App.Gui
             ((System.ComponentModel.ISupportInitialize)(this._dgvNodes)).EndInit();
             this._tabEdges.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._dgvEdges)).EndInit();
-            this._tabCoordinates.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this._dgvCoordinates)).EndInit();
             this._pnlTsp.ResumeLayout(false);
             this._tabControlTsp.ResumeLayout(false);
             this._tabDistances.ResumeLayout(false);
@@ -686,6 +630,8 @@ namespace App.Gui
             ((System.ComponentModel.ISupportInitialize)(this._dgvSummary)).EndInit();
             this._menuStripMain.ResumeLayout(false);
             this._menuStripMain.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dgvCoordinates)).EndInit();
+            this._tabCoordinates.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -697,8 +643,6 @@ namespace App.Gui
         private System.Windows.Forms.MenuStrip _menuStripMain;
         private System.Windows.Forms.ToolStripMenuItem _menuFile;
         private System.Windows.Forms.ToolStripMenuItem _mniNewTsp;
-        private System.Windows.Forms.ToolStripMenuItem _mniNewTspGraph;
-        private System.Windows.Forms.ToolStripMenuItem _mniNewTspMatrix;
         private System.Windows.Forms.ToolStripSeparator _mniOpenTspSep;
         private System.Windows.Forms.ToolStripMenuItem _mniOpenTsp;
         private System.Windows.Forms.ToolStripSeparator _mniSaveTspSep;
@@ -714,8 +658,6 @@ namespace App.Gui
         private System.Windows.Forms.ToolStripMenuItem _mniSolveTsp;
         private System.Windows.Forms.ToolStripSeparator _mniGenerateDistancesSep;
         private System.Windows.Forms.ToolStripMenuItem _mniClearGraph;
-        private System.Windows.Forms.ToolStripMenuItem _menuEdit;
-        private System.Windows.Forms.ToolStripMenuItem _mniPreferences;
         private System.Windows.Forms.ToolStripMenuItem _menuHelp;
         private System.Windows.Forms.ToolStripMenuItem _mniAbout;
         private System.Windows.Forms.Panel _pnlSetup;
@@ -738,12 +680,10 @@ namespace App.Gui
         private System.Windows.Forms.ToolStripMenuItem _menuView;
         private System.Windows.Forms.ToolStripMenuItem _mniViewSetup;
         private System.Windows.Forms.ToolStripMenuItem _mniViewResults;
-        private System.Windows.Forms.ToolStripMenuItem _mniOpenTspGraph;
-        private System.Windows.Forms.ToolStripMenuItem _mniOpenTspMatrix;
         private System.Windows.Forms.TabPage _tabNodes;
+        private System.Windows.Forms.DataGridView _dgvNodes;
         private System.Windows.Forms.TabPage _tabCoordinates;
         private System.Windows.Forms.DataGridView _dgvCoordinates;
-        private System.Windows.Forms.DataGridView _dgvNodes;
     }
 }
 

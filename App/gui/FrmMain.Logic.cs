@@ -6,47 +6,44 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Windows.Forms;
 
 namespace App.Gui
 {
     public partial class FrmMain
     {
-        private bool _isFirstTime;
-
         private string _programTitle;
         private string _fileTitle;
         private string _lastLocation;
 
-        private List<List<double>> _distances;
-        private List<Point> _points;
-        private List<string> _headers;
-        private List<Edge<string>> _edges;
+        private TspData _data;
+        private double[][] _distances;
+        private Edge<Node>[] _edges;
 
         private int _distancesMinWidth;
         private int _edgesMinWidth;
+        private int _nodesMinWidth;
 
         private void NewProject()
         {
-            RunFirstTime();
-            ClearProgram();
+            ClearData();
 
-            SetWindowTitle("Untitled");
+            _data = new TspData();
+            _fileTitle = "Untitled";
+            SetWindowTitle();
         }
 
         private void OpenProject()
         {
             string filePath;
-            string[][] inputData;
-
-            List<List<double>> distances;
-            List<string> headers;
-            List<Edge<string>> edges;
+            string fileName;
+            string inputData;
 
             using (var openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = _lastLocation;
-                openFileDialog.Filter = "CSV (*.csv)|*.csv";
+                openFileDialog.Filter = "JSON (*.json)|*.json";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
@@ -55,53 +52,41 @@ namespace App.Gui
                     try
                     {
                         filePath = openFileDialog.FileName;
-                        inputData = File.ReadLines(filePath).Select(x => x.Split(',')).ToArray();
+                        fileName = openFileDialog.SafeFileName;
+                        inputData = File.ReadAllText(filePath);
 
                         if (inputData.IsNullOrEmpty())
                         {
-                            PrintTo("File is empty", true);
-                            RunFirstTime();
-                            ClearProgram();
+                            ClearData();
 
                             _lastLocation = filePath;
-                            SetWindowTitle(openFileDialog.SafeFileName);
+                            _fileTitle = fileName;
+                            SetWindowTitle();
 
                             return;
                         }
-                        if (!inputData.HasEqualSize())
+
+                        // deserialize json to tsp data
+                        var options = new JsonSerializerOptions
                         {
-                            PrintTo("Matrix does not have equal size", true);
+                            PropertyNameCaseInsensitive = true
+                        };
+                        var data = (TspData)JsonSerializer.Deserialize(inputData, typeof(TspData), options);
+                        var res = GetDistances(data.Nodes);
 
-                            return;
-                        }
+                        ClearData();
 
-                        distances = GetMatrix(inputData);
+                        _data = data;
+                        _distances = res.Distances;
+                        _edges = res.Edges;
 
-                        if (!IsMatrixValid(distances))
-                        {
-                            PrintTo("Matrix has negative values", true);
-
-                            return;
-                        }
-
-                        headers = GetHeaders(distances);
-                        edges = GetEdges(distances, headers);
-
-                        RunFirstTime();
-                        ClearProgram();
-
-                        _lastLocation = filePath;
-                        _distances = distances;
-                        _headers = headers;
-                        _edges = edges;
-
-                        ShowDistances(_headers);
+                        SetDistancesColumns(_data.Nodes.Select(x => x.Name).ToArray());
 
                         var dtDistances = (DataTable)_dgvDistances.DataSource;
                         foreach (var row in _distances)
                         {
                             var dr = dtDistances.NewRow();
-                            for (var i = 0; i < row.Count; i++)
+                            for (var i = 0; i < row.Length; i++)
                             {
                                 dr[i] = row[i];
                             }
@@ -109,21 +94,22 @@ namespace App.Gui
                         }
 
                         var dtNodes = (DataTable)_dgvNodes.DataSource;
-                        foreach (var header in _headers)
+                        foreach (var node in _data.Nodes)
                         {
-                            dtNodes.Rows.Add(header);
+                            dtNodes.Rows.Add(node.Id, node.Name);
                         }
 
                         var dtEdges = (DataTable)_dgvEdges.DataSource;
                         foreach (var edge in _edges)
                         {
-                            dtEdges.Rows.Add(edge.Before, edge.Next, edge.Distance);
+                            dtEdges.Rows.Add(edge.Before.Name, edge.Next.Name, edge.Distance);
                         }
 
                         _lastLocation = filePath;
-                        SetWindowTitle(openFileDialog.SafeFileName);
+                        _fileTitle = fileName;
+                        SetWindowTitle();
                     }
-                    catch (Exception ex) when (ex is IOException || ex is FormatException || ex is IndexOutOfRangeException)
+                    catch (Exception ex) when (ex is IOException)
                     {
                         PrintTo(ex.Message, true);
                     }
@@ -131,41 +117,16 @@ namespace App.Gui
             }
         }
 
-        private void SetWindowTitle(string fileName)
+        private void SetWindowTitle()
         {
-            _fileTitle = fileName;
             Text = $"{_fileTitle} - {_programTitle}";
         }
 
-        private void RunFirstTime()
-        {
-            if (_isFirstTime)
-            {
-                LoadFirstTime();
-                ShowFirstTime();
-
-                _isFirstTime = false;
-            }
-        }
-
-        private void LoadFirstTime()
-        {
-            // enable elements for the first time creating or opening a project
-            _splitMain.Visible = true;
-
-            _menuView.Enabled = true;
-            _mniViewSetup.Checked = true;
-            _menuTsp.Enabled = true;
-
-            _mniSaveTsp.Enabled = true;
-            _mniSaveTspAs.Enabled = true;
-        }
-
-        private void ShowDistances(List<string> headers)
+        private void SetDistancesColumns(string[] headers)
         {
             var dtDistances = (DataTable)_dgvDistances.DataSource;
 
-            for (var i = 0; i < headers.Count; i++)
+            for (var i = 0; i < headers.Length; i++)
             {
                 dtDistances.Columns.Add(headers[i]);
                 _dgvDistances.Columns[i].MinimumWidth = _distancesMinWidth;
@@ -173,10 +134,11 @@ namespace App.Gui
             }
         }
 
-        private void ShowFirstTime()
+        private void LoadDataTables()
         {
             var dtNodes = new DataTable();
-            dtNodes.Columns.Add("Node", typeof(string));
+            dtNodes.Columns.Add("Id", typeof(string));
+            dtNodes.Columns.Add("Name", typeof(string));
             _dgvNodes.DataSource = dtNodes;
 
             var dtEdges = new DataTable();
@@ -187,81 +149,70 @@ namespace App.Gui
 
             _dgvDistances.DataSource = new DataTable();
 
-            for (var i = 0; i < _dgvEdges.Columns.Count; i++)
+            SetColumnWidth(_dgvEdges, _edgesMinWidth);
+            SetColumnWidth(_dgvNodes, _nodesMinWidth);
+        }
+
+        private void SetColumnWidth(DataGridView dgv, int width)
+        {
+            for (var i = 0; i < dgv.Columns.Count; i++)
             {
-                _dgvEdges.Columns[i].MinimumWidth = _edgesMinWidth;
+                dgv.Columns[i].MinimumWidth = width;
             }
         }
 
-        private void ClearProgram()
+        private void ClearData()
         {
             ((DataTable)_dgvNodes.DataSource).Rows.Clear();
             ((DataTable)_dgvEdges.DataSource).Rows.Clear();
             _dgvDistances.DataSource = new DataTable();
 
-            _headers.Clear();
-            _edges.Clear();
-            _distances.Clear();
+            _data = null;
+            _fileTitle = null;
+            _distances = null;
+            _edges = null;
         }
 
-        private List<List<double>> GetMatrix(string[][] array)
+        private (double[][] Distances, Edge<Node>[] Edges) GetDistances(List<Node> nodes)
         {
-            var rowLength = array.Length;
-            var columnLength = array[0].Length;
-            var matrix = new List<List<double>>();
+            var distances = new double[nodes.Count][];
+            var edges = new List<Edge<Node>>();
 
-            for (var i = 0; i < rowLength; i++)
+            for (var before = 0; before < nodes.Count - 1; before++)
             {
-                var row = new List<double>();
-                for (var j = 0; j < columnLength; j++)
+                for (var next = before + 1; next < nodes.Count; next++)
                 {
-                    row.Add(double.Parse(array[i][j]));
-                }
-                matrix.Add(row);
-            }
-
-            return matrix;
-        }
-
-        private List<string> GetHeaders<T>(IEnumerable<T> list)
-        {
-            var headers = new List<string>();
-
-            for (var i = 0; i < list.Count(); i++)
-            {
-                headers.Add(i.ToString());
-            }
-
-            return headers;
-        }
-
-        private List<Edge<string>> GetEdges(List<List<double>> distances, List<string> headers)
-        {
-            var edges = new List<Edge<string>>();
-
-            for (var start = 0; start < distances.Count - 1; start++)
-            {
-                for (var end = start + 1; end < distances[start].Count; end++)
-                {
-                    if (distances[start][end] > 0)
-                    {
-                        edges.Add(new Edge<string>(headers[start], headers[end], distances[start][end]));
-                    }
+                    var edge = new Edge<Node>(
+                        nodes[before],
+                        nodes[next],
+                        GetDistance(nodes[before], nodes[next])
+                    );
+                    edges.Add(edge);
                 }
             }
 
-            return edges;
+            for (var row = 0; row < nodes.Count; row++)
+            {
+                var distance = new double[nodes.Count];
+                for (var column = 0; column < nodes.Count; column++)
+                {
+                    distance[column] = (row != column) ? GetDistance(nodes[row], nodes[column]) : 0;
+                }
+                distances[row] = distance;
+            }
+
+            return (distances, edges.ToArray());
+        }
+
+        private float GetDistance(Node a, Node b)
+        {
+            return (float)Math.Sqrt(Math.Pow(a.Coord.X - b.Coord.X, 2) + Math.Pow(a.Coord.Y - b.Coord.Y, 2));
         }
 
         private void PrintTo(string message, bool? debug = false)
         {
             MessageBox.Show(message);
             Debug.WriteLine(message);
-        }
-
-        private bool IsMatrixValid(List<List<double>> matrix)
-        {
-            return matrix.All(d => d.All(n => n >= 0));
         }
     }
 }

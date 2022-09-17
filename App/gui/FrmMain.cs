@@ -11,57 +11,33 @@ namespace App.Gui
         {
             InitializeComponent();
 
-            _isFirstTime = true;
-
             _programTitle = "TSP GA Solver";
             _lastLocation = Application.StartupPath;
 
-            _distances = new List<List<double>>();
-            _points = new List<Point>();
-            _headers = new List<string>();
-            _edges = new List<Edge<string>>();
-
             _distancesMinWidth = 50;
             _edgesMinWidth = 50;
+            _nodesMinWidth = 50;
+
+            LoadDataTables();
         }
 
         private void FrmMain_Load(object sender, System.EventArgs e)
         {
-            Text = _programTitle;
+            Text = $"Untitled - {_programTitle}";
 
-            _splitMain.Panel2Collapsed = true;
-            _splitMain.Visible = false;
-
-            _menuView.Enabled = false;
-            _menuTsp.Enabled = false;
             _mniSolveTsp.Enabled = false;
             _mniGenerateDistances.Enabled = false;
             _mniClearDistances.Enabled = false;
-            _menuGraph.Enabled = false;
             _mniClearGraph.Enabled = false;
-
-            _mniSaveTsp.Enabled = false;
-            _mniSaveTspAs.Enabled = false;
-
-            _tabControlSetup.TabPages.Remove(_tabCoordinates);
-            _tabControlTsp.TabPages.Remove(_tabGraph);
         }
 
         #region Menu File
-        private void _mniNewTspGraph_Click(object sender, System.EventArgs e)
-        {
-        }
-
-        private void _mniNewTspMatrix_Click(object sender, System.EventArgs e)
+        private void _mniNewTsp_Click(object sender, System.EventArgs e)
         {
             NewProject();
         }
 
-        private void _mniOpenTspGraph_Click(object sender, System.EventArgs e)
-        {
-        }
-
-        private void _mniOpenTspMatrix_Click(object sender, System.EventArgs e)
+        private void _mniOpenTsp_Click(object sender, System.EventArgs e)
         {
             OpenProject();
         }

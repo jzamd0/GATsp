@@ -96,16 +96,18 @@ namespace App.Gui
         #region Menu View
         private void _mniViewSetup_Click(object sender, System.EventArgs e)
         {
-            var visible = _mniViewSetup.Checked;
-            _mniViewSetup.Checked = !visible;
-            _splitTsp.Panel1Collapsed = visible;
+            var sollapsed = _mniViewSetup.Checked;
+            _splitTsp.Panel2Collapsed = false;
+            _splitTsp.Panel1Collapsed = sollapsed;
+            _mniViewSetup.Checked = !sollapsed;
         }
 
         private void _mniViewResults_Click(object sender, System.EventArgs e)
         {
-            var visible = _mniViewResults.Checked;
-            _mniViewResults.Checked = !visible;
-            _splitMain.Panel2Collapsed = visible;
+            var collapsed = _mniViewResults.Checked;
+            _splitMain.Panel1Collapsed = false;
+            _splitMain.Panel2Collapsed = collapsed;
+            _mniViewResults.Checked = !collapsed;
         }
         #endregion
 
@@ -139,5 +141,23 @@ namespace App.Gui
 
         }
         #endregion
+
+        private void _pnlSetup_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            _splitTsp.Panel2Collapsed = !_splitTsp.Panel2Collapsed;
+            _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
+        }
+
+        private void _pnlResult_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            _splitMain.Panel1Collapsed = !_splitMain.Panel1Collapsed;
+            _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
+        }
+
+        private void _pnlTsp_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            _splitTsp.Panel1Collapsed = !_splitTsp.Panel1Collapsed;
+            _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
+        }
     }
 }

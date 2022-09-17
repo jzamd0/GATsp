@@ -175,6 +175,7 @@ namespace App.Gui
             this._pnlSetup.Name = "_pnlSetup";
             this._pnlSetup.Size = new System.Drawing.Size(250, 200);
             this._pnlSetup.TabIndex = 0;
+            this._pnlSetup.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this._pnlSetup_MouseDoubleClick);
             // 
             // _tabControlSetup
             // 
@@ -205,7 +206,7 @@ namespace App.Gui
             this._tabNodes.Location = new System.Drawing.Point(4, 24);
             this._tabNodes.Name = "_tabNodes";
             this._tabNodes.Padding = new System.Windows.Forms.Padding(3);
-            this._tabNodes.Size = new System.Drawing.Size(229, 154);
+            this._tabNodes.Size = new System.Drawing.Size(242, 172);
             this._tabNodes.TabIndex = 2;
             this._tabNodes.Text = "Nodes";
             this._tabNodes.UseVisualStyleBackColor = true;
@@ -225,7 +226,7 @@ namespace App.Gui
             this._dgvNodes.ReadOnly = true;
             this._dgvNodes.RowHeadersVisible = false;
             this._dgvNodes.RowTemplate.Height = 25;
-            this._dgvNodes.Size = new System.Drawing.Size(223, 148);
+            this._dgvNodes.Size = new System.Drawing.Size(236, 166);
             this._dgvNodes.TabIndex = 0;
             // 
             // _tabEdges
@@ -234,7 +235,7 @@ namespace App.Gui
             this._tabEdges.Location = new System.Drawing.Point(4, 24);
             this._tabEdges.Name = "_tabEdges";
             this._tabEdges.Padding = new System.Windows.Forms.Padding(3);
-            this._tabEdges.Size = new System.Drawing.Size(229, 154);
+            this._tabEdges.Size = new System.Drawing.Size(242, 172);
             this._tabEdges.TabIndex = 2;
             this._tabEdges.Text = "Edges";
             this._tabEdges.UseVisualStyleBackColor = true;
@@ -254,7 +255,7 @@ namespace App.Gui
             this._dgvEdges.ReadOnly = true;
             this._dgvEdges.RowHeadersVisible = false;
             this._dgvEdges.RowTemplate.Height = 25;
-            this._dgvEdges.Size = new System.Drawing.Size(223, 148);
+            this._dgvEdges.Size = new System.Drawing.Size(236, 166);
             this._dgvEdges.TabIndex = 0;
             // 
             // _tabCoordinates
@@ -263,7 +264,7 @@ namespace App.Gui
             this._tabCoordinates.Location = new System.Drawing.Point(4, 24);
             this._tabCoordinates.Name = "_tabCoordinates";
             this._tabCoordinates.Padding = new System.Windows.Forms.Padding(3);
-            this._tabCoordinates.Size = new System.Drawing.Size(229, 154);
+            this._tabCoordinates.Size = new System.Drawing.Size(242, 172);
             this._tabCoordinates.TabIndex = 1;
             this._tabCoordinates.Text = "Coordinates";
             this._tabCoordinates.UseVisualStyleBackColor = true;
@@ -283,7 +284,7 @@ namespace App.Gui
             this._dgvCoordinates.ReadOnly = true;
             this._dgvCoordinates.RowHeadersVisible = false;
             this._dgvCoordinates.RowTemplate.Height = 25;
-            this._dgvCoordinates.Size = new System.Drawing.Size(223, 148);
+            this._dgvCoordinates.Size = new System.Drawing.Size(236, 166);
             this._dgvCoordinates.TabIndex = 0;
             // 
             // _pnlTsp
@@ -296,6 +297,7 @@ namespace App.Gui
             this._pnlTsp.Name = "_pnlTsp";
             this._pnlTsp.Size = new System.Drawing.Size(330, 200);
             this._pnlTsp.TabIndex = 0;
+            this._pnlTsp.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this._pnlTsp_MouseDoubleClick);
             // 
             // _tabControlTsp
             // 
@@ -343,7 +345,7 @@ namespace App.Gui
             this._tabGraph.Location = new System.Drawing.Point(4, 24);
             this._tabGraph.Name = "_tabGraph";
             this._tabGraph.Padding = new System.Windows.Forms.Padding(3);
-            this._tabGraph.Size = new System.Drawing.Size(335, 154);
+            this._tabGraph.Size = new System.Drawing.Size(322, 172);
             this._tabGraph.TabIndex = 1;
             this._tabGraph.Text = "Graph";
             this._tabGraph.UseVisualStyleBackColor = true;
@@ -354,7 +356,7 @@ namespace App.Gui
             this._pbxCanvas.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pbxCanvas.Location = new System.Drawing.Point(3, 3);
             this._pbxCanvas.Name = "_pbxCanvas";
-            this._pbxCanvas.Size = new System.Drawing.Size(329, 148);
+            this._pbxCanvas.Size = new System.Drawing.Size(316, 166);
             this._pbxCanvas.TabIndex = 0;
             this._pbxCanvas.TabStop = false;
             // 
@@ -368,6 +370,7 @@ namespace App.Gui
             this._pnlResult.Name = "_pnlResult";
             this._pnlResult.Size = new System.Drawing.Size(584, 111);
             this._pnlResult.TabIndex = 0;
+            this._pnlResult.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this._pnlResult_MouseDoubleClick);
             // 
             // _tabControlResults
             // 
@@ -414,7 +417,7 @@ namespace App.Gui
             this._tabPopulation.Location = new System.Drawing.Point(4, 24);
             this._tabPopulation.Name = "_tabPopulation";
             this._tabPopulation.Padding = new System.Windows.Forms.Padding(3);
-            this._tabPopulation.Size = new System.Drawing.Size(576, 101);
+            this._tabPopulation.Size = new System.Drawing.Size(576, 83);
             this._tabPopulation.TabIndex = 1;
             this._tabPopulation.Text = "Population";
             this._tabPopulation.UseVisualStyleBackColor = true;

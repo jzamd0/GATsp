@@ -161,24 +161,16 @@ namespace App.Gui
             _mniSaveTspAs.Enabled = true;
         }
 
-        private void SetMinimumWdithDistance(DataGridView dgv, int minWidth)
-        {
-            for (var i = 0; i < dgv.Columns.Count; i++)
-            {
-                dgv.Columns[i].MinimumWidth = minWidth;
-            }
-        }
-
         private void ShowDistances(List<string> headers)
         {
             var dtDistances = (DataTable)_dgvDistances.DataSource;
 
-            foreach (var header in headers)
+            for (var i = 0; i < headers.Count; i++)
             {
-                dtDistances.Columns.Add(header);
+                dtDistances.Columns.Add(headers[i]);
+                _dgvDistances.Columns[i].MinimumWidth = _distancesMinWidth;
+                _dgvDistances.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-
-            SetMinimumWdithDistance(_dgvDistances, _distancesMinWidth);
         }
 
         private void ShowFirstTime()
@@ -195,7 +187,10 @@ namespace App.Gui
 
             _dgvDistances.DataSource = new DataTable();
 
-            SetMinimumWdithDistance(_dgvEdges, _edgesMinWidth);
+            for (var i = 0; i < _dgvEdges.Columns.Count; i++)
+            {
+                _dgvEdges.Columns[i].MinimumWidth = _edgesMinWidth;
+            }
         }
 
         private void ClearProgram()

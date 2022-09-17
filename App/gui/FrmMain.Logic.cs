@@ -23,6 +23,9 @@ namespace App.Gui
         private List<string> _headers;
         private List<Edge<string>> _edges;
 
+        private int _distancesMinWidth;
+        private int _edgesMinWidth;
+
         private void NewProject()
         {
             RunFirstTime();
@@ -158,6 +161,14 @@ namespace App.Gui
             _mniSaveTspAs.Enabled = true;
         }
 
+        private void SetMinimumWdithDistance(DataGridView dgv, int minWidth)
+        {
+            for (var i = 0; i < dgv.Columns.Count; i++)
+            {
+                dgv.Columns[i].MinimumWidth = minWidth;
+            }
+        }
+
         private void ShowDistances(List<string> headers)
         {
             var dtDistances = (DataTable)_dgvDistances.DataSource;
@@ -166,6 +177,8 @@ namespace App.Gui
             {
                 dtDistances.Columns.Add(header);
             }
+
+            SetMinimumWdithDistance(_dgvDistances, _distancesMinWidth);
         }
 
         private void ShowFirstTime()
@@ -181,6 +194,8 @@ namespace App.Gui
             _dgvEdges.DataSource = dtEdges;
 
             _dgvDistances.DataSource = new DataTable();
+
+            SetMinimumWdithDistance(_dgvEdges, _edgesMinWidth);
         }
 
         private void ClearProgram()

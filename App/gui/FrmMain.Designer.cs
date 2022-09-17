@@ -135,12 +135,14 @@ namespace App.Gui
             // _splitMain.Panel1
             // 
             this._splitMain.Panel1.Controls.Add(this._splitTsp);
+            this._splitMain.Panel1MinSize = 100;
             // 
             // _splitMain.Panel2
             // 
             this._splitMain.Panel2.Controls.Add(this._pnlResult);
+            this._splitMain.Panel2MinSize = 100;
             this._splitMain.Size = new System.Drawing.Size(584, 315);
-            this._splitMain.SplitterDistance = 182;
+            this._splitMain.SplitterDistance = 200;
             this._splitMain.TabIndex = 1;
             // 
             // _splitTsp
@@ -153,12 +155,14 @@ namespace App.Gui
             // _splitTsp.Panel1
             // 
             this._splitTsp.Panel1.Controls.Add(this._pnlSetup);
+            this._splitTsp.Panel1MinSize = 200;
             // 
             // _splitTsp.Panel2
             // 
             this._splitTsp.Panel2.Controls.Add(this._pnlTsp);
-            this._splitTsp.Size = new System.Drawing.Size(584, 182);
-            this._splitTsp.SplitterDistance = 237;
+            this._splitTsp.Panel2MinSize = 300;
+            this._splitTsp.Size = new System.Drawing.Size(584, 200);
+            this._splitTsp.SplitterDistance = 250;
             this._splitTsp.TabIndex = 0;
             // 
             // _pnlSetup
@@ -169,7 +173,7 @@ namespace App.Gui
             this._pnlSetup.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pnlSetup.Location = new System.Drawing.Point(0, 0);
             this._pnlSetup.Name = "_pnlSetup";
-            this._pnlSetup.Size = new System.Drawing.Size(237, 182);
+            this._pnlSetup.Size = new System.Drawing.Size(250, 200);
             this._pnlSetup.TabIndex = 0;
             // 
             // _tabControlSetup
@@ -182,7 +186,7 @@ namespace App.Gui
             this._tabControlSetup.Location = new System.Drawing.Point(0, 0);
             this._tabControlSetup.Name = "_tabControlSetup";
             this._tabControlSetup.SelectedIndex = 0;
-            this._tabControlSetup.Size = new System.Drawing.Size(237, 182);
+            this._tabControlSetup.Size = new System.Drawing.Size(250, 200);
             this._tabControlSetup.TabIndex = 0;
             // 
             // _tabSetup
@@ -190,7 +194,7 @@ namespace App.Gui
             this._tabSetup.Location = new System.Drawing.Point(4, 24);
             this._tabSetup.Name = "_tabSetup";
             this._tabSetup.Padding = new System.Windows.Forms.Padding(3);
-            this._tabSetup.Size = new System.Drawing.Size(229, 154);
+            this._tabSetup.Size = new System.Drawing.Size(242, 172);
             this._tabSetup.TabIndex = 0;
             this._tabSetup.Text = "Setup";
             this._tabSetup.UseVisualStyleBackColor = true;
@@ -290,7 +294,7 @@ namespace App.Gui
             this._pnlTsp.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pnlTsp.Location = new System.Drawing.Point(0, 0);
             this._pnlTsp.Name = "_pnlTsp";
-            this._pnlTsp.Size = new System.Drawing.Size(343, 182);
+            this._pnlTsp.Size = new System.Drawing.Size(330, 200);
             this._pnlTsp.TabIndex = 0;
             // 
             // _tabControlTsp
@@ -301,7 +305,7 @@ namespace App.Gui
             this._tabControlTsp.Location = new System.Drawing.Point(0, 0);
             this._tabControlTsp.Name = "_tabControlTsp";
             this._tabControlTsp.SelectedIndex = 0;
-            this._tabControlTsp.Size = new System.Drawing.Size(343, 182);
+            this._tabControlTsp.Size = new System.Drawing.Size(330, 200);
             this._tabControlTsp.TabIndex = 1;
             // 
             // _tabDistances
@@ -310,7 +314,7 @@ namespace App.Gui
             this._tabDistances.Location = new System.Drawing.Point(4, 24);
             this._tabDistances.Name = "_tabDistances";
             this._tabDistances.Padding = new System.Windows.Forms.Padding(3);
-            this._tabDistances.Size = new System.Drawing.Size(335, 154);
+            this._tabDistances.Size = new System.Drawing.Size(322, 172);
             this._tabDistances.TabIndex = 0;
             this._tabDistances.Text = "Distances";
             this._tabDistances.UseVisualStyleBackColor = true;
@@ -330,7 +334,7 @@ namespace App.Gui
             this._dgvDistances.ReadOnly = true;
             this._dgvDistances.RowHeadersVisible = false;
             this._dgvDistances.RowTemplate.Height = 25;
-            this._dgvDistances.Size = new System.Drawing.Size(329, 148);
+            this._dgvDistances.Size = new System.Drawing.Size(316, 166);
             this._dgvDistances.TabIndex = 0;
             // 
             // _tabGraph
@@ -362,7 +366,7 @@ namespace App.Gui
             this._pnlResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this._pnlResult.Location = new System.Drawing.Point(0, 0);
             this._pnlResult.Name = "_pnlResult";
-            this._pnlResult.Size = new System.Drawing.Size(584, 129);
+            this._pnlResult.Size = new System.Drawing.Size(584, 111);
             this._pnlResult.TabIndex = 0;
             // 
             // _tabControlResults
@@ -373,7 +377,7 @@ namespace App.Gui
             this._tabControlResults.Location = new System.Drawing.Point(0, 0);
             this._tabControlResults.Name = "_tabControlResults";
             this._tabControlResults.SelectedIndex = 0;
-            this._tabControlResults.Size = new System.Drawing.Size(584, 129);
+            this._tabControlResults.Size = new System.Drawing.Size(584, 111);
             this._tabControlResults.TabIndex = 1;
             // 
             // _tabSummary
@@ -382,7 +386,7 @@ namespace App.Gui
             this._tabSummary.Location = new System.Drawing.Point(4, 24);
             this._tabSummary.Name = "_tabSummary";
             this._tabSummary.Padding = new System.Windows.Forms.Padding(3);
-            this._tabSummary.Size = new System.Drawing.Size(576, 101);
+            this._tabSummary.Size = new System.Drawing.Size(576, 83);
             this._tabSummary.TabIndex = 0;
             this._tabSummary.Text = "Summary";
             this._tabSummary.UseVisualStyleBackColor = true;
@@ -402,7 +406,7 @@ namespace App.Gui
             this._dgvSummary.ReadOnly = true;
             this._dgvSummary.RowHeadersVisible = false;
             this._dgvSummary.RowTemplate.Height = 25;
-            this._dgvSummary.Size = new System.Drawing.Size(570, 95);
+            this._dgvSummary.Size = new System.Drawing.Size(570, 77);
             this._dgvSummary.TabIndex = 0;
             // 
             // _tabPopulation

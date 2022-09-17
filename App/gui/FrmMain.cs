@@ -20,6 +20,9 @@ namespace App.Gui
             _points = new List<Point>();
             _headers = new List<string>();
             _edges = new List<Edge<string>>();
+
+            _distancesMinWidth = 50;
+            _edgesMinWidth = 50;
         }
 
         private void FrmMain_Load(object sender, System.EventArgs e)

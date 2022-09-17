@@ -59,7 +59,7 @@ namespace App.Gui
 
                         if (inputData.IsNullOrEmpty())
                         {
-                            Debug.WriteLine("File is empty");
+                            PrintTo("File is empty", true);
                             RunFirstTime();
                             ClearProgram();
 
@@ -70,7 +70,7 @@ namespace App.Gui
                         }
                         if (!inputData.HasEqualSize())
                         {
-                            Debug.WriteLine("Matrix doesn't have equal size");
+                            PrintTo("Matrix does not have equal size", true);
 
                             return;
                         }
@@ -79,7 +79,7 @@ namespace App.Gui
 
                         if (!IsMatrixValid(distances))
                         {
-                            Debug.WriteLine("Matrix has negative values");
+                            PrintTo("Matrix has negative values", true);
 
                             return;
                         }
@@ -125,7 +125,7 @@ namespace App.Gui
                     }
                     catch (Exception ex) when (ex is IOException || ex is FormatException || ex is IndexOutOfRangeException)
                     {
-                        Debug.WriteLine(ex.Message);
+                        PrintTo(ex.Message, true);
                     }
                 }
             }
@@ -251,6 +251,12 @@ namespace App.Gui
             }
 
             return edges;
+        }
+
+        private void PrintTo(string message, bool? debug = false)
+        {
+            MessageBox.Show(message);
+            Debug.WriteLine(message);
         }
 
         private bool IsMatrixValid(List<List<double>> matrix)

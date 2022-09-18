@@ -76,7 +76,7 @@ namespace App.Gui
             _fileTitle = "Untitled";
             SetWindowTitle();
 
-            _hasModified = false;
+            HasModified(false);
             _canOverwriteDraw = true;
 
             _pbxCanvas.Invalidate();
@@ -113,7 +113,7 @@ namespace App.Gui
                             _fileTitle = fileName;
                             SetWindowTitle();
 
-                            _hasModified = false;
+                            HasModified(false);
                             _canOverwriteDraw = true;
 
                             _pbxCanvas.Invalidate();
@@ -135,45 +135,17 @@ namespace App.Gui
                         _distances = res.Distances;
                         _edges = res.Edges;
 
-                        SetDistancesColumns(_data.Nodes.Select(x => x.Name).ToArray());
-
-                        var dtDistances = (DataTable)_dgvDistances.DataSource;
-                        foreach (var row in _distances)
-                        {
-                            var dr = dtDistances.NewRow();
-                            for (var i = 0; i < row.Length; i++)
-                            {
-                                dr[i] = row[i];
-                            }
-                            dtDistances.Rows.Add(dr);
-                        }
-
-                        var dtNodes = (DataTable)_dgvNodes.DataSource;
-                        foreach (var node in _data.Nodes)
-                        {
-                            dtNodes.Rows.Add(node.Id, node.Name);
-                        }
-
-                        var dtEdges = (DataTable)_dgvEdges.DataSource;
-                        foreach (var edge in _edges)
-                        {
-                            dtEdges.Rows.Add(edge.Before.Name, edge.Next.Name, edge.Distance);
-                        }
-
-                        var dtCoordinates = (DataTable)_dgvCoordinates.DataSource;
-                        foreach (var node in _data.Nodes)
-                        {
-                            dtCoordinates.Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
-                        }
+                        LoadNodes();
+                        LoadDistances();
 
                         _lastLocation = filePath;
                         _fileTitle = fileName;
                         SetWindowTitle();
 
+                        HasModified(false);
                         _canOverwriteDraw = true;
-                        _pbxCanvas.Invalidate();
 
-                        _hasModified = false;
+                        _pbxCanvas.Invalidate();
                     }
                     catch (Exception ex) when (ex is IOException || ex is JsonException)
                     {
@@ -186,18 +158,6 @@ namespace App.Gui
         private void SetWindowTitle()
         {
             Text = $"{_fileTitle} - {_programTitle}";
-        }
-
-        private void SetDistancesColumns(string[] headers)
-        {
-            var dtDistances = (DataTable)_dgvDistances.DataSource;
-
-            for (var i = 0; i < headers.Length; i++)
-            {
-                dtDistances.Columns.Add(headers[i]);
-                _dgvDistances.Columns[i].MinimumWidth = _distancesMinWidth;
-                _dgvDistances.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
         }
 
         private void LoadDataTables()
@@ -278,6 +238,61 @@ namespace App.Gui
             return (distances, edges.ToArray());
         }
 
+        private void LoadNodes()
+        {
+            var dtNodes = (DataTable)_dgvNodes.DataSource;
+            var dtCoordinates = (DataTable)_dgvCoordinates.DataSource;
+
+            if (_data.Nodes.Count > 0)
+            {
+                foreach (var node in _data.Nodes)
+                {
+                    dtNodes.Rows.Add(node.Id, node.Name);
+                    dtCoordinates.Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+                }
+
+                _mniClearGraph.Enabled = true;
+            }
+            else
+            {
+                _mniClearGraph.Enabled = false;
+            }
+
+            _canOverwriteDraw = true;
+
+            _pbxCanvas.Invalidate();
+        }
+
+        private void LoadDistances()
+        {
+            var dtDistances = (DataTable)_dgvDistances.DataSource;
+            var headers = _data.Nodes.Select(x => x.Name).ToArray();
+
+            // create columns for distances view
+            for (var i = 0; i < headers.Length; i++)
+            {
+                dtDistances.Columns.Add(headers[i]);
+                _dgvDistances.Columns[i].MinimumWidth = _distancesMinWidth;
+                _dgvDistances.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+
+            foreach (var row in _distances)
+            {
+                var dr = dtDistances.NewRow();
+                for (var i = 0; i < row.Length; i++)
+                {
+                    dr[i] = row[i];
+                }
+                dtDistances.Rows.Add(dr);
+            }
+
+            var dtEdges = (DataTable)_dgvEdges.DataSource;
+            foreach (var edge in _edges)
+            {
+                dtEdges.Rows.Add(edge.Before.Name, edge.Next.Name, edge.Distance);
+            }
+        }
+
         private float GetDistance(Node a, Node b)
         {
             return (float)Math.Sqrt(Math.Pow(a.Coord.X - b.Coord.X, 2) + Math.Pow(a.Coord.Y - b.Coord.Y, 2));
@@ -287,6 +302,23 @@ namespace App.Gui
         {
             MessageBox.Show(message);
             Debug.WriteLine(message);
+        }
+
+        private void HasModified(bool modified)
+        {
+            _hasModified = modified;
+
+            if (_hasModified)
+            {
+                if (!Text.StartsWith("*"))
+                {
+                    Text = $"*{Text}";
+                }
+            }
+            else
+            {
+                Text = Text.TrimStart('*');
+            }
         }
 
         private void AddNode(Node node)
@@ -302,7 +334,7 @@ namespace App.Gui
             ((DataTable)_dgvNodes.DataSource).Rows.Add(node.Id, node.Name);
             ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
 
-            _hasModified = true;
+            HasModified(true);
             _canOverwriteDraw = true;
 
             _mniClearGraph.Enabled = true;
@@ -318,7 +350,7 @@ namespace App.Gui
             ((DataTable)_dgvNodes.DataSource).Rows.RemoveAt(i);
             ((DataTable)_dgvCoordinates.DataSource).Rows.RemoveAt(i);
 
-            _hasModified = true;
+            HasModified(true);
             _canOverwriteDraw = true;
 
             _mniClearGraph.Enabled = _data.Nodes.Count > 0;

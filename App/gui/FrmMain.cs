@@ -34,6 +34,8 @@ namespace App.Gui
         {
             Text = $"Untitled - {_programTitle}";
 
+            _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
+            _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
             _mniSolveTsp.Enabled = false;
             _mniGenerateDistances.Enabled = false;
             _mniClearDistances.Enabled = false;

@@ -90,19 +90,19 @@ namespace App.Gui
             string fileName;
             string inputData;
 
-            using (var openFileDialog = new OpenFileDialog())
+            using (var openDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = _lastLocation;
-                openFileDialog.Filter = "JSON (*.json)|*.json";
-                openFileDialog.FilterIndex = 1;
-                openFileDialog.RestoreDirectory = true;
+                openDialog.InitialDirectory = _lastLocation;
+                openDialog.Filter = "JSON (*.json)|*.json";
+                openDialog.FilterIndex = 1;
+                openDialog.RestoreDirectory = true;
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                if (openDialog.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        filePath = openFileDialog.FileName;
-                        fileName = openFileDialog.SafeFileName;
+                        filePath = openDialog.FileName;
+                        fileName = openDialog.SafeFileName;
                         inputData = File.ReadAllText(filePath);
 
                         if (inputData.IsNullOrEmpty())
@@ -161,6 +161,54 @@ namespace App.Gui
                     }
                 }
             }
+        }
+
+        private void SaveProject()
+        {
+            string filePath;
+            string fileName;
+
+            using (var saveDialog = new SaveFileDialog())
+            {
+                saveDialog.InitialDirectory = _lastLocation;
+                saveDialog.Filter = "JSON (*.json)|*.json";
+                saveDialog.DefaultExt = "json";
+                saveDialog.AddExtension = true;
+                saveDialog.RestoreDirectory = true;
+
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        filePath = saveDialog.FileName;
+                        fileName = Path.GetFileName(filePath);
+
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            WriteIndented = true
+                        };
+                        var json = JsonSerializer.Serialize(_data, typeof(TspData), options);
+                        File.WriteAllText(filePath, json);
+
+                        _lastLocation = filePath;
+                        _fileTitle = fileName;
+                        SetWindowTitle();
+
+                        HasModified(false);
+                        _canOverwriteDraw = true;
+
+                        _pbxCanvas.Invalidate();
+                    }
+                    catch (Exception ex) when (ex is IOException || ex is JsonException || ex is FormatException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+
+
+
         }
 
         private void SetWindowTitle()

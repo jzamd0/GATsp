@@ -19,6 +19,7 @@ namespace App.Gui
             _nodesMinWidth = 50;
             _coordinatesMinWidth = 50;
 
+            SetConfiguration();
             LoadDataTables();
         }
 
@@ -131,6 +132,17 @@ namespace App.Gui
         {
             _splitTsp.Panel1Collapsed = !_splitTsp.Panel1Collapsed;
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
+        }
+
+        private void _pbxCanvas_Paint(object sender, PaintEventArgs e)
+        {
+            DrawNodes(e.Graphics);
+            DrawShortestPath(e.Graphics);
+        }
+
+        private void _pbxCanvas_MouseClick(object sender, MouseEventArgs e)
+        {
+
         }
     }
 }

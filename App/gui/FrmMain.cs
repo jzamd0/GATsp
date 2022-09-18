@@ -13,6 +13,7 @@ namespace App.Gui
             InitializeComponent();
 
             _programTitle = "TSP GA Solver";
+            _filePath = null;
             _lastLocation = Application.StartupPath;
 
             _data = new TspData();
@@ -57,14 +58,12 @@ namespace App.Gui
 
         private void _mniSaveTsp_Click(object sender, System.EventArgs e)
         {
-            // save document in json
-            // get data from json file
-            // finish save as first, then save later
+            SaveProject();
         }
 
         private void _mniSaveTspAs_Click(object sender, System.EventArgs e)
         {
-            SaveProject();
+            SaveProjectAs();
         }
 
         private void _mniExit_Click(object sender, System.EventArgs e)

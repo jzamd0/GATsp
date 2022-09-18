@@ -14,6 +14,7 @@ namespace App.Gui
     public partial class FrmMain
     {
         private string _programTitle;
+        private string _filePath;
         private string _fileTitle;
         private string _lastLocation;
 
@@ -75,6 +76,7 @@ namespace App.Gui
 
             _data = new TspData();
             _data.Nodes = new List<Node>();
+            _filePath = null;
             _fileTitle = "Untitled";
             SetWindowTitle();
 
@@ -111,8 +113,9 @@ namespace App.Gui
 
                             _data = new TspData();
                             _data.Nodes = new List<Node>();
-                            _lastLocation = filePath;
+                            _filePath = filePath;
                             _fileTitle = fileName;
+                            _lastLocation = filePath;
                             SetWindowTitle();
 
                             HasModified(false);
@@ -148,8 +151,9 @@ namespace App.Gui
                         LoadNodes();
                         LoadDistances();
 
-                        _lastLocation = filePath;
+                        _filePath = filePath;
                         _fileTitle = fileName;
+                        _lastLocation = filePath;
                         SetWindowTitle();
 
                         HasModified(false);
@@ -165,7 +169,7 @@ namespace App.Gui
             }
         }
 
-        private void SaveProject()
+        private void SaveProjectAs()
         {
             string filePath;
             string fileName;
@@ -185,22 +189,12 @@ namespace App.Gui
                         filePath = saveDialog.FileName;
                         fileName = Path.GetFileName(filePath);
 
-                        var options = new JsonSerializerOptions
-                        {
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                            WriteIndented = true
-                        };
-                        var json = JsonSerializer.Serialize(_data, typeof(TspData), options);
-                        File.WriteAllText(filePath, json);
+                        WriteProject(filePath);
 
-                        _lastLocation = filePath;
+                        _filePath = filePath;
                         _fileTitle = fileName;
+                        _lastLocation = filePath;
                         SetWindowTitle();
-
-                        HasModified(false);
-                        _canOverwriteDraw = true;
-
-                        _pbxCanvas.Invalidate();
                     }
                     catch (Exception ex) when (ex is IOException || ex is JsonException || ex is FormatException)
                     {
@@ -208,6 +202,36 @@ namespace App.Gui
                     }
                 }
             }
+        }
+
+        private void SaveProject()
+        {
+            if (File.Exists(_filePath))
+            {
+                WriteProject(_filePath);
+            }
+            else
+            {
+                SaveProjectAs();
+            }
+        }
+
+        private void WriteProject(string filePath)
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            };
+            var json = JsonSerializer.Serialize(_data, typeof(TspData), options);
+            File.WriteAllText(filePath, json);
+
+            SetWindowTitle();
+
+            HasModified(false);
+            _canOverwriteDraw = true;
+
+            _pbxCanvas.Invalidate();
         }
 
         private void SetWindowTitle()
@@ -378,7 +402,7 @@ namespace App.Gui
 
         private void PrintTo(string message, bool? debug = false)
         {
-            MessageBox.Show(message);
+            MessageBox.Show(message, _programTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Debug.WriteLine(message);
         }
 

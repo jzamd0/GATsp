@@ -130,9 +130,11 @@ namespace App.Gui
                         };
                         var data = (TspData)JsonSerializer.Deserialize(inputData, typeof(TspData), options);
 
-                        if (!AreNodesValid(data.Nodes))
+                        var valid = AreNodesValid(data.Nodes);
+                        if (!valid.Valid)
                         {
-                            throw new FormatException("File contains a node with the same coordinate as another node");
+                            PrintTo(valid.Message, true);
+                            return;
                         }
 
                         var res = GetDistances(data.Nodes);
@@ -206,9 +208,6 @@ namespace App.Gui
                     }
                 }
             }
-
-
-
         }
 
         private void SetWindowTitle()
@@ -263,20 +262,21 @@ namespace App.Gui
             _edges = null;
         }
 
-        private bool AreNodesValid(List<Node> nodes)
+        private (bool Valid, string Message) AreNodesValid(List<Node> nodes)
         {
+            // check for nodes with smae coordinates
             for (var i = 0; i < nodes.Count - 1; i++)
             {
                 for (var j = i + 1; j < nodes.Count; j++)
                 {
                     if (GetDistance(nodes[i], nodes[j]) == 0)
                     {
-                        return false;
+                        return (false, "File contains a node with the same coordinate as another node");
                     }
                 }
             }
 
-            return true;
+            return (true, null);
         }
 
         private (double[][] Distances, Edge<Node>[] Edges) GetDistances(List<Node> nodes)

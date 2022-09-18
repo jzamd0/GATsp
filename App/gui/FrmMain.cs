@@ -68,7 +68,7 @@ namespace App.Gui
 
         private void _mniExportTspToDistances_Click(object sender, System.EventArgs e)
         {
-
+            ExportProjectToCSV();
         }
 
         private void _mniExportTspToGraph_Click(object sender, System.EventArgs e)

@@ -234,6 +234,51 @@ namespace App.Gui
             _pbxCanvas.Invalidate();
         }
 
+        private void ExportProjectToCSV()
+        {
+            if (_distances.IsNullOrEmpty())
+            {
+                PrintTo("There are not distances. Generate distances first", true);
+                return;
+            }
+
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Filter = "CSV (*.csv)|*.csv";
+                exportDialog.DefaultExt = "csv";
+                exportDialog.AddExtension = true;
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var filePath = exportDialog.FileName;
+                        var values = ConvertToCsv(_distances);
+                        File.WriteAllLines(filePath, values);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+        }
+
+        private string[] ConvertToCsv(double[][] matrix)
+        {
+            var n = matrix.Length;
+            var s = new string[n];
+
+            for (var i = 0; i < n; i++)
+            {
+                s[i] = $"{string.Join(",", matrix[i].Select(n => Math.Round(n, 3)).ToArray())}";
+            }
+
+            return s;
+        }
+
         private void SetWindowTitle()
         {
             Text = $"{_fileTitle} - {_programTitle}";

@@ -66,6 +66,16 @@ namespace App.Gui
             SaveProjectAs();
         }
 
+        private void _mniExportTspToDistances_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void _mniExportTspToGraph_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
         private void _mniExit_Click(object sender, System.EventArgs e)
         {
             this.Close();

@@ -1,6 +1,7 @@
 ﻿using Lib;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace App.Gui
@@ -14,10 +15,16 @@ namespace App.Gui
             _programTitle = "TSP GA Solver";
             _lastLocation = Application.StartupPath;
 
+            _data = new TspData();
+            _data.Nodes = new List<Node>();
+
             _distancesMinWidth = 50;
             _edgesMinWidth = 50;
             _nodesMinWidth = 50;
             _coordinatesMinWidth = 50;
+
+            _hasModified = false;
+            _canOverwriteDraw = false;
 
             SetConfiguration();
             LoadDataTables();
@@ -105,7 +112,7 @@ namespace App.Gui
         #region Graph
         private void _mniClearGraph_Click(object sender, System.EventArgs e)
         {
-
+            ClearNodes();
         }
         #endregion
 
@@ -142,7 +149,26 @@ namespace App.Gui
 
         private void _pbxCanvas_MouseClick(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left)
+            {
+                var p = new Point(e.X, e.Y);
+                var id = (_data.Nodes.Count > 0) ? _data.Nodes.Last().Id + 1 : 0;
+                AddNode(new Node(id, id.ToString(), p));
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                if (_data.Nodes.Count > 0)
+                {
+                    var lim = 5;
+                    var rect = new Rectangle(e.X - lim, e.Y - lim, lim * 2, lim * 2);
+                    var found = _data.Nodes.FirstOrDefault(node => rect.Contains(node.Coord));
 
+                    if (found != null)
+                    {
+                        RemoveNode(found);
+                    }
+                }
+            }
         }
     }
 }

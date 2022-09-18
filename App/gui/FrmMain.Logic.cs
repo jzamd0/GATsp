@@ -27,6 +27,8 @@ namespace App.Gui
         private int _coordinatesMinWidth;
 
         private List<Node> _shortestPath;
+        private bool _hasModified;
+        private bool _canOverwriteDraw;
 
         private int _pointWidth;
         private int _pointHeight;
@@ -68,11 +70,16 @@ namespace App.Gui
         private void NewProject()
         {
             ClearData();
-            ClearNodes(_pbxCanvas.CreateGraphics());
 
             _data = new TspData();
+            _data.Nodes = new List<Node>();
             _fileTitle = "Untitled";
             SetWindowTitle();
+
+            _hasModified = false;
+            _canOverwriteDraw = true;
+
+            _pbxCanvas.Invalidate();
         }
 
         private void OpenProject()
@@ -99,11 +106,17 @@ namespace App.Gui
                         if (inputData.IsNullOrEmpty())
                         {
                             ClearData();
-                            ClearNodes(_pbxCanvas.CreateGraphics());
 
+                            _data = new TspData();
+                            _data.Nodes = new List<Node>();
                             _lastLocation = filePath;
                             _fileTitle = fileName;
                             SetWindowTitle();
+
+                            _hasModified = false;
+                            _canOverwriteDraw = true;
+
+                            _pbxCanvas.Invalidate();
 
                             return;
                         }
@@ -117,7 +130,6 @@ namespace App.Gui
                         var res = GetDistances(data.Nodes);
 
                         ClearData();
-                        ClearNodes(_pbxCanvas.CreateGraphics());
 
                         _data = data;
                         _distances = res.Distances;
@@ -157,8 +169,11 @@ namespace App.Gui
                         _lastLocation = filePath;
                         _fileTitle = fileName;
                         SetWindowTitle();
-                        DrawNodes(_pbxCanvas.CreateGraphics());
 
+                        _canOverwriteDraw = true;
+                        _pbxCanvas.Invalidate();
+
+                        _hasModified = false;
                     }
                     catch (Exception ex) when (ex is IOException || ex is JsonException)
                     {
@@ -232,11 +247,6 @@ namespace App.Gui
             _edges = null;
         }
 
-        private void ClearNodes(Graphics graphics)
-        {
-            graphics.Clear(_backColor);
-        }
-
         private (double[][] Distances, Edge<Node>[] Edges) GetDistances(List<Node> nodes)
         {
             var distances = new double[nodes.Count][];
@@ -279,11 +289,62 @@ namespace App.Gui
             Debug.WriteLine(message);
         }
 
+        private void AddNode(Node node)
+        {
+            // check any node has same coordinates and where distance between both is 0
+            if (_data.Nodes.Count > 0 && _data.Nodes.Any(n => GetDistance(n, node) == 0))
+            {
+                return;
+            }
+
+            _data.Nodes.Add(node);
+
+            ((DataTable)_dgvNodes.DataSource).Rows.Add(node.Id, node.Name);
+            ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+
+            _hasModified = true;
+            _canOverwriteDraw = true;
+
+            _mniClearGraph.Enabled = true;
+
+            _pbxCanvas.Invalidate();
+        }
+
+        private void RemoveNode(Node node)
+        {
+            var i = _data.Nodes.IndexOf(node);
+            _data.Nodes.Remove(node);
+
+            ((DataTable)_dgvNodes.DataSource).Rows.RemoveAt(i);
+            ((DataTable)_dgvCoordinates.DataSource).Rows.RemoveAt(i);
+
+            _hasModified = true;
+            _canOverwriteDraw = true;
+
+            _mniClearGraph.Enabled = _data.Nodes.Count > 0;
+
+            _pbxCanvas.Invalidate();
+        }
+
+        private void ClearNodes()
+        {
+            for (var i = _data.Nodes.Count - 1; i > -1; i--)
+            {
+                RemoveNode(_data.Nodes[i]);
+            }
+        }
+
         private void DrawNodes(Graphics graphics)
         {
             if (_data == null || _data.Nodes.IsNullOrEmpty())
             {
                 return;
+            }
+
+            if (_canOverwriteDraw)
+            {
+                graphics.Clear(_backColor);
+                _canOverwriteDraw = false;
             }
 
             for (var i = 0; i < _data.Nodes.Count; i++)

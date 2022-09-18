@@ -29,6 +29,8 @@ namespace App.Gui
         private int _coordinatesMinWidth;
 
         private List<Node> _shortestPath;
+        private int _decimalsToRound;
+
         private bool _hasModified;
         private bool _canSolveTsp;
         private bool _canGetDistances;
@@ -52,6 +54,8 @@ namespace App.Gui
 
         private void SetConfiguration()
         {
+            _decimalsToRound = 5;
+
             _pointWidth = 10;
             _pointHeight = 10;
             _nodeColor = Color.DodgerBlue;
@@ -383,7 +387,7 @@ namespace App.Gui
             {
                 for (var j = i + 1; j < nodes.Count; j++)
                 {
-                    if (GetDistance(nodes[i], nodes[j]) == 0)
+                    if (GetDistance(nodes[i], nodes[j], _decimalsToRound) == 0)
                     {
                         return (false, "File contains a node with the same coordinate as another node.");
                     }
@@ -405,7 +409,7 @@ namespace App.Gui
                     var edge = new Edge<Node>(
                         nodes[before],
                         nodes[next],
-                        GetDistance(nodes[before], nodes[next])
+                        GetDistance(nodes[before], nodes[next], _decimalsToRound)
                     );
                     edges.Add(edge);
                 }
@@ -416,7 +420,7 @@ namespace App.Gui
                 var distance = new double[nodes.Count];
                 for (var column = 0; column < nodes.Count; column++)
                 {
-                    distance[column] = (row != column) ? GetDistance(nodes[row], nodes[column]) : 0;
+                    distance[column] = (row != column) ? GetDistance(nodes[row], nodes[column], _decimalsToRound) : 0;
                 }
                 distances[row] = distance;
             }
@@ -485,9 +489,11 @@ namespace App.Gui
             }
         }
 
-        private float GetDistance(Node a, Node b)
+        private double GetDistance(Node a, Node b, int decimals)
         {
-            return (float)Math.Sqrt(Math.Pow(a.Coord.X - b.Coord.X, 2) + Math.Pow(a.Coord.Y - b.Coord.Y, 2));
+            var res = Math.Sqrt(Math.Pow(a.Coord.X - b.Coord.X, 2) + Math.Pow(a.Coord.Y - b.Coord.Y, 2));
+            var rounded = Math.Round(res, decimals);
+            return rounded;
         }
 
         private void PrintTo(string message, bool? debug = false)
@@ -552,7 +558,7 @@ namespace App.Gui
         private void AddNode(Node node)
         {
             // check any node has same coordinates and where distance between both is 0
-            if (_data.Nodes.Count > 0 && _data.Nodes.Any(n => GetDistance(n, node) == 0))
+            if (_data.Nodes.Count > 0 && _data.Nodes.Any(n => GetDistance(n, node, _decimalsToRound) == 0))
             {
                 return;
             }

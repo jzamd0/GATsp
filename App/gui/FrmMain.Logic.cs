@@ -28,6 +28,8 @@ namespace App.Gui
 
         private List<Node> _shortestPath;
         private bool _hasModified;
+        private bool _canSolveTsp;
+        private bool _canGetDistances;
         private bool _canOverwriteDraw;
 
         private int _pointWidth;
@@ -257,10 +259,15 @@ namespace App.Gui
             {
                 _mniClearGraph.Enabled = false;
             }
+        }
 
-            _canOverwriteDraw = true;
+        private void ClearDistances()
+        {
+            ((DataTable)_dgvEdges.DataSource).Rows.Clear();
+            _dgvDistances.DataSource = new DataTable();
 
-            _pbxCanvas.Invalidate();
+            _distances = null;
+            _edges = null;
         }
 
         private void LoadDistances()
@@ -271,7 +278,7 @@ namespace App.Gui
             // create columns for distances view
             for (var i = 0; i < headers.Length; i++)
             {
-                dtDistances.Columns.Add(headers[i]);
+                dtDistances.Columns.Add(headers[i], typeof(double));
                 _dgvDistances.Columns[i].MinimumWidth = _distancesMinWidth;
                 _dgvDistances.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
@@ -287,6 +294,7 @@ namespace App.Gui
             }
 
             var dtEdges = (DataTable)_dgvEdges.DataSource;
+
             foreach (var edge in _edges)
             {
                 dtEdges.Rows.Add(edge.Before.Name, edge.Next.Name, edge.Distance);
@@ -304,9 +312,11 @@ namespace App.Gui
             Debug.WriteLine(message);
         }
 
-        private void HasModified(bool modified)
+        private void HasModified(bool hasModified)
         {
-            _hasModified = modified;
+            _hasModified = hasModified;
+            CanGetDistances();
+            CanSolveTsp();
 
             if (_hasModified)
             {
@@ -318,6 +328,40 @@ namespace App.Gui
             else
             {
                 Text = Text.TrimStart('*');
+            }
+        }
+
+        private void CanGetDistances()
+        {
+            var minNodes = 1;
+
+            if (_data.Nodes.Count >= minNodes)
+            {
+                _canGetDistances = true;
+                _mniGenerateDistances.Enabled = true;
+                _mniClearDistances.Enabled = true;
+            }
+            else
+            {
+                _mniGenerateDistances.Enabled = false;
+                _mniClearDistances.Enabled = false;
+                _canGetDistances = false;
+            }
+        }
+
+        private void CanSolveTsp()
+        {
+            var minNodes = 4;
+
+            if (_data.Nodes.Count >= minNodes)
+            {
+                _mniSolveTsp.Enabled = true;
+                _canSolveTsp = true;
+            }
+            else
+            {
+                _mniSolveTsp.Enabled = false;
+                _canSolveTsp = false;
             }
         }
 
@@ -353,7 +397,7 @@ namespace App.Gui
             HasModified(true);
             _canOverwriteDraw = true;
 
-            _mniClearGraph.Enabled = _data.Nodes.Count > 0;
+            _mniClearGraph.Enabled = _data.Nodes.Count >= 1;
 
             _pbxCanvas.Invalidate();
         }

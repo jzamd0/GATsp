@@ -24,6 +24,8 @@ namespace App.Gui
             _coordinatesMinWidth = 50;
 
             _hasModified = false;
+            _canSolveTsp = false;
+            _canGetDistances = false;
             _canOverwriteDraw = false;
 
             SetConfiguration();
@@ -102,18 +104,26 @@ namespace App.Gui
 
         private void _mniGenerateDistances_Click(object sender, System.EventArgs e)
         {
+            var res = GetDistances(_data.Nodes);
 
+            ClearDistances();
+
+            _distances = res.Distances;
+            _edges = res.Edges;
+
+            LoadDistances();
         }
 
         private void _mniClearDistances_Click(object sender, System.EventArgs e)
         {
-
+            ClearDistances();
         }
         #endregion
 
         #region Graph
         private void _mniClearGraph_Click(object sender, System.EventArgs e)
         {
+            ClearDistances();
             ClearNodes();
         }
         #endregion

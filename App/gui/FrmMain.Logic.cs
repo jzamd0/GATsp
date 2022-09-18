@@ -239,7 +239,7 @@ namespace App.Gui
         {
             if (_distances.IsNullOrEmpty())
             {
-                PrintTo("There are not distances. Generate distances first", true);
+                PrintTo("Generate distances first to export matrix.", true);
                 return;
             }
 
@@ -271,7 +271,7 @@ namespace App.Gui
         {
             if (_data.Nodes.IsNullOrEmpty())
             {
-                PrintTo("There are not nodes in the graph. Add nodes to generate a graph", true);
+                PrintTo("Add nodes to the graph to export it to an image.", true);
                 return;
             }
 
@@ -385,7 +385,7 @@ namespace App.Gui
                 {
                     if (GetDistance(nodes[i], nodes[j]) == 0)
                     {
-                        return (false, "File contains a node with the same coordinate as another node");
+                        return (false, "File contains a node with the same coordinate as another node.");
                     }
                 }
             }

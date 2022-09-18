@@ -73,7 +73,7 @@ namespace App.Gui
 
         private void _mniExportTspToGraph_Click(object sender, System.EventArgs e)
         {
-
+            ExportProjectToGraph();
         }
 
         private void _mniExit_Click(object sender, System.EventArgs e)

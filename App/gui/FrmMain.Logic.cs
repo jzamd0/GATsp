@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -257,6 +258,50 @@ namespace App.Gui
                         var filePath = exportDialog.FileName;
                         var values = ConvertToCsv(_distances);
                         File.WriteAllLines(filePath, values);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+        }
+
+        private void ExportProjectToGraph()
+        {
+            if (_data.Nodes.IsNullOrEmpty())
+            {
+                PrintTo("There are not nodes in the graph. Add nodes to generate a graph", true);
+                return;
+            }
+
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Filter = "PNG (*.png)|*.png";
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var filePath = exportDialog.FileName;
+
+                        var padding = 40;
+                        var minX = _data.Nodes.Select(n => n.Coord.X).Min();
+                        var minY = _data.Nodes.Select(n => n.Coord.Y).Min();
+                        var width = _data.Nodes.Select(n => n.Coord.X).Max() + (padding * 2) - minX;
+                        var height = _data.Nodes.Select(n => n.Coord.Y).Max() + (padding * 2) - minY;
+
+                        var bmap = new Bitmap(width, height);
+                        var g = Graphics.FromImage(bmap);
+
+                        g.Clear(_backColor);
+                        DrawNodesForImage(g, new Point(minX, minY), padding);
+                        DrawShortestPathForImage(g, new Point(minX, minY), padding);
+
+                        bmap.Save(filePath, ImageFormat.Png);
+                        g.Dispose();
                     }
                     catch (Exception ex) when (ex is IOException)
                     {
@@ -595,6 +640,49 @@ namespace App.Gui
                 // get points to draw
                 var pBefore = _data.Nodes[_shortestPath[i].Id].Coord;
                 var pNext = _data.Nodes[_shortestPath[i + 1].Id].Coord;
+
+                graphics.DrawLine(_linePen, pBefore, pNext);
+            }
+        }
+
+        private void DrawNodesForImage(Graphics graphics, Point start, int padding)
+        {
+            for (var i = 0; i < _data.Nodes.Count; i++)
+            {
+                var coord = _data.Nodes[i].Coord;
+                var p = new Point(coord.X - start.X + padding, coord.Y - start.Y + padding);
+                var header = _data.Nodes[i].Name;
+
+                if (i > 0)
+                {
+                    graphics.DrawEllipse(_pen, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.FillEllipse(_brush, p.X, p.Y, _pointWidth, _pointHeight);
+                }
+                else
+                {
+                    // draw the first point with another color
+                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _pointWidth, _pointHeight);
+                }
+
+                graphics.DrawString(header, _nodeFont, _nodeTextBrush, p);
+            }
+        }
+
+        private void DrawShortestPathForImage(Graphics graphics, Point start, int padding)
+        {
+            if (_shortestPath.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            for (var i = 0; i < _shortestPath.Count - 1; i++)
+            {
+                // get points to draw
+                var coordBefore = _data.Nodes[_shortestPath[i].Id].Coord;
+                var coordNext = _data.Nodes[_shortestPath[i + 1].Id].Coord;
+                var pBefore = new Point(coordBefore.X - start.X, coordBefore.Y - start.Y + padding);
+                var pNext = new Point(coordNext.X - start.X, coordNext.Y - start.Y);
 
                 graphics.DrawLine(_linePen, pBefore, pNext);
             }

@@ -129,6 +129,12 @@ namespace App.Gui
                             PropertyNameCaseInsensitive = true
                         };
                         var data = (TspData)JsonSerializer.Deserialize(inputData, typeof(TspData), options);
+
+                        if (!AreNodesValid(data.Nodes))
+                        {
+                            throw new FormatException("File contains a node with the same coordinate as another node");
+                        }
+
                         var res = GetDistances(data.Nodes);
 
                         ClearData();
@@ -149,7 +155,7 @@ namespace App.Gui
 
                         _pbxCanvas.Invalidate();
                     }
-                    catch (Exception ex) when (ex is IOException || ex is JsonException)
+                    catch (Exception ex) when (ex is IOException || ex is JsonException || ex is FormatException)
                     {
                         PrintTo(ex.Message, true);
                     }
@@ -207,6 +213,22 @@ namespace App.Gui
             _fileTitle = null;
             _distances = null;
             _edges = null;
+        }
+
+        private bool AreNodesValid(List<Node> nodes)
+        {
+            for (var i = 0; i < nodes.Count - 1; i++)
+            {
+                for (var j = i + 1; j < nodes.Count; j++)
+                {
+                    if (GetDistance(nodes[i], nodes[j]) == 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private (double[][] Distances, Edge<Node>[] Edges) GetDistances(List<Node> nodes)

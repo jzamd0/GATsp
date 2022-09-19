@@ -667,9 +667,9 @@ namespace App.Gui
 
             for (var i = 0; i < _shortestPath.Count - 1; i++)
             {
-                // get points to draw
-                var pBefore = _data.Nodes[_shortestPath[i].Id].Coord;
-                var pNext = _data.Nodes[_shortestPath[i + 1].Id].Coord;
+                // get points to and draw them
+                var pBefore = _data.Nodes[i].Coord;
+                var pNext = _data.Nodes[i + 1].Coord;
 
                 graphics.DrawLine(_linePen, pBefore, pNext);
             }
@@ -708,9 +708,9 @@ namespace App.Gui
 
             for (var i = 0; i < _shortestPath.Count - 1; i++)
             {
-                // get points to draw
-                var coordBefore = _data.Nodes[_shortestPath[i].Id].Coord;
-                var coordNext = _data.Nodes[_shortestPath[i + 1].Id].Coord;
+                // get points to and draw them
+                var coordBefore = _shortestPath[i].Coord;
+                var coordNext = _shortestPath[i + 1].Coord;
                 var pBefore = new Point(coordBefore.X - start.X, coordBefore.Y - start.Y + padding);
                 var pNext = new Point(coordNext.X - start.X, coordNext.Y - start.Y);
 

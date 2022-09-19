@@ -198,9 +198,9 @@ namespace App.Gui
             {
                 if (_data.Nodes.Count > 0)
                 {
-                    var lim = 5;
-                    var rect = new Rectangle(e.X - lim, e.Y - lim, lim * 2, lim * 2);
-                    var found = _data.Nodes.FirstOrDefault(node => rect.Contains(node.Coord));
+                    var offset = 5;
+                    var selection = new Rectangle(e.X - offset, e.Y - offset, offset * 2, offset * 2);
+                    var found = _data.Nodes.FirstOrDefault(node => selection.Contains(node.Coord));
 
                     if (found != null)
                     {

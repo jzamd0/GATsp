@@ -23,7 +23,7 @@ namespace Lib
 
         public override string ToString()
         {
-            var coord = $" ({Coord.X}, {Coord.Y})";
+            var coord = (Coord != null && !Coord.IsEmpty) ? $" ({Coord.X}, {Coord.Y})" : "";
             return $"{Id}: {Name}{coord}";
         }
     }

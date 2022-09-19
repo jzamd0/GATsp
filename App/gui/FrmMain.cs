@@ -1,7 +1,5 @@
 ﻿using Lib;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace App.Gui
@@ -23,8 +21,6 @@ namespace App.Gui
             _nodesMinWidth = 50;
             _coordinatesMinWidth = 50;
 
-            _hasModified = false;
-            _canSolveTsp = false;
             _canOverwriteDraw = false;
 
             _canvasPadding = 40;
@@ -37,6 +33,8 @@ namespace App.Gui
         {
             Text = $"Untitled - {_programTitle}";
 
+            _mniExportTspToDistances.Enabled = false;
+            _mniExportTspToGraph.Enabled = false;
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
             _mniSolveTsp.Enabled = false;
@@ -118,11 +116,6 @@ namespace App.Gui
         {
             DrawNodes(e.Graphics);
             DrawShortestPath(e.Graphics);
-        }
-
-        private void _pbxCanvas_MouseClick(object sender, MouseEventArgs e)
-        {
-
         }
     }
 }

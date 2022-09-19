@@ -361,7 +361,6 @@ namespace App.Gui
             this._pbxCanvas.TabIndex = 0;
             this._pbxCanvas.TabStop = false;
             this._pbxCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this._pbxCanvas_Paint);
-            this._pbxCanvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this._pbxCanvas_MouseClick);
             // 
             // _pnlResult
             // 

@@ -28,8 +28,6 @@ namespace App.Gui
         private int _nodesMinWidth;
         private int _coordinatesMinWidth;
 
-        private bool _hasModified;
-        private bool _canSolveTsp;
         private bool _canOverwriteDraw;
 
         private int _canvasPadding;
@@ -75,21 +73,6 @@ namespace App.Gui
             _pbxCanvas.BackColor = _backColor;
         }
 
-        private void NewProject()
-        {
-            ClearData();
-
-            _data = new TspData();
-            _data.Nodes = new List<Node>();
-            _fileTitle = "Untitled";
-            SetWindowTitle();
-
-            HasModified();
-            _canOverwriteDraw = true;
-
-            _pbxCanvas.Invalidate();
-        }
-
         private void OpenProject()
         {
             string filePath;
@@ -116,26 +99,14 @@ namespace App.Gui
 
                         if (inputData.IsNullOrEmpty())
                         {
-                            ClearData();
-
-                            _data = new TspData();
-                            _data.Nodes = new List<Node>();
-                            _fileTitle = fileName;
-                            _lastLocation = filePath;
-                            SetWindowTitle();
-
-                            HasModified();
-                            _canOverwriteDraw = true;
-
-                            _pbxCanvas.Invalidate();
-
+                            PrintTo("File is empty. Please open a JSON file that is not empty.", true);
                             return;
                         }
 
                         // deserialize json to tsp data
                         var options = new JsonSerializerOptions
                         {
-                            PropertyNameCaseInsensitive = true
+                            PropertyNameCaseInsensitive = true,
                         };
                         var data = (TspData)JsonSerializer.Deserialize(inputData, typeof(TspData), options);
 
@@ -160,11 +131,9 @@ namespace App.Gui
                         _fileTitle = fileName;
                         _lastLocation = fullFileName;
                         SetWindowTitle();
+                        EnableOrDisableMenuItems();
 
-                        HasModified();
-                        _canOverwriteDraw = true;
-
-                        _pbxCanvas.Invalidate();
+                        UpdateCanvas();
                     }
                     catch (Exception ex) when (ex is IOException || ex is JsonException || ex is FormatException)
                     {
@@ -176,12 +145,6 @@ namespace App.Gui
 
         private void ExportProjectToCSV()
         {
-            if (_distances.IsNullOrEmpty())
-            {
-                PrintTo("Generate distances first to export matrix.", true);
-                return;
-            }
-
             using (var exportDialog = new SaveFileDialog())
             {
                 exportDialog.InitialDirectory = _lastLocation;
@@ -209,12 +172,6 @@ namespace App.Gui
 
         private void ExportProjectToImage()
         {
-            if (_data.Nodes.IsNullOrEmpty())
-            {
-                PrintTo("Add nodes to the graph to export it to an image.", true);
-                return;
-            }
-
             using (var exportDialog = new SaveFileDialog())
             {
                 exportDialog.InitialDirectory = _lastLocation;
@@ -335,19 +292,24 @@ namespace App.Gui
 
         private (bool Valid, string Message) AreNodesValid(List<Node> nodes)
         {
+            if (nodes.IsNullOrEmpty())
+            {
+                return (false, "File does not contain any nodes. Add nodes to the file before opening.");
+            }
+
             // check for nodes with smae coordinates
             for (var i = 0; i < nodes.Count - 1; i++)
             {
                 if (nodes[i].Coord.X < 0 || nodes[i].Coord.Y < 0)
                 {
-                    return (false, "File contains a node with negative coordinates.");
+                    return (false, "File contains a node with negative coordinates. Change the coordinates for this node.");
                 }
 
                 for (var j = i + 1; j < nodes.Count; j++)
                 {
-                    if (GetDistance(nodes[i], nodes[j], _decimalsToRound) == 0)
+                    if (GetDistance(nodes[i].Coord, nodes[j].Coord, _decimalsToRound) == 0)
                     {
-                        return (false, "File contains a node with the same coordinate as another node.");
+                        return (false, "File contains a node with the same coordinates as another node. Change the coordinates for this node.");
                     }
                 }
             }
@@ -367,7 +329,7 @@ namespace App.Gui
                     var edge = new Edge<Node>(
                         nodes[before],
                         nodes[next],
-                        GetDistance(nodes[before], nodes[next], _decimalsToRound)
+                        GetDistance(nodes[before].Coord, nodes[next].Coord, _decimalsToRound)
                     );
                     edges.Add(edge);
                 }
@@ -378,7 +340,7 @@ namespace App.Gui
                 var distance = new double[nodes.Count];
                 for (var column = 0; column < nodes.Count; column++)
                 {
-                    distance[column] = (row != column) ? GetDistance(nodes[row], nodes[column], _decimalsToRound) : 0;
+                    distance[column] = (row != column) ? GetDistance(nodes[row].Coord, nodes[column].Coord, _decimalsToRound) : 0;
                 }
                 distances[row] = distance;
             }
@@ -400,15 +362,6 @@ namespace App.Gui
                 }
 
             }
-        }
-
-        private void ClearDistances()
-        {
-            ((DataTable)_dgvEdges.DataSource).Rows.Clear();
-            _dgvDistances.DataSource = new DataTable();
-
-            _distances = null;
-            _edges = null;
         }
 
         private void LoadDistances()
@@ -442,13 +395,6 @@ namespace App.Gui
             }
         }
 
-        private double GetDistance(Node a, Node b, int decimals)
-        {
-            var res = Math.Sqrt(Math.Pow(a.Coord.X - b.Coord.X, 2) + Math.Pow(a.Coord.Y - b.Coord.Y, 2));
-            var rounded = Math.Round(res, decimals);
-            return rounded;
-        }
-
         private double GetDistance(Point a, Point b, int decimals)
         {
             var res = Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
@@ -478,37 +424,22 @@ namespace App.Gui
             }
         }
 
-        private void HasModified()
+        private void UpdateCanvas()
         {
-            CanSolveTsp();
-
             SetMinimumSizeCanvas();
+            _canOverwriteDraw = true;
+            _pbxCanvas.Invalidate();
         }
 
-        private void CanSolveTsp()
+        private void EnableOrDisableMenuItems()
         {
-            var minNodes = 4;
+            var minNodesToSolveTsp = 4;
+            var minNodesToDistances = 2;
+            var minNodesToGraph = 1;
 
-            if (_data.Nodes.Count >= minNodes)
-            {
-                _mniSolveTsp.Enabled = true;
-                _canSolveTsp = true;
-            }
-            else
-            {
-                _mniSolveTsp.Enabled = false;
-                _canSolveTsp = false;
-            }
-        }
-
-        private bool HasSameCoordinates(Node node)
-        {
-            return _data.Nodes.Any(n => GetDistance(n, node, _decimalsToRound) == 0);
-        }
-
-        private bool HasSameCoordinates(Point p)
-        {
-            return _data.Nodes.Any(n => GetDistance(n.Coord, p, _decimalsToRound) == 0);
+            _mniSolveTsp.Enabled = _data.Nodes.Count >= minNodesToSolveTsp;
+            _mniExportTspToDistances.Enabled = _data.Nodes.Count >= minNodesToDistances;
+            _mniExportTspToGraph.Enabled = _data.Nodes.Count >= minNodesToGraph;
         }
 
         private void DrawNodes(Graphics graphics)

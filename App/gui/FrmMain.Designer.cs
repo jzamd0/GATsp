@@ -62,6 +62,9 @@ namespace App.Gui
             this._mniSaveTspSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniSaveTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniSaveTspAs = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniTspPropertiesSep = new System.Windows.Forms.ToolStripSeparator();
+            this._mniTspProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportTspSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniExportTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToDistances = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToGraph = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,10 +82,6 @@ namespace App.Gui
             this._mniClearGraph = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniExportTspSep = new System.Windows.Forms.ToolStripSeparator();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniTspProperties = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniTspPropertiesSep = new System.Windows.Forms.ToolStripSeparator();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -472,8 +471,7 @@ namespace App.Gui
             this._mniExportTspSep,
             this._mniExportTsp,
             this._mniExitSep,
-            this._mniExit,
-            this.exportToolStripMenuItem});
+            this._mniExit});
             this._menuFile.Name = "_menuFile";
             this._menuFile.Size = new System.Drawing.Size(37, 20);
             this._menuFile.Text = "File";
@@ -516,6 +514,23 @@ namespace App.Gui
             this._mniSaveTspAs.Text = "Save As...";
             this._mniSaveTspAs.Click += new System.EventHandler(this._mniSaveTspAs_Click);
             // 
+            // _mniTspPropertiesSep
+            // 
+            this._mniTspPropertiesSep.Name = "_mniTspPropertiesSep";
+            this._mniTspPropertiesSep.Size = new System.Drawing.Size(177, 6);
+            // 
+            // _mniTspProperties
+            // 
+            this._mniTspProperties.Name = "_mniTspProperties";
+            this._mniTspProperties.Size = new System.Drawing.Size(180, 22);
+            this._mniTspProperties.Text = "Properties...";
+            this._mniTspProperties.Click += new System.EventHandler(this._mniTspProperties_Click);
+            // 
+            // _mniExportTspSep
+            // 
+            this._mniExportTspSep.Name = "_mniExportTspSep";
+            this._mniExportTspSep.Size = new System.Drawing.Size(177, 6);
+            // 
             // _mniExportTsp
             // 
             this._mniExportTsp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -528,14 +543,14 @@ namespace App.Gui
             // _mniExportTspToDistances
             // 
             this._mniExportTspToDistances.Name = "_mniExportTspToDistances";
-            this._mniExportTspToDistances.Size = new System.Drawing.Size(180, 22);
+            this._mniExportTspToDistances.Size = new System.Drawing.Size(133, 22);
             this._mniExportTspToDistances.Text = "Distances...";
             this._mniExportTspToDistances.Click += new System.EventHandler(this._mniExportTspToDistances_Click);
             // 
             // _mniExportTspToGraph
             // 
             this._mniExportTspToGraph.Name = "_mniExportTspToGraph";
-            this._mniExportTspToGraph.Size = new System.Drawing.Size(180, 22);
+            this._mniExportTspToGraph.Size = new System.Drawing.Size(133, 22);
             this._mniExportTspToGraph.Text = "Graph...";
             this._mniExportTspToGraph.Click += new System.EventHandler(this._mniExportTspToGraph_Click);
             // 
@@ -563,14 +578,14 @@ namespace App.Gui
             // _mniViewSetup
             // 
             this._mniViewSetup.Name = "_mniViewSetup";
-            this._mniViewSetup.Size = new System.Drawing.Size(180, 22);
+            this._mniViewSetup.Size = new System.Drawing.Size(111, 22);
             this._mniViewSetup.Text = "Setup";
             this._mniViewSetup.Click += new System.EventHandler(this._mniViewSetup_Click);
             // 
             // _mniViewResults
             // 
             this._mniViewResults.Name = "_mniViewResults";
-            this._mniViewResults.Size = new System.Drawing.Size(180, 22);
+            this._mniViewResults.Size = new System.Drawing.Size(111, 22);
             this._mniViewResults.Text = "Results";
             this._mniViewResults.Click += new System.EventHandler(this._mniViewResults_Click);
             // 
@@ -588,26 +603,26 @@ namespace App.Gui
             // _mniSolveTsp
             // 
             this._mniSolveTsp.Name = "_mniSolveTsp";
-            this._mniSolveTsp.Size = new System.Drawing.Size(180, 22);
+            this._mniSolveTsp.Size = new System.Drawing.Size(174, 22);
             this._mniSolveTsp.Text = "Solve TSP";
             this._mniSolveTsp.Click += new System.EventHandler(this._mniSolveTsp_Click);
             // 
             // _mniGenerateDistancesSep
             // 
             this._mniGenerateDistancesSep.Name = "_mniGenerateDistancesSep";
-            this._mniGenerateDistancesSep.Size = new System.Drawing.Size(177, 6);
+            this._mniGenerateDistancesSep.Size = new System.Drawing.Size(171, 6);
             // 
             // _mniGenerateDistances
             // 
             this._mniGenerateDistances.Name = "_mniGenerateDistances";
-            this._mniGenerateDistances.Size = new System.Drawing.Size(180, 22);
+            this._mniGenerateDistances.Size = new System.Drawing.Size(174, 22);
             this._mniGenerateDistances.Text = "Generate Distances";
             this._mniGenerateDistances.Click += new System.EventHandler(this._mniGenerateDistances_Click);
             // 
             // _mniClearDistances
             // 
             this._mniClearDistances.Name = "_mniClearDistances";
-            this._mniClearDistances.Size = new System.Drawing.Size(180, 22);
+            this._mniClearDistances.Size = new System.Drawing.Size(174, 22);
             this._mniClearDistances.Text = "Clear Distances";
             this._mniClearDistances.Click += new System.EventHandler(this._mniClearDistances_Click);
             // 
@@ -640,29 +655,6 @@ namespace App.Gui
             this._mniAbout.Size = new System.Drawing.Size(107, 22);
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
-            // 
-            // _mniExportTspSep
-            // 
-            this._mniExportTspSep.Name = "_mniExportTspSep";
-            this._mniExportTspSep.Size = new System.Drawing.Size(177, 6);
-            // 
-            // exportToolStripMenuItem
-            // 
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportToolStripMenuItem.Text = "Export";
-            // 
-            // _mniTspProperties
-            // 
-            this._mniTspProperties.Name = "_mniTspProperties";
-            this._mniTspProperties.Size = new System.Drawing.Size(180, 22);
-            this._mniTspProperties.Text = "Properties...";
-            this._mniTspProperties.Click += new System.EventHandler(this._mniTspProperties_Click);
-            // 
-            // _mniTspPropertiesSep
-            // 
-            this._mniTspPropertiesSep.Name = "_mniTspPropertiesSep";
-            this._mniTspPropertiesSep.Size = new System.Drawing.Size(177, 6);
             // 
             // FrmMain
             // 
@@ -766,7 +758,6 @@ namespace App.Gui
         private System.Windows.Forms.ToolStripSeparator _mniTspPropertiesSep;
         private System.Windows.Forms.ToolStripMenuItem _mniTspProperties;
         private System.Windows.Forms.ToolStripSeparator _mniExportTspSep;
-        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
     }
 }
 

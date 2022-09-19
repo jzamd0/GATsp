@@ -70,7 +70,16 @@ namespace App.Gui
 
         private void _mniTspProperties_Click(object sender, System.EventArgs e)
         {
+            using (var frmProperties = new FrmProperties(_data.Name, _data.Comment))
+            {
+                var res = frmProperties.ShowDialog();
 
+                if (res == DialogResult.OK)
+                {
+                    _data.Name = frmProperties.Name;
+                    _data.Comment = frmProperties.Comment;
+                }
+            }
         }
 
         private void _mniExportTspToDistances_Click(object sender, System.EventArgs e)

@@ -4,9 +4,31 @@ namespace App.Gui
 {
     public partial class FrmProperties : Form
     {
-        public FrmProperties()
+        public string Name { get; set; }
+        public string Comment { get; set; }
+
+        public FrmProperties(string name, string comment)
         {
             InitializeComponent();
+
+            Name = name;
+            Comment = comment;
+
+            _tbxName.Text = name;
+            _tbxDescription.Text = comment;
+        }
+
+        private void _btnSave_Click(object sender, System.EventArgs e)
+        {
+            Name = _tbxName.Text;
+            Comment = _tbxDescription.Text;
+
+            Close();
+        }
+
+        private void _btnCancel_Click(object sender, System.EventArgs e)
+        {
+            Close();
         }
     }
 }

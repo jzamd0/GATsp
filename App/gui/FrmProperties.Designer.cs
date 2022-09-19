@@ -132,6 +132,7 @@ namespace App.Gui
             // 
             // _btnSave
             // 
+            this._btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
             this._btnSave.Dock = System.Windows.Forms.DockStyle.Right;
             this._btnSave.Location = new System.Drawing.Point(450, 10);
             this._btnSave.Name = "_btnSave";
@@ -139,9 +140,11 @@ namespace App.Gui
             this._btnSave.TabIndex = 0;
             this._btnSave.Text = "Save";
             this._btnSave.UseVisualStyleBackColor = true;
+            this._btnSave.Click += new System.EventHandler(this._btnSave_Click);
             // 
             // _btnCancel
             // 
+            this._btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this._btnCancel.Dock = System.Windows.Forms.DockStyle.Right;
             this._btnCancel.Location = new System.Drawing.Point(369, 10);
             this._btnCancel.Name = "_btnCancel";
@@ -149,6 +152,7 @@ namespace App.Gui
             this._btnCancel.TabIndex = 1;
             this._btnCancel.Text = "Cancel";
             this._btnCancel.UseVisualStyleBackColor = true;
+            this._btnCancel.Click += new System.EventHandler(this._btnCancel_Click);
             // 
             // FrmProperties
             // 
@@ -157,7 +161,6 @@ namespace App.Gui
             this.ClientSize = new System.Drawing.Size(584, 361);
             this.Controls.Add(this._pnlMain);
             this.MinimumSize = new System.Drawing.Size(600, 400);
-            this.Name = "FrmProperties";
             this.Text = "File Properties";
             this._pnlMain.ResumeLayout(false);
             this._tablePanelMain.ResumeLayout(false);

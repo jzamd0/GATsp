@@ -13,7 +13,6 @@ namespace App.Gui
             InitializeComponent();
 
             _programTitle = "TSP GA Solver";
-            _filePath = null;
             _lastLocation = Application.StartupPath;
 
             _data = new TspData();
@@ -26,7 +25,6 @@ namespace App.Gui
 
             _hasModified = false;
             _canSolveTsp = false;
-            _canGetDistances = false;
             _canOverwriteDraw = false;
 
             _canvasPadding = 40;
@@ -42,8 +40,6 @@ namespace App.Gui
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
             _mniSolveTsp.Enabled = false;
-            _mniGenerateDistances.Enabled = false;
-            _mniClearDistances.Enabled = false;
         }
 
         #region Menu File
@@ -90,23 +86,6 @@ namespace App.Gui
         private void _mniSolveTsp_Click(object sender, System.EventArgs e)
         {
 
-        }
-
-        private void _mniGenerateDistances_Click(object sender, System.EventArgs e)
-        {
-            var res = GetDistances(_data.Nodes);
-
-            ClearDistances();
-
-            _distances = res.Distances;
-            _edges = res.Edges;
-
-            LoadDistances();
-        }
-
-        private void _mniClearDistances_Click(object sender, System.EventArgs e)
-        {
-            ClearDistances();
         }
         #endregion
 

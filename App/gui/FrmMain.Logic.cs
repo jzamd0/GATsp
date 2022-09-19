@@ -15,7 +15,6 @@ namespace App.Gui
     public partial class FrmMain
     {
         private string _programTitle;
-        private string _filePath;
         private string _fileTitle;
         private string _lastLocation;
 
@@ -31,7 +30,6 @@ namespace App.Gui
 
         private bool _hasModified;
         private bool _canSolveTsp;
-        private bool _canGetDistances;
         private bool _canOverwriteDraw;
 
         private int _canvasPadding;
@@ -83,11 +81,10 @@ namespace App.Gui
 
             _data = new TspData();
             _data.Nodes = new List<Node>();
-            _filePath = null;
             _fileTitle = "Untitled";
             SetWindowTitle();
 
-            HasModified(false);
+            HasModified();
             _canOverwriteDraw = true;
 
             _pbxCanvas.Invalidate();
@@ -96,12 +93,14 @@ namespace App.Gui
         private void OpenProject()
         {
             string filePath;
+            string fullFileName;
             string fileName;
             string inputData;
 
             using (var openDialog = new OpenFileDialog())
             {
                 openDialog.InitialDirectory = _lastLocation;
+                openDialog.Title = "Open JSON File";
                 openDialog.Filter = "JSON (*.json)|*.json";
                 openDialog.FilterIndex = 1;
                 openDialog.RestoreDirectory = true;
@@ -110,9 +109,10 @@ namespace App.Gui
                 {
                     try
                     {
-                        filePath = openDialog.FileName;
+                        fullFileName = openDialog.FileName;
+                        filePath = Path.GetFullPath(openDialog.FileName);
                         fileName = openDialog.SafeFileName;
-                        inputData = File.ReadAllText(filePath);
+                        inputData = File.ReadAllText(fullFileName);
 
                         if (inputData.IsNullOrEmpty())
                         {
@@ -120,12 +120,11 @@ namespace App.Gui
 
                             _data = new TspData();
                             _data.Nodes = new List<Node>();
-                            _filePath = filePath;
                             _fileTitle = fileName;
                             _lastLocation = filePath;
                             SetWindowTitle();
 
-                            HasModified(false);
+                            HasModified();
                             _canOverwriteDraw = true;
 
                             _pbxCanvas.Invalidate();
@@ -158,12 +157,11 @@ namespace App.Gui
                         LoadNodes();
                         LoadDistances();
 
-                        _filePath = filePath;
                         _fileTitle = fileName;
-                        _lastLocation = filePath;
+                        _lastLocation = fullFileName;
                         SetWindowTitle();
 
-                        HasModified(false);
+                        HasModified();
                         _canOverwriteDraw = true;
 
                         _pbxCanvas.Invalidate();
@@ -187,6 +185,7 @@ namespace App.Gui
             using (var exportDialog = new SaveFileDialog())
             {
                 exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export To CSV";
                 exportDialog.Filter = "CSV (*.csv)|*.csv";
                 exportDialog.DefaultExt = "csv";
                 exportDialog.AddExtension = true;
@@ -196,9 +195,9 @@ namespace App.Gui
                 {
                     try
                     {
-                        var filePath = exportDialog.FileName;
+                        var fullFileName = exportDialog.FileName;
                         var values = ConvertToCsv(_distances);
-                        File.WriteAllLines(filePath, values);
+                        File.WriteAllLines(fullFileName, values);
                     }
                     catch (Exception ex) when (ex is IOException)
                     {
@@ -219,6 +218,7 @@ namespace App.Gui
             using (var exportDialog = new SaveFileDialog())
             {
                 exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export To Image";
                 exportDialog.Filter = "PNG (*.png)|*.png";
                 exportDialog.RestoreDirectory = true;
 
@@ -226,7 +226,7 @@ namespace App.Gui
                 {
                     try
                     {
-                        var filePath = exportDialog.FileName;
+                        var fullFileName = exportDialog.FileName;
 
                         var minX = _data.Nodes.Select(n => n.Coord.X).Min();
                         var minY = _data.Nodes.Select(n => n.Coord.Y).Min();
@@ -242,7 +242,7 @@ namespace App.Gui
                         DrawNodesForImage(g, new Point(minX, minY), _canvasPadding);
                         DrawShortestPathForImage(g, new Point(minX, minY), _canvasPadding);
 
-                        bmap.Save(filePath, ImageFormat.Png);
+                        bmap.Save(fullFileName, ImageFormat.Png);
                         g.Dispose();
                     }
                     catch (Exception ex) when (ex is IOException)
@@ -478,43 +478,11 @@ namespace App.Gui
             }
         }
 
-        private void HasModified(bool hasModified)
+        private void HasModified()
         {
-            _hasModified = hasModified;
-            CanGetDistances();
             CanSolveTsp();
 
             SetMinimumSizeCanvas();
-
-            if (_hasModified)
-            {
-                if (!Text.StartsWith("*"))
-                {
-                    Text = $"*{Text}";
-                }
-            }
-            else
-            {
-                Text = Text.TrimStart('*');
-            }
-        }
-
-        private void CanGetDistances()
-        {
-            var minNodes = 1;
-
-            if (_data.Nodes.Count >= minNodes)
-            {
-                _canGetDistances = true;
-                _mniGenerateDistances.Enabled = true;
-                _mniClearDistances.Enabled = true;
-            }
-            else
-            {
-                _mniGenerateDistances.Enabled = false;
-                _mniClearDistances.Enabled = false;
-                _canGetDistances = false;
-            }
         }
 
         private void CanSolveTsp()

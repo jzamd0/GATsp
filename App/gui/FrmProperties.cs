@@ -15,13 +15,13 @@ namespace App.Gui
             Comment = comment;
 
             _tbxName.Text = name;
-            _tbxDescription.Text = comment;
+            _tbxComment.Text = comment;
         }
 
         private void _btnSave_Click(object sender, System.EventArgs e)
         {
             Name = _tbxName.Text;
-            Comment = _tbxDescription.Text;
+            Comment = _tbxComment.Text;
 
             Close();
         }

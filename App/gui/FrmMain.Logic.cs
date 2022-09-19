@@ -176,71 +176,6 @@ namespace App.Gui
             }
         }
 
-        private void SaveProjectAs()
-        {
-            string filePath;
-            string fileName;
-
-            using (var saveDialog = new SaveFileDialog())
-            {
-                saveDialog.InitialDirectory = _lastLocation;
-                saveDialog.Filter = "JSON (*.json)|*.json";
-                saveDialog.DefaultExt = "json";
-                saveDialog.AddExtension = true;
-                saveDialog.RestoreDirectory = true;
-
-                if (saveDialog.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        filePath = saveDialog.FileName;
-                        fileName = Path.GetFileName(filePath);
-
-                        WriteProject(filePath);
-
-                        _filePath = filePath;
-                        _fileTitle = fileName;
-                        _lastLocation = filePath;
-                        SetWindowTitle();
-                    }
-                    catch (Exception ex) when (ex is IOException || ex is JsonException || ex is FormatException)
-                    {
-                        PrintTo(ex.Message, true);
-                    }
-                }
-            }
-        }
-
-        private void SaveProject()
-        {
-            if (File.Exists(_filePath))
-            {
-                WriteProject(_filePath);
-            }
-            else
-            {
-                SaveProjectAs();
-            }
-        }
-
-        private void WriteProject(string filePath)
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            };
-            var json = JsonSerializer.Serialize(_data, typeof(TspData), options);
-            File.WriteAllText(filePath, json);
-
-            SetWindowTitle();
-
-            HasModified(false);
-            _canOverwriteDraw = true;
-
-            _pbxCanvas.Invalidate();
-        }
-
         private void ExportProjectToCSV()
         {
             if (_distances.IsNullOrEmpty())
@@ -375,9 +310,6 @@ namespace App.Gui
             SetColumnWidth(_dgvEdges, _edgesMinWidth);
             SetColumnWidth(_dgvNodes, _nodesMinWidth);
             SetColumnWidth(_dgvCoordinates, _coordinatesMinWidth);
-
-            _dgvNodes.Columns["Id"].ReadOnly = true;
-            _dgvCoordinates.Columns["Node"].ReadOnly = true;
         }
 
         private void SetColumnWidth(DataGridView dgv, int width)
@@ -467,11 +399,6 @@ namespace App.Gui
                     dtCoordinates.Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
                 }
 
-                _mniClearGraph.Enabled = true;
-            }
-            else
-            {
-                _mniClearGraph.Enabled = false;
             }
         }
 
@@ -556,7 +483,6 @@ namespace App.Gui
             _hasModified = hasModified;
             CanGetDistances();
             CanSolveTsp();
-            _mniClearGraph.Enabled = _data.Nodes.Count >= 1;
 
             SetMinimumSizeCanvas();
 
@@ -607,66 +533,6 @@ namespace App.Gui
             }
         }
 
-        private void AddNode(Node node)
-        {
-            // check any node has same coordinates and where distance between both is 0
-            if (HasSameCoordinates(node))
-            {
-                PrintTo("The node has the same coordinate as another node.", true);
-                return;
-            }
-
-            _data.Nodes.Add(node);
-
-            ((DataTable)_dgvNodes.DataSource).Rows.Add(node.Id, node.Name);
-            ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
-
-            HasModified(true);
-            _canOverwriteDraw = true;
-
-            _pbxCanvas.Invalidate();
-        }
-
-        private void RenameNode(int index, string name)
-        {
-            _data.Nodes[index].Name = name;
-
-            ((DataTable)_dgvNodes.DataSource).Rows[index]["Name"] = name;
-            ((DataTable)_dgvCoordinates.DataSource).Rows[index]["Node"] = name;
-
-            HasModified(true);
-            _canOverwriteDraw = true;
-
-            _pbxCanvas.Invalidate();
-        }
-
-        private void MoveNode(int index, int x, int y)
-        {
-            _data.Nodes[index].Coord = new Point(x, y);
-
-            ((DataTable)_dgvCoordinates.DataSource).Rows[index]["X"] = x;
-            ((DataTable)_dgvCoordinates.DataSource).Rows[index]["Y"] = y;
-
-            HasModified(true);
-            _canOverwriteDraw = true;
-
-            _pbxCanvas.Invalidate();
-        }
-
-        private void RemoveNode(Node node)
-        {
-            var i = _data.Nodes.IndexOf(node);
-            _data.Nodes.Remove(node);
-
-            ((DataTable)_dgvNodes.DataSource).Rows.RemoveAt(i);
-            ((DataTable)_dgvCoordinates.DataSource).Rows.RemoveAt(i);
-
-            HasModified(true);
-            _canOverwriteDraw = true;
-
-            _pbxCanvas.Invalidate();
-        }
-
         private bool HasSameCoordinates(Node node)
         {
             return _data.Nodes.Any(n => GetDistance(n, node, _decimalsToRound) == 0);
@@ -675,19 +541,6 @@ namespace App.Gui
         private bool HasSameCoordinates(Point p)
         {
             return _data.Nodes.Any(n => GetDistance(n.Coord, p, _decimalsToRound) == 0);
-        }
-
-        private void ClearNodes()
-        {
-            for (var i = _data.Nodes.Count - 1; i > -1; i--)
-            {
-                RemoveNode(_data.Nodes[i]);
-            }
-        }
-
-        private int GetNodeId()
-        {
-            return (_data.Nodes.Count > 0) ? _data.Nodes.Max(n => n.Id) + 1 : 0;
         }
 
         private void DrawNodes(Graphics graphics)

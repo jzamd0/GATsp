@@ -62,7 +62,6 @@ namespace App.Gui
             this._mniSaveTspSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniSaveTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniSaveTspAs = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniExportTspSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniExportTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToDistances = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToGraph = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,6 +79,10 @@ namespace App.Gui
             this._mniClearGraph = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportTspSep = new System.Windows.Forms.ToolStripSeparator();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniTspProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniTspPropertiesSep = new System.Windows.Forms.ToolStripSeparator();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -464,10 +467,13 @@ namespace App.Gui
             this._mniSaveTspSep,
             this._mniSaveTsp,
             this._mniSaveTspAs,
+            this._mniTspPropertiesSep,
+            this._mniTspProperties,
             this._mniExportTspSep,
             this._mniExportTsp,
             this._mniExitSep,
-            this._mniExit});
+            this._mniExit,
+            this.exportToolStripMenuItem});
             this._menuFile.Name = "_menuFile";
             this._menuFile.Size = new System.Drawing.Size(37, 20);
             this._menuFile.Text = "File";
@@ -475,45 +481,40 @@ namespace App.Gui
             // _mniNewTsp
             // 
             this._mniNewTsp.Name = "_mniNewTsp";
-            this._mniNewTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniNewTsp.Size = new System.Drawing.Size(180, 22);
             this._mniNewTsp.Text = "New";
             this._mniNewTsp.Click += new System.EventHandler(this._mniNewTsp_Click);
             // 
             // _mniOpenTspSep
             // 
             this._mniOpenTspSep.Name = "_mniOpenTspSep";
-            this._mniOpenTspSep.Size = new System.Drawing.Size(120, 6);
+            this._mniOpenTspSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniOpenTsp
             // 
             this._mniOpenTsp.Name = "_mniOpenTsp";
-            this._mniOpenTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniOpenTsp.Size = new System.Drawing.Size(180, 22);
             this._mniOpenTsp.Text = "Open...";
             this._mniOpenTsp.Click += new System.EventHandler(this._mniOpenTsp_Click);
             // 
             // _mniSaveTspSep
             // 
             this._mniSaveTspSep.Name = "_mniSaveTspSep";
-            this._mniSaveTspSep.Size = new System.Drawing.Size(120, 6);
+            this._mniSaveTspSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniSaveTsp
             // 
             this._mniSaveTsp.Name = "_mniSaveTsp";
-            this._mniSaveTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniSaveTsp.Size = new System.Drawing.Size(180, 22);
             this._mniSaveTsp.Text = "Save";
             this._mniSaveTsp.Click += new System.EventHandler(this._mniSaveTsp_Click);
             // 
             // _mniSaveTspAs
             // 
             this._mniSaveTspAs.Name = "_mniSaveTspAs";
-            this._mniSaveTspAs.Size = new System.Drawing.Size(123, 22);
+            this._mniSaveTspAs.Size = new System.Drawing.Size(180, 22);
             this._mniSaveTspAs.Text = "Save As...";
             this._mniSaveTspAs.Click += new System.EventHandler(this._mniSaveTspAs_Click);
-            // 
-            // _mniExportTspSep
-            // 
-            this._mniExportTspSep.Name = "_mniExportTspSep";
-            this._mniExportTspSep.Size = new System.Drawing.Size(120, 6);
             // 
             // _mniExportTsp
             // 
@@ -521,32 +522,32 @@ namespace App.Gui
             this._mniExportTspToDistances,
             this._mniExportTspToGraph});
             this._mniExportTsp.Name = "_mniExportTsp";
-            this._mniExportTsp.Size = new System.Drawing.Size(123, 22);
+            this._mniExportTsp.Size = new System.Drawing.Size(180, 22);
             this._mniExportTsp.Text = "Export";
             // 
             // _mniExportTspToDistances
             // 
             this._mniExportTspToDistances.Name = "_mniExportTspToDistances";
-            this._mniExportTspToDistances.Size = new System.Drawing.Size(133, 22);
+            this._mniExportTspToDistances.Size = new System.Drawing.Size(180, 22);
             this._mniExportTspToDistances.Text = "Distances...";
             this._mniExportTspToDistances.Click += new System.EventHandler(this._mniExportTspToDistances_Click);
             // 
             // _mniExportTspToGraph
             // 
             this._mniExportTspToGraph.Name = "_mniExportTspToGraph";
-            this._mniExportTspToGraph.Size = new System.Drawing.Size(133, 22);
+            this._mniExportTspToGraph.Size = new System.Drawing.Size(180, 22);
             this._mniExportTspToGraph.Text = "Graph...";
             this._mniExportTspToGraph.Click += new System.EventHandler(this._mniExportTspToGraph_Click);
             // 
             // _mniExitSep
             // 
             this._mniExitSep.Name = "_mniExitSep";
-            this._mniExitSep.Size = new System.Drawing.Size(120, 6);
+            this._mniExitSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniExit
             // 
             this._mniExit.Name = "_mniExit";
-            this._mniExit.Size = new System.Drawing.Size(123, 22);
+            this._mniExit.Size = new System.Drawing.Size(180, 22);
             this._mniExit.Text = "Exit";
             this._mniExit.Click += new System.EventHandler(this._mniExit_Click);
             // 
@@ -562,14 +563,14 @@ namespace App.Gui
             // _mniViewSetup
             // 
             this._mniViewSetup.Name = "_mniViewSetup";
-            this._mniViewSetup.Size = new System.Drawing.Size(111, 22);
+            this._mniViewSetup.Size = new System.Drawing.Size(180, 22);
             this._mniViewSetup.Text = "Setup";
             this._mniViewSetup.Click += new System.EventHandler(this._mniViewSetup_Click);
             // 
             // _mniViewResults
             // 
             this._mniViewResults.Name = "_mniViewResults";
-            this._mniViewResults.Size = new System.Drawing.Size(111, 22);
+            this._mniViewResults.Size = new System.Drawing.Size(180, 22);
             this._mniViewResults.Text = "Results";
             this._mniViewResults.Click += new System.EventHandler(this._mniViewResults_Click);
             // 
@@ -587,26 +588,26 @@ namespace App.Gui
             // _mniSolveTsp
             // 
             this._mniSolveTsp.Name = "_mniSolveTsp";
-            this._mniSolveTsp.Size = new System.Drawing.Size(174, 22);
+            this._mniSolveTsp.Size = new System.Drawing.Size(180, 22);
             this._mniSolveTsp.Text = "Solve TSP";
             this._mniSolveTsp.Click += new System.EventHandler(this._mniSolveTsp_Click);
             // 
             // _mniGenerateDistancesSep
             // 
             this._mniGenerateDistancesSep.Name = "_mniGenerateDistancesSep";
-            this._mniGenerateDistancesSep.Size = new System.Drawing.Size(171, 6);
+            this._mniGenerateDistancesSep.Size = new System.Drawing.Size(177, 6);
             // 
             // _mniGenerateDistances
             // 
             this._mniGenerateDistances.Name = "_mniGenerateDistances";
-            this._mniGenerateDistances.Size = new System.Drawing.Size(174, 22);
+            this._mniGenerateDistances.Size = new System.Drawing.Size(180, 22);
             this._mniGenerateDistances.Text = "Generate Distances";
             this._mniGenerateDistances.Click += new System.EventHandler(this._mniGenerateDistances_Click);
             // 
             // _mniClearDistances
             // 
             this._mniClearDistances.Name = "_mniClearDistances";
-            this._mniClearDistances.Size = new System.Drawing.Size(174, 22);
+            this._mniClearDistances.Size = new System.Drawing.Size(180, 22);
             this._mniClearDistances.Text = "Clear Distances";
             this._mniClearDistances.Click += new System.EventHandler(this._mniClearDistances_Click);
             // 
@@ -639,6 +640,29 @@ namespace App.Gui
             this._mniAbout.Size = new System.Drawing.Size(107, 22);
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
+            // 
+            // _mniExportTspSep
+            // 
+            this._mniExportTspSep.Name = "_mniExportTspSep";
+            this._mniExportTspSep.Size = new System.Drawing.Size(177, 6);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem.Text = "Export";
+            // 
+            // _mniTspProperties
+            // 
+            this._mniTspProperties.Name = "_mniTspProperties";
+            this._mniTspProperties.Size = new System.Drawing.Size(180, 22);
+            this._mniTspProperties.Text = "Properties...";
+            this._mniTspProperties.Click += new System.EventHandler(this._mniTspProperties_Click);
+            // 
+            // _mniTspPropertiesSep
+            // 
+            this._mniTspPropertiesSep.Name = "_mniTspPropertiesSep";
+            this._mniTspPropertiesSep.Size = new System.Drawing.Size(177, 6);
             // 
             // FrmMain
             // 
@@ -738,8 +762,11 @@ namespace App.Gui
         private System.Windows.Forms.ToolStripMenuItem _mniExportTsp;
         private System.Windows.Forms.ToolStripMenuItem _mniExportTspToDistances;
         private System.Windows.Forms.ToolStripMenuItem _mniExportTspToGraph;
-        private System.Windows.Forms.ToolStripSeparator _mniExportTspSep;
         private System.Windows.Forms.Panel _pnlCanvas;
+        private System.Windows.Forms.ToolStripSeparator _mniTspPropertiesSep;
+        private System.Windows.Forms.ToolStripMenuItem _mniTspProperties;
+        private System.Windows.Forms.ToolStripSeparator _mniExportTspSep;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
     }
 }
 

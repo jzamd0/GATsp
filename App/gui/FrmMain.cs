@@ -68,6 +68,11 @@ namespace App.Gui
             SaveProjectAs();
         }
 
+        private void _mniTspProperties_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
         private void _mniExportTspToDistances_Click(object sender, System.EventArgs e)
         {
             ExportProjectToCSV();

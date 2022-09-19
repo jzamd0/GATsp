@@ -191,7 +191,7 @@ namespace App.Gui
             if (e.Button == MouseButtons.Left)
             {
                 var p = new Point(e.X, e.Y);
-                var id = (_data.Nodes.Count > 0) ? _data.Nodes.Last().Id + 1 : 0;
+                var id = GetNodeId();
                 AddNode(new Node(id, id.ToString(), p));
             }
             else if (e.Button == MouseButtons.Right)

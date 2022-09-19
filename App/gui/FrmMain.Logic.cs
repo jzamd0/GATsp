@@ -619,6 +619,11 @@ namespace App.Gui
             }
         }
 
+        private int GetNodeId()
+        {
+            return (_data.Nodes.Count > 0) ? _data.Nodes.Max(n => n.Id) + 1 : 0;
+        }
+
         private void DrawNodes(Graphics graphics)
         {
             if (_data == null || _data.Nodes.IsNullOrEmpty())

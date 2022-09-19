@@ -29,6 +29,8 @@ namespace App.Gui
             _canGetDistances = false;
             _canOverwriteDraw = false;
 
+            _canvasPadding = 40;
+
             SetConfiguration();
             LoadDataTables();
         }

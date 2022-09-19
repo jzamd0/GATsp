@@ -22,19 +22,21 @@ namespace App.Gui
         private TspData _data;
         private double[][] _distances;
         private Edge<Node>[] _edges;
+        private List<Node> _shortestPath;
 
         private int _distancesMinWidth;
         private int _edgesMinWidth;
         private int _nodesMinWidth;
         private int _coordinatesMinWidth;
 
-        private List<Node> _shortestPath;
-        private int _decimalsToRound;
-
         private bool _hasModified;
         private bool _canSolveTsp;
         private bool _canGetDistances;
         private bool _canOverwriteDraw;
+
+        private int _canvasPadding;
+
+        private int _decimalsToRound;
 
         private int _pointWidth;
         private int _pointHeight;
@@ -291,18 +293,17 @@ namespace App.Gui
                     {
                         var filePath = exportDialog.FileName;
 
-                        var padding = 40;
                         var minX = _data.Nodes.Select(n => n.Coord.X).Min();
                         var minY = _data.Nodes.Select(n => n.Coord.Y).Min();
-                        var width = _data.Nodes.Select(n => n.Coord.X).Max() + (padding * 2) - minX;
-                        var height = _data.Nodes.Select(n => n.Coord.Y).Max() + (padding * 2) - minY;
+                        var width = _data.Nodes.Select(n => n.Coord.X).Max() + (_canvasPadding * 2) - minX;
+                        var height = _data.Nodes.Select(n => n.Coord.Y).Max() + (_canvasPadding * 2) - minY;
 
                         var bmap = new Bitmap(width, height);
                         var g = Graphics.FromImage(bmap);
 
                         g.Clear(_backColor);
-                        DrawNodesForImage(g, new Point(minX, minY), padding);
-                        DrawShortestPathForImage(g, new Point(minX, minY), padding);
+                        DrawNodesForImage(g, new Point(minX, minY), _canvasPadding);
+                        DrawShortestPathForImage(g, new Point(minX, minY), _canvasPadding);
 
                         bmap.Save(filePath, ImageFormat.Png);
                         g.Dispose();
@@ -502,11 +503,29 @@ namespace App.Gui
             Debug.WriteLine(message);
         }
 
+        private void SetMinimumSizeCanvas()
+        {
+            if (!_data.Nodes.IsNullOrEmpty())
+            {
+                // check for the furthest node coordinates to extend the canvas panel to a proper size
+                var maxX = _data.Nodes.Select(n => n.Coord.X).Max();
+                var maxY = _data.Nodes.Select(n => n.Coord.Y).Max();
+
+                _pnlCanvas.AutoScrollMinSize = new Size(maxX + _canvasPadding, maxY + _canvasPadding);
+            }
+            else
+            {
+                _pnlCanvas.MinimumSize = new Size(0, 0);
+            }
+        }
+
         private void HasModified(bool hasModified)
         {
             _hasModified = hasModified;
             CanGetDistances();
             CanSolveTsp();
+
+            SetMinimumSizeCanvas();
 
             if (_hasModified)
             {

@@ -89,7 +89,7 @@ namespace App.Gui
 
         private void _mniExportTspToGraph_Click(object sender, System.EventArgs e)
         {
-            ExportProjectToGraph();
+            ExportProjectToImage();
         }
 
         private void _mniExit_Click(object sender, System.EventArgs e)
@@ -207,6 +207,106 @@ namespace App.Gui
                         RemoveNode(found);
                     }
                 }
+            }
+        }
+
+        private void _dgvNodes_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            var name = e.FormattedValue.ToString();
+
+            if (name.IsNullOrEmpty())
+            {
+                _dgvNodes.CancelEdit();
+                return;
+            }
+
+            var node = _data.Nodes[e.RowIndex];
+
+            if (name == node.Name)
+            {
+                _dgvNodes.CancelEdit();
+                return;
+            }
+        }
+
+        private void _dgvNodes_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var name = _dgvNodes.Rows[e.RowIndex].Cells["Name"].Value.ToString();
+
+            RenameNode(e.RowIndex, name);
+        }
+
+        private void _dgvCoordinates_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var x = int.Parse(_dgvCoordinates.Rows[e.RowIndex].Cells["X"].Value.ToString());
+            var y = int.Parse(_dgvCoordinates.Rows[e.RowIndex].Cells["Y"].Value.ToString());
+            var coord = new Point(x, y);
+
+            MoveNode(e.RowIndex, coord.X, coord.Y);
+        }
+
+        private void _dgvCoordinates_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            var value = e.FormattedValue.ToString();
+
+            if (e.ColumnIndex != 1 && e.ColumnIndex != 2)
+            {
+                return;
+            }
+
+            if (_dgvCoordinates.Rows[e.RowIndex].IsNewRow)
+            {
+                return;
+            }
+
+            if (value.IsNullOrEmpty())
+            {
+                _dgvCoordinates.CancelEdit();
+                return;
+            }
+
+            if (!int.TryParse(value, out _))
+            {
+                _dgvCoordinates.CancelEdit();
+                PrintTo("Please add an integer number for the coordinate.", true);
+                return;
+            }
+
+            var x = -1;
+            var y = -1;
+
+            if (e.ColumnIndex == 1)
+            {
+                x = int.Parse(value);
+                y = int.Parse(_dgvCoordinates.Rows[e.RowIndex].Cells["Y"].Value.ToString());
+            }
+            else if (e.ColumnIndex == 2)
+            {
+                x = int.Parse(_dgvCoordinates.Rows[e.RowIndex].Cells["X"].Value.ToString());
+                y = int.Parse(value);
+            }
+
+            var coord = new Point(x, y);
+            var node = _data.Nodes[e.RowIndex];
+
+            if (coord.X < 0 || coord.Y < 0)
+            {
+                _dgvCoordinates.CancelEdit();
+                PrintTo("Please add a positive coordinate.", true);
+                return;
+            }
+
+            if (coord == node.Coord)
+            {
+                _dgvCoordinates.CancelEdit();
+                return;
+            }
+
+            if (HasSameCoordinates(coord))
+            {
+                _dgvCoordinates.CancelEdit();
+                PrintTo("Please add a different coordinate for this node.", true);
+                return;
             }
         }
     }

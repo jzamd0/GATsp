@@ -273,7 +273,7 @@ namespace App.Gui
             }
         }
 
-        private void ExportProjectToGraph()
+        private void ExportProjectToImage()
         {
             if (_data.Nodes.IsNullOrEmpty())
             {
@@ -295,7 +295,9 @@ namespace App.Gui
 
                         var minX = _data.Nodes.Select(n => n.Coord.X).Min();
                         var minY = _data.Nodes.Select(n => n.Coord.Y).Min();
-                        var width = _data.Nodes.Select(n => n.Coord.X).Max() + (_canvasPadding * 2) - minX;
+                        // get furthest x coordinate using the node coordinate with the text width added
+                        var maxX = _data.Nodes.Select(n => n.Coord.X + MeasureString(n.Name, _nodeFont).ToSize().Width).Max();
+                        var width = maxX + (_canvasPadding * 2) - minX;
                         var height = _data.Nodes.Select(n => n.Coord.Y).Max() + (_canvasPadding * 2) - minY;
 
                         var bmap = new Bitmap(width, height);
@@ -314,6 +316,21 @@ namespace App.Gui
                     }
                 }
             }
+        }
+
+        public static SizeF MeasureString(string s, Font font)
+        {
+            SizeF result;
+
+            using (var image = new Bitmap(1, 1))
+            {
+                using (var g = Graphics.FromImage(image))
+                {
+                    result = g.MeasureString(s, font);
+                }
+            }
+
+            return result;
         }
 
         private string[] ConvertToCsv(double[][] matrix)
@@ -358,6 +375,9 @@ namespace App.Gui
             SetColumnWidth(_dgvEdges, _edgesMinWidth);
             SetColumnWidth(_dgvNodes, _nodesMinWidth);
             SetColumnWidth(_dgvCoordinates, _coordinatesMinWidth);
+
+            _dgvNodes.Columns["Id"].ReadOnly = true;
+            _dgvCoordinates.Columns["Node"].ReadOnly = true;
         }
 
         private void SetColumnWidth(DataGridView dgv, int width)
@@ -386,6 +406,11 @@ namespace App.Gui
             // check for nodes with smae coordinates
             for (var i = 0; i < nodes.Count - 1; i++)
             {
+                if (nodes[i].Coord.X < 0 || nodes[i].Coord.Y < 0)
+                {
+                    return (false, "File contains a node with negative coordinates.");
+                }
+
                 for (var j = i + 1; j < nodes.Count; j++)
                 {
                     if (GetDistance(nodes[i], nodes[j], _decimalsToRound) == 0)
@@ -497,6 +522,13 @@ namespace App.Gui
             return rounded;
         }
 
+        private double GetDistance(Point a, Point b, int decimals)
+        {
+            var res = Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
+            var rounded = Math.Round(res, decimals);
+            return rounded;
+        }
+
         private void PrintTo(string message, bool? debug = false)
         {
             MessageBox.Show(message, _programTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -508,7 +540,7 @@ namespace App.Gui
             if (!_data.Nodes.IsNullOrEmpty())
             {
                 // check for the furthest node coordinates to extend the canvas panel to a proper size
-                var maxX = _data.Nodes.Select(n => n.Coord.X).Max();
+                var maxX = _data.Nodes.Select(n => n.Coord.X + MeasureString(n.Name, _nodeFont).ToSize().Width).Max();
                 var maxY = _data.Nodes.Select(n => n.Coord.Y).Max();
 
                 _pnlCanvas.AutoScrollMinSize = new Size(maxX + _canvasPadding, maxY + _canvasPadding);
@@ -524,6 +556,7 @@ namespace App.Gui
             _hasModified = hasModified;
             CanGetDistances();
             CanSolveTsp();
+            _mniClearGraph.Enabled = _data.Nodes.Count >= 1;
 
             SetMinimumSizeCanvas();
 
@@ -577,8 +610,9 @@ namespace App.Gui
         private void AddNode(Node node)
         {
             // check any node has same coordinates and where distance between both is 0
-            if (_data.Nodes.Count > 0 && _data.Nodes.Any(n => GetDistance(n, node, _decimalsToRound) == 0))
+            if (HasSameCoordinates(node))
             {
+                PrintTo("The node has the same coordinate as another node.", true);
                 return;
             }
 
@@ -590,7 +624,31 @@ namespace App.Gui
             HasModified(true);
             _canOverwriteDraw = true;
 
-            _mniClearGraph.Enabled = true;
+            _pbxCanvas.Invalidate();
+        }
+
+        private void RenameNode(int index, string name)
+        {
+            _data.Nodes[index].Name = name;
+
+            ((DataTable)_dgvNodes.DataSource).Rows[index]["Name"] = name;
+            ((DataTable)_dgvCoordinates.DataSource).Rows[index]["Node"] = name;
+
+            HasModified(true);
+            _canOverwriteDraw = true;
+
+            _pbxCanvas.Invalidate();
+        }
+
+        private void MoveNode(int index, int x, int y)
+        {
+            _data.Nodes[index].Coord = new Point(x, y);
+
+            ((DataTable)_dgvCoordinates.DataSource).Rows[index]["X"] = x;
+            ((DataTable)_dgvCoordinates.DataSource).Rows[index]["Y"] = y;
+
+            HasModified(true);
+            _canOverwriteDraw = true;
 
             _pbxCanvas.Invalidate();
         }
@@ -606,9 +664,17 @@ namespace App.Gui
             HasModified(true);
             _canOverwriteDraw = true;
 
-            _mniClearGraph.Enabled = _data.Nodes.Count >= 1;
-
             _pbxCanvas.Invalidate();
+        }
+
+        private bool HasSameCoordinates(Node node)
+        {
+            return _data.Nodes.Any(n => GetDistance(n, node, _decimalsToRound) == 0);
+        }
+
+        private bool HasSameCoordinates(Point p)
+        {
+            return _data.Nodes.Any(n => GetDistance(n.Coord, p, _decimalsToRound) == 0);
         }
 
         private void ClearNodes()

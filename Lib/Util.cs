@@ -7,6 +7,11 @@ namespace Lib
 {
     public static class Util
     {
+        public static double GetDistance(Point a, Point b)
+        {
+            return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
+        }
+
         public static double GetDistance(Point a, Point b, int decimals)
         {
             var res = Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));

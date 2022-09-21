@@ -1,4 +1,4 @@
-﻿namespace Lib
+﻿namespace Lib.GA
 {
     public class GA
     {

@@ -183,7 +183,6 @@ namespace App.Gui
             // 
             this._tabControlSetup.Controls.Add(this._tabSetup);
             this._tabControlSetup.Controls.Add(this._tabNodes);
-            this._tabControlSetup.Controls.Add(this._tabEdges);
             this._tabControlSetup.Controls.Add(this._tabCoordinates);
             this._tabControlSetup.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabControlSetup.Location = new System.Drawing.Point(0, 0);
@@ -305,6 +304,7 @@ namespace App.Gui
             // 
             this._tabControlTsp.Controls.Add(this._tabDistances);
             this._tabControlTsp.Controls.Add(this._tabGraph);
+            this._tabControlTsp.Controls.Add(this._tabEdges);
             this._tabControlTsp.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabControlTsp.Location = new System.Drawing.Point(0, 0);
             this._tabControlTsp.Name = "_tabControlTsp";

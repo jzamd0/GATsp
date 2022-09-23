@@ -26,6 +26,10 @@ namespace App.Gui
 
             _canvasPadding = 40;
 
+            _minNodesToSolveTsp = 3;
+            _minNodesToDistances = 2;
+            _minNodesToGraph = 1;
+
             _canOverwriteDraw = false;
 
             SetConfiguration();
@@ -137,13 +141,14 @@ namespace App.Gui
         }
         #endregion
 
-        #region Help
+        #region Menu Help
         private void _mniAbout_Click(object sender, System.EventArgs e)
         {
 
         }
         #endregion
 
+        #region Panels
         private void _pnlSetup_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             _splitTsp.Panel2Collapsed = !_splitTsp.Panel2Collapsed;
@@ -161,7 +166,9 @@ namespace App.Gui
             _splitTsp.Panel1Collapsed = !_splitTsp.Panel1Collapsed;
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
         }
+        #endregion
 
+        #region Canvas
         private void _pbxCanvas_Paint(object sender, PaintEventArgs e)
         {
             DrawNodes(e.Graphics);
@@ -191,5 +198,6 @@ namespace App.Gui
                 }
             }
         }
+        #endregion
     }
 }

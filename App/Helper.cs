@@ -19,6 +19,11 @@ namespace App
             return nodes.Any(n => Util.GetDistance(n.Coord, p) == 0);
         }
 
+        public static bool HasDuplicateId(List<Node> nodes)
+        {
+            return nodes.GroupBy(x => x.Id).Any(g => g.Count() > 1);
+        }
+
         public static SizeF MeasureString(string s, Font font)
         {
             SizeF result;

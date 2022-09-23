@@ -32,6 +32,11 @@ namespace App.Gui
 
         private int _canvasPadding { get; set; }
 
+        // constraints
+        public int _minNodesToSolveTsp { get; set; }
+        public int _minNodesToDistances { get; set; }
+        public int _minNodesToGraph { get; set; }
+
         // program flags
         private bool _canOverwriteDraw { get; set; }
 
@@ -139,8 +144,14 @@ namespace App.Gui
                         ClearData();
 
                         _data = data;
-                        DisplayNodes();
-                        GenerateDistances();
+                        if (_data.Nodes.Count > 0)
+                        {
+                            DisplayNodes();
+                        }
+                        if (_data.Nodes.Count >= _minNodesToDistances)
+                        {
+                            GenerateDistances();
+                        }
 
                         _fullFileName = fullFileName;
                         _lastLocation = filePath;
@@ -233,8 +244,10 @@ namespace App.Gui
                 {
                     try
                     {
+                        var res = GetDistances(_data.Nodes);
+
                         var fullFileName = exportDialog.FileName;
-                        var values = Helper.ConvertToCsv(_distances);
+                        var values = Helper.ConvertToCsv(res.Distances);
                         File.WriteAllLines(fullFileName, values);
                     }
                     catch (Exception ex) when (ex is IOException)
@@ -294,16 +307,12 @@ namespace App.Gui
 
         private void EnableOrDisableMenuItems()
         {
-            var minNodesToSolveTsp = 3;
-            var minNodesToDistances = 2;
-            var minNodesToGraph = 1;
-
-            _mniSolveTsp.Enabled = _data.Nodes.Count >= minNodesToSolveTsp;
-            _mniExportTspToDistances.Enabled = _data.Nodes.Count >= minNodesToDistances;
-            _mniGenerateDistances.Enabled = _data.Nodes.Count >= minNodesToDistances;
-            _mniClearDistances.Enabled = _data.Nodes.Count >= minNodesToDistances;
-            _mniClearNodes.Enabled = _data.Nodes.Count >= minNodesToGraph;
-            _mniExportTspToGraph.Enabled = _data.Nodes.Count >= minNodesToGraph;
+            _mniSolveTsp.Enabled = _data.Nodes.Count >= _minNodesToSolveTsp;
+            _mniExportTspToDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
+            _mniGenerateDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
+            _mniClearDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
+            _mniClearNodes.Enabled = _data.Nodes.Count >= _minNodesToGraph;
+            _mniExportTspToGraph.Enabled = _data.Nodes.Count >= _minNodesToGraph;
         }
 
         private void SetDataTables()
@@ -356,8 +365,31 @@ namespace App.Gui
 
         private void UpdateApp()
         {
+            UpdateLabels();
             EnableOrDisableMenuItems();
             UpdateCanvas();
+        }
+
+        private void UpdateLabels()
+        {
+            // update node count label
+            if (_data.Nodes.IsNullOrEmpty())
+            {
+                _lblNodesCount.Text = "0 node(s)";
+            }
+            else if (_data.Nodes.Count > 0)
+            {
+                _lblNodesCount.Text = $"{_data.Nodes.Count} node(s)";
+            }
+
+            if (_edges.IsNullOrEmpty())
+            {
+                _lblEdgesCount.Text = "0 edge(s)";
+            }
+            else if (_edges.Length > 0)
+            {
+                _lblEdgesCount.Text = $"{_edges.Length} edge(s)";
+            }
         }
 
         #region Nodes
@@ -404,19 +436,42 @@ namespace App.Gui
 
         private (bool Valid, string Message) AreNodesValid(List<Node> nodes)
         {
+            // check for empty list
             if (nodes == null)
             {
                 return (false, "File does not contain a list for nodes. Create a list to add nodes.");
             }
 
-            // check for nodes with smae coordinates
-            for (var i = 0; i < nodes.Count - 1; i++)
+            // check of duplicated ids
+            if (Helper.HasDuplicateId(nodes))
             {
+                return (false, "The list of nodes contain duplicated IDs. Change the IDs for thoese nodes");
+            }
+
+            for (var i = 0; i < nodes.Count; i++)
+            {
+                // check for blank name for node
+                if (nodes[i].Name.IsNullOrEmpty())
+                {
+                    return (false, "A node has a blank name. Add a name for the node");
+                }
+
+                // check for nodes with coordinates with negative values
                 if (nodes[i].Coord.X < 0 || nodes[i].Coord.Y < 0)
                 {
                     return (false, "File contains a node with negative coordinates. Change the coordinates for this node.");
                 }
 
+                // check for missing coordinates
+                if (nodes[i].Coord == null || nodes[i].Coord.IsEmpty)
+                {
+                    return (false, "A node has missing coordinates. Add coordinates to the node.");
+                }
+            }
+
+            // check for nodes with smae coordinates
+            for (var i = 0; i < nodes.Count - 1; i++)
+            {
                 for (var j = i + 1; j < nodes.Count; j++)
                 {
                     if (Util.GetDistance(nodes[i].Coord, nodes[j].Coord, _decimalsToRound) == 0)
@@ -441,6 +496,8 @@ namespace App.Gui
             _edges = res.Edges;
 
             DisplayDistances();
+
+            UpdateLabels();
         }
 
         private (double[][] Distances, Edge<Node>[] Edges) GetDistances(List<Node> nodes)
@@ -481,6 +538,8 @@ namespace App.Gui
 
             _distances = null;
             _edges = null;
+
+            UpdateLabels();
         }
         #endregion
 

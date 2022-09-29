@@ -1,4 +1,5 @@
-﻿using Lib.Tsp;
+﻿using Lib.Genetics;
+using Lib.Tsp;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -26,8 +27,8 @@ namespace App.Gui
 
             _canvasPadding = 40;
 
-            _minNodesToSolveTsp = 3;
-            _minNodesToDistances = 2;
+            _minNodesToSolveTsp = GA.GenotypeSizeLimit - 1;
+            _minNodesToDistances = _minNodesToSolveTsp;
             _minNodesToGraph = 1;
 
             _canOverwriteDraw = false;
@@ -132,8 +133,10 @@ namespace App.Gui
             }
 
             var setup = res.Setup;
+            GenerateDistances();
 
-            PrintTo($"{setup}", true);
+            setup.Distances = _distances;
+            setup.GenotypeSize = _data.Nodes.Count + 1;
         }
 
         private void _minGenerateDistances_Click(object sender, System.EventArgs e)

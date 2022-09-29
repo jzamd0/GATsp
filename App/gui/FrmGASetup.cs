@@ -1,4 +1,5 @@
 ﻿using Lib.Genetics;
+using Lib.Genetics.Operators;
 using System;
 using System.Windows.Forms;
 
@@ -32,8 +33,8 @@ namespace App.Gui
             _cbxCrossoverType.ValueMember = "Value";
 
             var crossoverItems = new[] {
-                new { Text = "None", Value = string.Empty },
-                new { Text = "OX", Value = "1" },
+                new { Text = "None", Value = CrossoverType.None },
+                new { Text = "OX", Value = CrossoverType.OX },
             };
 
             _cbxCrossoverType.DataSource = crossoverItems;
@@ -42,10 +43,10 @@ namespace App.Gui
             _cbxMutationType.ValueMember = "Value";
 
             var mutationItems = new[] {
-                new { Text = "None", Value = string.Empty },
-                new { Text = "Insert", Value = "1" },
-                new { Text = "Swap", Value = "2" },
-                new { Text = "Switch", Value = "3" },
+                new { Text = "None", Value = MutationType.None },
+                new { Text = "Insert", Value = MutationType.Insert },
+                new { Text = "Swap", Value = MutationType.Swap },
+                new { Text = "Switch", Value = MutationType.Switch },
             };
 
             _cbxMutationType.DataSource = mutationItems;
@@ -80,6 +81,15 @@ namespace App.Gui
                 return (false, null, MessageWarningPositiveNumber);
             }
 
+            if (popSize < GA.PopulationSizeLimit)
+            {
+                return (false, null, $"Population size must be greater than {GA.PopulationSizeLimit - 1}.");
+            }
+            if (generations < GA.GenerationsLimit)
+            {
+                return (false, null, $"Generations must be greater than {GA.GenerationsLimit - 1}.");
+            }
+
             // check for rate interval
             if (!(0 <= px && px <= 1) || !(0 <= pm && pm <= 1) || !(0 <= pe && pe <= 1))
             {
@@ -98,8 +108,8 @@ namespace App.Gui
             setup.CrossoverRate = px;
             setup.MutationRate = pm;
             setup.ElitismRate = pe;
-            setup.CrossoverType = (px == 0) ? string.Empty : _cbxCrossoverType.SelectedValue.ToString();
-            setup.MutationType = (pm == 0) ? string.Empty : _cbxMutationType.SelectedValue.ToString();
+            setup.CrossoverType = (px == 0) ? CrossoverType.None : (CrossoverType)_cbxCrossoverType.SelectedValue;
+            setup.MutationType = (pm == 0) ? MutationType.None : (MutationType)_cbxMutationType.SelectedValue;
 
             return (true, setup, null);
         }

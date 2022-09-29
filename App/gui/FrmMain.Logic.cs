@@ -15,6 +15,8 @@ namespace App.Gui
 {
     public partial class FrmMain
     {
+        private FrmGASetup _frmGASetup { get; set; }
+
         private string _programTitle { get; set; }
         private string _fileTitle { get; set; }
         private string _lastLocation { get; set; }
@@ -81,6 +83,16 @@ namespace App.Gui
             _linePen = new Pen(_lineColor);
 
             _pbxCanvas.BackColor = _backColor;
+        }
+
+        private void AddGASetupPanel()
+        {
+            _frmGASetup = new FrmGASetup();
+            _frmGASetup.TopLevel = false;
+            _tabSetup.Controls.Add(_frmGASetup);
+            _frmGASetup.FormBorderStyle = FormBorderStyle.None;
+            _frmGASetup.Dock = DockStyle.Top;
+            _frmGASetup.Show();
         }
 
         #region File

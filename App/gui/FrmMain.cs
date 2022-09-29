@@ -34,6 +34,7 @@ namespace App.Gui
 
             SetConfiguration();
             SetDataTables();
+            AddGASetupPanel();
         }
 
         private void FrmMain_Load(object sender, System.EventArgs e)
@@ -122,7 +123,17 @@ namespace App.Gui
         #region Menu TSP
         private void _mniSolveTsp_Click(object sender, System.EventArgs e)
         {
+            var res = _frmGASetup.GetGASetup();
 
+            if (!res.Valid)
+            {
+                PrintTo(res.Message);
+                return;
+            }
+
+            var setup = res.Setup;
+
+            PrintTo($"{setup}", true);
         }
 
         private void _minGenerateDistances_Click(object sender, System.EventArgs e)

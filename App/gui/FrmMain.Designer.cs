@@ -199,6 +199,7 @@ namespace App.Gui
             // 
             // _tabSetup
             // 
+            this._tabSetup.AutoScroll = true;
             this._tabSetup.Location = new System.Drawing.Point(4, 24);
             this._tabSetup.Name = "_tabSetup";
             this._tabSetup.Padding = new System.Windows.Forms.Padding(3);

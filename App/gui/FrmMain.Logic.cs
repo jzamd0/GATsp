@@ -1,4 +1,5 @@
 ﻿using Lib;
+using Lib.Genetics;
 using Lib.Tsp;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace App.Gui
         private double[][] _distances { get; set; }
         private Edge<Node>[] _edges { get; set; }
         private List<Node> _shortestPath { get; set; }
+        private GASetup _resultSetup { get; set; }
+        private GAResult _result { get; set; }
 
         private int _distancesViewMinWidth { get; set; }
         private int _edgesViewMinWidth { get; set; }
@@ -347,6 +350,7 @@ namespace App.Gui
             _dgvCoordinates.DataSource = dtCoordinates;
 
             _dgvDistances.DataSource = new DataTable();
+            _dgvSummary.DataSource = new DataTable();
 
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
@@ -367,12 +371,21 @@ namespace App.Gui
             ((DataTable)_dgvEdges.DataSource).Rows.Clear();
             ((DataTable)_dgvCoordinates.DataSource).Rows.Clear();
             _dgvDistances.DataSource = new DataTable();
+            ClearResult();
 
             _data = null;
             _fileTitle = null;
             _fullFileName = null;
             _distances = null;
             _edges = null;
+        }
+
+        private void ClearResult()
+        {
+            _dgvSummary.DataSource = new DataTable();
+            _shortestPath = null;
+            _resultSetup = null;
+            _result = null;
         }
 
         private void UpdateApp()
@@ -434,6 +447,11 @@ namespace App.Gui
 
             ((DataTable)_dgvNodes.DataSource).Rows.RemoveAt(index);
             ((DataTable)_dgvCoordinates.DataSource).Rows.RemoveAt(index);
+            // remove shortest path only if a node from the path is removed
+            if (!_shortestPath.IsNullOrEmpty() && _shortestPath.Contains(node))
+            {
+                _shortestPath = null;
+            }
 
             UpdateApp();
         }
@@ -454,10 +472,17 @@ namespace App.Gui
                 return (false, "File does not contain a list for nodes. Create a list to add nodes.");
             }
 
-            // check of duplicated ids
+            // check for duplicate ids
             if (Helper.HasDuplicateId(nodes))
             {
-                return (false, "The list of nodes contain duplicated IDs. Change the IDs for thoese nodes");
+                return (false, "Some nodes contain duplicate IDs. Change the IDs for thoese nodes");
+            }
+
+            // check for dupblicate names
+            if (Helper.HasDuplicateName(nodes))
+            {
+                return (false, "Some nodes contain duplicate names. Change the names for thoese nodes");
+
             }
 
             for (var i = 0; i < nodes.Count; i++)
@@ -555,6 +580,38 @@ namespace App.Gui
         }
         #endregion
 
+        #region TSP
+        private void SolveTsp(GASetup setup)
+        {
+            ClearResult();
+
+            var started = DateTime.Now;
+            var swTotal = new Stopwatch();
+            var swGA = new Stopwatch();
+
+            swTotal.Start();
+            GenerateDistances();
+            setup.Distances = _distances;
+            setup.GenotypeSize = _data.Nodes.Count + 1;
+
+            swGA.Start();
+            var res = new GA().Solve(setup, false);
+            swGA.Stop();
+
+            var shortestPath = Helper.MapToPath(_data.Nodes, res.Best.Values);
+            swTotal.Stop();
+            var finished = DateTime.Now;
+
+            _shortestPath = shortestPath;
+            _resultSetup = setup;
+            _result = res;
+
+            DisplaySummary(res, shortestPath, setup.GenotypeSize, started, finished, swGA.ElapsedMilliseconds, swTotal.ElapsedMilliseconds);
+            UpdateApp();
+
+        }
+        #endregion
+
         private void DisplayNodes()
         {
             // display nodes and coordinates to view
@@ -598,6 +655,24 @@ namespace App.Gui
             {
                 dtEdges.Rows.Add(edge.Before.Name, edge.Next.Name, edge.Distance);
             }
+        }
+
+        private void DisplaySummary(GAResult res, List<Node> shortestPath, int genotypeSize, DateTime started, DateTime finished, long gaDuration, long totalDuration)
+        {
+            var dtSummary = (DataTable)_dgvSummary.DataSource;
+            dtSummary.Columns.Add("Data", typeof(string));
+            dtSummary.Columns.Add("Values", typeof(string));
+            _dgvSummary.DataSource = dtSummary;
+
+            dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Genotype Size", genotypeSize);
+            dtSummary.Rows.Add("Best Tour", string.Join(", ", shortestPath.Select(n => n.Name).ToArray()));
+            dtSummary.Rows.Add("Best Fitness", Math.Round(res.Best.Fitness, _decimalsToRound));
+            dtSummary.Rows.Add("Last Generation", res.LastGeneration);
+            dtSummary.Rows.Add("Has Converged", (res.HasConverged) ? "Yes" : "No");
+            dtSummary.Rows.Add("GA Duration (ms)", gaDuration);
+            dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
         }
 
         private void PrintTo(string message, bool? debug = false)
@@ -676,8 +751,8 @@ namespace App.Gui
             for (var i = 0; i < _shortestPath.Count - 1; i++)
             {
                 // get points to and draw them
-                var pBefore = _data.Nodes[i].Coord;
-                var pNext = _data.Nodes[i + 1].Coord;
+                var pBefore = _shortestPath[i].Coord;
+                var pNext = _shortestPath[i + 1].Coord;
 
                 graphics.DrawLine(_linePen, pBefore, pNext);
             }

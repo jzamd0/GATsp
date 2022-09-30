@@ -132,11 +132,7 @@ namespace App.Gui
                 return;
             }
 
-            var setup = res.Setup;
-            GenerateDistances();
-
-            setup.Distances = _distances;
-            setup.GenotypeSize = _data.Nodes.Count + 1;
+            SolveTsp(res.Setup);
         }
 
         private void _minGenerateDistances_Click(object sender, System.EventArgs e)

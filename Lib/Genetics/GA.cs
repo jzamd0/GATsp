@@ -121,7 +121,7 @@ namespace Lib.Genetics
             result.InitialPopulation = initialPopulation;
             result.LastPopulation = population;
             result.LastGeneration = generation;
-            result.Convergence = convergence;
+            result.LastConvergence = convergence;
             result.HasConverged = hasConverged;
             result.AverageFitnesses = averageFitnesses.ToArray();
             result.BestFitnesses = bestFitnesses.ToArray();

@@ -6,7 +6,7 @@
         public Individual[] InitialPopulation { get; set; }
         public Individual[] LastPopulation { get; set; }
         public double LastGeneration { get; set; }
-        public double Convergence { get; set; }
+        public double LastConvergence { get; set; }
         public bool HasConverged { get; set; }
         public double[] AverageFitnesses { get; set; }
         public double[] BestFitnesses { get; set; }
@@ -16,13 +16,13 @@
         {
         }
 
-        public GAResult(Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double convergence, bool hasConverged, double[] averageFitnesses, double[] bestFitnesses, double[] convergences)
+        public GAResult(Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, double[] averageFitnesses, double[] bestFitnesses, double[] convergences)
         {
             Best = best;
             InitialPopulation = initialPopulation;
             LastPopulation = lastPopulation;
             LastGeneration = lastGeneration;
-            Convergence = convergence;
+            LastConvergence = lastConvergence;
             HasConverged = hasConverged;
             AverageFitnesses = averageFitnesses;
             BestFitnesses = bestFitnesses;

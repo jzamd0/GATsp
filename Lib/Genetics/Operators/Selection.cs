@@ -8,11 +8,14 @@ namespace Lib.Genetics.Operators
         Tournament,
     }
 
-    public static class Selection
+    public class Selection
     {
-        public static Individual Tournament(Individual[] population, int populationSize, int genotypeSize, int tournamentSize)
+        public Selection()
         {
-            Random rand = new Random();
+        }
+
+        public Individual Tournament(Individual[] population, int populationSize, int tournamentSize, Random rand)
+        {
             Individual best = null;
 
             for (var i = 0; i < tournamentSize; i++)
@@ -21,7 +24,7 @@ namespace Lib.Genetics.Operators
                 best = (best == null || population[index].Fitness < best.Fitness) ? population[index] : best;
             }
 
-            return best;
+            return new Individual(best.Values.Copy(), best.Fitness);
         }
     }
 }

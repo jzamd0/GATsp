@@ -7,10 +7,10 @@ namespace Lib.Genetics
 {
     public class GA
     {
-        public static readonly int GenerationsLimit = 0;
-        public static readonly int PopulationSizeLimit = 3;
-        public static readonly int GenotypeSizeLimit = 4;
-        public static readonly int NodesLimit = 2;
+        public static readonly int MinGenerations = 0;
+        public static readonly int MinPopulationSize = 4;
+        public static readonly int MinGenotypeSize = 4;
+        public static readonly int MinNodes = 2;
 
         protected int TourStart { get; set; }
         protected int TourEnd { get; set; }
@@ -18,17 +18,21 @@ namespace Lib.Genetics
 
         public GAResult Solve(GASetup setup, bool verbose = false)
         {
-            if (setup.Generations < GenerationsLimit)
+            if (setup.Generations < MinGenerations)
             {
-                throw new ArgumentOutOfRangeException($"Generations must be greater than {GenerationsLimit - 1}.", nameof(setup.Generations));
+                throw new ArgumentOutOfRangeException($"Generations must be greater than {MinGenerations - 1}.", nameof(setup.Generations));
             }
-            if (setup.PopulationSize < PopulationSizeLimit)
+            if (setup.PopulationSize < MinPopulationSize)
             {
-                throw new ArgumentOutOfRangeException($"Population size must be greater than {PopulationSizeLimit - 1}.", nameof(setup.PopulationSize));
+                throw new ArgumentOutOfRangeException($"Population size must be greater than {MinPopulationSize - 1}.", nameof(setup.PopulationSize));
             }
-            if (setup.GenotypeSize < GenotypeSizeLimit)
+            if (setup.PopulationSize % 2 != 0)
             {
-                throw new ArgumentOutOfRangeException($"Genotype size must be greater than {GenotypeSizeLimit - 1}.", nameof(setup.GenotypeSize));
+                throw new ArgumentException($"Population must be even.", nameof(setup.PopulationSize));
+            }
+            if (setup.GenotypeSize < MinGenotypeSize)
+            {
+                throw new ArgumentOutOfRangeException($"Genotype size must be greater than {MinGenotypeSize - 1}.", nameof(setup.GenotypeSize));
             }
             if (setup.Distances.IsNullOrEmpty())
             {
@@ -40,13 +44,9 @@ namespace Lib.Genetics
             TourRange = TourEnd - TourStart;
 
             int generation = 0;
-            int selectedPopulationSize = setup.PopulationSize;
-            int crossoverPopulationSize = (int)Math.Floor(setup.PopulationSize * setup.CrossoverRate);
-            int elitePopulationSize = (int)Math.Floor(setup.PopulationSize * setup.ElitismRate);
 
             Individual[] initialPopulation = new Individual[setup.PopulationSize];
-            Individual[] crossoverPopulation = null;
-            Individual[] elitePopulation = null;
+            Individual[] newPopulation = null;
 
             Individual best = null;
             double convergence = 0.0;
@@ -70,12 +70,16 @@ namespace Lib.Genetics
                 averageFitnesses.Add(GetAverageFitness(population));
                 bestFitnesses.Add(best.Fitness);
 
-                Util.Print($"Generation of algorithm is {generation}.", verbose);
                 // get convergence for best individual from population
                 convergence = GetPopulationConvergence(population, setup.PopulationSize, best);
                 convergences.Add(convergence);
-                Util.Print($"Convergence is about {convergence} % for best individual with {best.Fitness}.", verbose);
+
+                Util.Print($"Generation:                {generation}.", verbose);
+                Util.Print($"Average fitness:           {averageFitnesses.Last()}", verbose);
+                Util.Print($"Best fitness:              {bestFitnesses.Last()}", verbose);
+                Util.Print($"Convergence for best ind.: {convergence} %", verbose);
                 Util.Print("---", verbose);
+
                 // stop algorithm when all individuals from the population are the same
                 hasConverged = HasPopulationConverged(population);
                 if (hasConverged)
@@ -91,23 +95,20 @@ namespace Lib.Genetics
                     break;
                 }
 
-                var selectedPopulation = SelectPopulation(population, setup.PopulationSize, setup.GenotypeSize, selectedPopulationSize);
+                newPopulation = SelectPopulation(population, setup.PopulationSize, setup.GenotypeSize);
                 if (setup.CrossoverRate > 0 && setup.CrossoverType != CrossoverType.None)
                 {
-                    crossoverPopulation = CrossoverPopulation(selectedPopulation, selectedPopulationSize, setup.GenotypeSize, crossoverPopulationSize, setup.CrossoverType);
+                    newPopulation = CrossoverPopulation(newPopulation, setup.PopulationSize, setup.GenotypeSize, setup.CrossoverRate, setup.CrossoverType);
                 }
-                if (setup.CrossoverRate > 0 && setup.MutationRate > 0 && setup.MutationType != MutationType.None)
+                if (setup.MutationRate > 0 && setup.MutationType != MutationType.None)
                 {
-                    crossoverPopulation = MutatePopulation(crossoverPopulation, crossoverPopulationSize, setup.GenotypeSize, setup.MutationRate, setup.MutationType);
+                    newPopulation = MutatePopulation(newPopulation, setup.PopulationSize, setup.GenotypeSize, setup.MutationRate, setup.MutationType);
                 }
                 if (setup.ElitismRate > 0)
                 {
-                    elitePopulation = GetElitePopulation(population, setup.PopulationSize, elitePopulationSize);
+                    newPopulation = ReplacePopulationWithElite(newPopulation, setup.PopulationSize, population, setup.ElitismRate);
                 }
-                if (!crossoverPopulation.IsNullOrEmpty() || !elitePopulation.IsNullOrEmpty())
-                {
-                    population = MigratePopulation(population, setup.PopulationSize, crossoverPopulation, elitePopulation);
-                }
+                population = CopyPopulation(newPopulation, setup.PopulationSize);
 
                 generation += 1;
             }
@@ -123,9 +124,9 @@ namespace Lib.Genetics
             result.LastGeneration = generation;
             result.LastConvergence = convergence;
             result.HasConverged = hasConverged;
-            result.AverageFitnesses = averageFitnesses.ToArray();
-            result.BestFitnesses = bestFitnesses.ToArray();
-            result.Convergences = convergences.ToArray();
+            result.AverageFitnesses = averageFitnesses;
+            result.BestFitnesses = bestFitnesses;
+            result.Convergences = convergences;
 
             return result;
         }
@@ -203,53 +204,76 @@ namespace Lib.Genetics
             return best;
         }
 
-        protected Individual[] SelectPopulation(Individual[] population, int populationSize, int genotypeSize, int selectedPopulationSize)
+        protected Individual[] SelectPopulation(Individual[] population, int populationSize, int genotypeSize)
         {
-            var selectedPopulation = new Individual[selectedPopulationSize];
+            var rand = new Random();
+            var selop = new Selection();
+            var selectedPopulation = new Individual[populationSize];
             var tournamentSize = 2;
 
-            for (var i = 0; i < selectedPopulationSize; i++)
+            for (var i = 0; i < populationSize; i++)
             {
-                var best = Selection.Tournament(population, populationSize, genotypeSize, tournamentSize);
+                var best = selop.Tournament(population, populationSize, tournamentSize, rand);
                 selectedPopulation[i] = best;
             }
 
             return selectedPopulation;
         }
 
-        protected Individual[] CrossoverPopulation(Individual[] population, int populationSize, int genotypeSize, int crossoverPopulationSize, CrossoverType xopType)
+        protected Individual[] CrossoverPopulation(Individual[] population, int populationSize, int genotypeSize, double crossoverRate, CrossoverType xopType)
         {
             var rand = new Random();
             var xop = new Crossover();
-            var populationEvenSize = (crossoverPopulationSize % 2 == 0) ? crossoverPopulationSize : crossoverPopulationSize + 1;
-            var crossoverPopulation = new List<Individual>();
+            var crossoverPopulation = new Individual[populationSize];
+            var range = 1;
 
-            while (crossoverPopulation.Count < populationEvenSize)
+            for (var i = 0; i < populationSize; i += 2)
             {
-                var parent1 = Util.Extract(population[rand.Next(0, populationSize)].Values, TourStart, TourRange);
-                var parent2 = Util.Extract(population[rand.Next(0, populationSize)].Values, TourStart, TourRange);
-
-                var values1 = new double[TourRange];
-                var values2 = new double[TourRange];
-
-                if (xopType == CrossoverType.OX)
+                if (rand.NextDouble() <= crossoverRate)
                 {
-                    var point1 = rand.Next(0, TourEnd - 1);
-                    var point2 = rand.Next(point1 + 1, TourEnd);
+                    var parent1 = Util.Extract(population[i].Values, TourStart, TourRange);
+                    var parent2 = Util.Extract(population[i + 1].Values, TourStart, TourRange);
 
-                    values1 = xop.OX(parent1, parent2, TourRange, point1, point2);
-                    values2 = xop.OX(parent2, parent1, TourRange, point1, point2);
+                    var offspring1 = new double[TourRange];
+                    var offspring2 = new double[TourRange];
+
+                    if (xopType == CrossoverType.OBX)
+                    {
+                        var mask = Enumerable.Repeat(0, TourRange).Select(n => rand.Next(0, 2)).ToArray();
+
+                        offspring1 = xop.OBX(parent1, parent2, TourRange, mask);
+                        offspring2 = xop.OBX(parent2, parent1, TourRange, mask);
+                    }
+                    else if (xopType == CrossoverType.PPX)
+                    {
+                        var mask = Enumerable.Repeat(0, TourRange).Select(n => rand.Next(0, 2)).ToArray();
+
+                        offspring1 = xop.PPX(parent1, parent2, TourRange, mask);
+                        offspring2 = xop.PPX(parent2, parent1, TourRange, mask);
+                    }
+                    else if (xopType == CrossoverType.TPX)
+                    {
+                        var point1 = rand.Next(0, TourEnd - 1 - range);
+                        var point2 = rand.Next(point1 + 1 + range, TourEnd);
+
+                        offspring1 = xop.TPX(parent1, parent2, TourRange, point1, point2);
+                        offspring2 = xop.TPX(parent2, parent1, TourRange, point1, point2);
+                    }
+
+                    offspring1 = Util.Expand(offspring1, genotypeSize, TourStart, 0);
+                    offspring2 = Util.Expand(offspring2, genotypeSize, TourStart, 0);
+
+                    crossoverPopulation[i] = new Individual(offspring1, 0);
+                    crossoverPopulation[i + 1] = new Individual(offspring2, 0);
                 }
-
-                values1 = Util.Expand(values1, genotypeSize, TourStart, 0);
-                values2 = Util.Expand(values2, genotypeSize, TourStart, 0);
-
-                crossoverPopulation.Add(new Individual(values1, 0));
-                crossoverPopulation.Add(new Individual(values2, 0));
+                else
+                {
+                    crossoverPopulation[i] = population[i];
+                    crossoverPopulation[i + 1] = population[i + 1];
+                }
             }
 
-            // if the size of the population is odd, return all individuals except the last one
-            return (populationSize % 2 == 0) ? crossoverPopulation.ToArray() : Util.Extract(crossoverPopulation.ToArray(), 0, crossoverPopulationSize);
+            return crossoverPopulation;
         }
 
         protected Individual[] MutatePopulation(Individual[] population, int populationSize, int genotypeSize, double mutationRate, MutationType mutopType)
@@ -260,7 +284,7 @@ namespace Lib.Genetics
 
             for (var i = 0; i < populationSize; i++)
             {
-                if (rand.NextDouble() < mutationRate)
+                if (rand.NextDouble() <= mutationRate)
                 {
                     var point1 = rand.Next(1, TourEnd - 1);
                     var point2 = rand.Next(point1 + 1, TourEnd);
@@ -290,55 +314,42 @@ namespace Lib.Genetics
             return mutatedPopulation;
         }
 
-        protected Individual[] GetElitePopulation(Individual[] population, int populationSize, int elitePopulationSize)
-        {
-            return population
-                .GroupBy(i => i.Fitness)
-                .Select(g => g.First())
-                .OrderBy(i => i.Fitness)
-                .Take(elitePopulationSize)
-                .ToArray();
-        }
-
-        protected Individual[] MigratePopulation(Individual[] population, int populationSize, params Individual[][] populations)
-        {
-            var individuals = new List<Individual>();
-            var counter = 0;
-
-            foreach (var p in populations)
-            {
-                InsertPopulation(populationSize, individuals, p, ref counter);
-            }
-            InsertPopulation(populationSize, individuals, population, ref counter, true);
-
-            return individuals.ToArray();
-        }
-
-        protected void InsertPopulation(int populationSize, List<Individual> individuals, Individual[] population, ref int counter, bool random = false)
+        protected Individual[] ReplacePopulationWithElite(Individual[] population, int populationSize, Individual[] originalPopulation, double elitismRate)
         {
             var rand = new Random();
+            var replacedPopulation = new Individual[populationSize];
+            var rankedPopulation = Util.Rank(originalPopulation.Select(i => i.Fitness));
+            var i = 0;
+            var ie = 0;
 
-            if (!population.IsNullOrEmpty())
+            while (i < populationSize && ie < rankedPopulation.Length)
             {
-                for (var i = 0; i < population.Length; i++)
+                if (rand.NextDouble() <= elitismRate)
                 {
-                    if (counter == populationSize)
-                    {
-                        break;
-                    }
-
-                    if (!random)
-                    {
-                        individuals.Add(population[i]);
-                    }
-                    else
-                    {
-                        var index = rand.Next(0, population.Length);
-                        individuals.Add(population[index]);
-                    }
-                    counter += 1;
+                    var elite = originalPopulation[rankedPopulation[ie]];
+                    replacedPopulation[i] = new Individual(elite.Values.Copy(), elite.Fitness);
+                    ie += 1;
                 }
+                else
+                {
+                    replacedPopulation[i] = population[i];
+                }
+                i += 1;
             }
+
+            return replacedPopulation;
+        }
+
+        protected Individual[] CopyPopulation(Individual[] population, int populationSize)
+        {
+            var copiedPopulation = new Individual[populationSize];
+
+            for (var i = 0; i < populationSize; i++)
+            {
+                copiedPopulation[i] = new Individual(population[i].Values.Copy(), population[i].Fitness);
+            }
+
+            return copiedPopulation;
         }
 
         protected bool HasPopulationConverged(Individual[] population)

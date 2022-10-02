@@ -43,6 +43,18 @@ namespace Lib
             return source == null || source.Count() == 0;
         }
 
+        public static T[] Copy<T>(this T[] array)
+        {
+            return array.Copy(0, array.Length);
+        }
+
+        public static T[] Copy<T>(this T[] array, int index, int length)
+        {
+            T[] result = new T[length];
+            Array.Copy(array, index, result, 0, length);
+            return result;
+        }
+
         public static T[] Extract<T>(T[] array, int index, int length)
         {
             T[] result = new T[length];
@@ -62,9 +74,19 @@ namespace Lib
         public static T[] Expand<T>(T[] array, int size, int index, T value)
         {
             var result = new T[size];
-            result = Util.Fill(result, value);
+            result = Fill(result, value);
             Array.Copy(array, 0, result, index, array.Length);
             return result;
+        }
+
+        public static int[] Rank<T>(IEnumerable<T> array) where T : IComparable<T>
+        {
+            return array.Select((i, index) => (i, index)).OrderBy(a => a.i).Select(a => a.index).Distinct().ToArray();
+        }
+
+        public static int[] RankDescending<T>(IEnumerable<T> array) where T : IComparable<T>
+        {
+            return array.Select((i, index) => (i, index)).OrderByDescending(a => a.i).Select(a => a.index).Distinct().ToArray();
         }
     }
 }

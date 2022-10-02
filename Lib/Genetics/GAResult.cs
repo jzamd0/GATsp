@@ -1,4 +1,6 @@
-﻿namespace Lib.Genetics
+﻿using System.Collections.Generic;
+
+namespace Lib.Genetics
 {
     public class GAResult
     {
@@ -8,15 +10,15 @@
         public double LastGeneration { get; set; }
         public double LastConvergence { get; set; }
         public bool HasConverged { get; set; }
-        public double[] AverageFitnesses { get; set; }
-        public double[] BestFitnesses { get; set; }
-        public double[] Convergences { get; set; }
+        public List<double> AverageFitnesses { get; set; }
+        public List<double> BestFitnesses { get; set; }
+        public List<double> Convergences { get; set; }
 
         public GAResult()
         {
         }
 
-        public GAResult(Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, double[] averageFitnesses, double[] bestFitnesses, double[] convergences)
+        public GAResult(Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, List<double> averageFitnesses, List<double> bestFitnesses, List<double> convergences)
         {
             Best = best;
             InitialPopulation = initialPopulation;

@@ -352,6 +352,16 @@ namespace App.Gui
             _dgvDistances.DataSource = new DataTable();
             _dgvSummary.DataSource = new DataTable();
 
+            var dtInitialPopulation = new DataTable();
+            dtInitialPopulation.Columns.Add("Path", typeof(string));
+            dtInitialPopulation.Columns.Add("Fitness", typeof(double));
+            _dgvInitialPopulation.DataSource = dtInitialPopulation;
+
+            var dtLastPopulation = new DataTable();
+            dtLastPopulation.Columns.Add("Path", typeof(string));
+            dtLastPopulation.Columns.Add("Fitness", typeof(double));
+            _dgvLastPopulation.DataSource = dtLastPopulation;
+
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
             SetColumnWidth(_dgvCoordinates, _coordinatesViewMinWidth);
@@ -383,6 +393,9 @@ namespace App.Gui
         private void ClearResult()
         {
             _dgvSummary.DataSource = new DataTable();
+            ((DataTable)_dgvInitialPopulation.DataSource).Rows.Clear();
+            ((DataTable)_dgvLastPopulation.DataSource).Rows.Clear();
+
             _shortestPath = null;
             _resultSetup = null;
             _result = null;
@@ -607,6 +620,8 @@ namespace App.Gui
             _result = res;
 
             DisplaySummary(res, shortestPath, setup.GenotypeSize, started, finished, swGA.ElapsedMilliseconds, swTotal.ElapsedMilliseconds);
+            DisplayPopulation();
+
             UpdateApp();
 
         }
@@ -671,8 +686,24 @@ namespace App.Gui
             dtSummary.Rows.Add("Best Fitness", Math.Round(res.Best.Fitness, _decimalsToRound));
             dtSummary.Rows.Add("Last Generation", res.LastGeneration);
             dtSummary.Rows.Add("Has Converged", (res.HasConverged) ? "Yes" : "No");
+            dtSummary.Rows.Add("Last Convergence (%)", Math.Round(res.LastConvergence, _decimalsToRound));
             dtSummary.Rows.Add("GA Duration (ms)", gaDuration);
             dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
+        }
+
+        private void DisplayPopulation()
+        {
+            var dtInitialPopulation = (DataTable)_dgvInitialPopulation.DataSource;
+            foreach (var ind in _result.InitialPopulation)
+            {
+                dtInitialPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+            }
+
+            var dtLastPopulation = (DataTable)_dgvLastPopulation.DataSource;
+            foreach (var ind in _result.LastPopulation)
+            {
+                dtLastPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+            }
         }
 
         private void PrintTo(string message, bool? debug = false)
@@ -794,8 +825,8 @@ namespace App.Gui
                 // get points to and draw them
                 var coordBefore = _shortestPath[i].Coord;
                 var coordNext = _shortestPath[i + 1].Coord;
-                var pBefore = new Point(coordBefore.X - start.X, coordBefore.Y - start.Y + padding);
-                var pNext = new Point(coordNext.X - start.X, coordNext.Y - start.Y);
+                var pBefore = new Point(coordBefore.X - start.X + padding, coordBefore.Y - start.Y + padding);
+                var pNext = new Point(coordNext.X - start.X + padding, coordNext.Y - start.Y + padding);
 
                 graphics.DrawLine(_linePen, pBefore, pNext);
             }

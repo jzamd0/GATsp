@@ -10,7 +10,6 @@ namespace App.Gui
         public string MessageWarningValidNumber { get; private set; }
         public string MessageWarningPositiveNumber { get; private set; }
         public string MessageWarningRatesInterval { get; private set; }
-        public string MessageWarningRatesDistribution { get; private set; }
 
         public FrmGASetup()
         {
@@ -18,8 +17,7 @@ namespace App.Gui
 
             MessageWarningValidNumber = "Please enter a valid number.";
             MessageWarningPositiveNumber = "Please enter a positive number.";
-            MessageWarningRatesInterval = "Rates should be between 0 and 1.";
-            MessageWarningRatesDistribution = "Rates for crossover and elitism should sum no more than 1.";
+            MessageWarningRatesInterval = "Rate values must be between 0 and 1.";
         }
 
         private void FrmGASetup_Load(object sender, EventArgs e)
@@ -34,7 +32,9 @@ namespace App.Gui
 
             var crossoverItems = new[] {
                 new { Text = "None", Value = CrossoverType.None },
-                new { Text = "OX", Value = CrossoverType.OX },
+                new { Text = "OBX", Value = CrossoverType.OBX },
+                new { Text = "PPX", Value = CrossoverType.PPX },
+                new { Text = "TPX", Value = CrossoverType.TPX },
             };
 
             _cbxCrossoverType.DataSource = crossoverItems;
@@ -81,25 +81,23 @@ namespace App.Gui
                 return (false, null, MessageWarningPositiveNumber);
             }
 
-            if (popSize < GA.PopulationSizeLimit)
+            if (popSize < GA.MinPopulationSize)
             {
-                return (false, null, $"Population size must be greater than {GA.PopulationSizeLimit - 1}.");
+                return (false, null, $"Population size must be greater than {GA.MinPopulationSize - 1}.");
             }
-            if (generations < GA.GenerationsLimit)
+            if (generations < GA.MinGenerations)
             {
-                return (false, null, $"Generations must be greater than {GA.GenerationsLimit - 1}.");
+                return (false, null, $"Generations must be greater than {GA.MinGenerations - 1}.");
+            }
+            if (popSize % 2 != 0)
+            {
+                return (false, null, "Population size must be even");
             }
 
             // check for rate interval
             if (!(0 <= px && px <= 1) || !(0 <= pm && pm <= 1) || !(0 <= pe && pe <= 1))
             {
                 return (false, null, MessageWarningRatesInterval);
-            }
-
-            // check for distribution of rates
-            if (px + pe > 1)
-            {
-                return (false, null, MessageWarningRatesDistribution);
             }
 
             var setup = new GASetup();

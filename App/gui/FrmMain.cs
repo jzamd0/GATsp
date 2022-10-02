@@ -27,7 +27,7 @@ namespace App.Gui
 
             _canvasPadding = 40;
 
-            _minNodesToSolveTsp = GA.GenotypeSizeLimit - 1;
+            _minNodesToSolveTsp = GA.MinGenotypeSize - 1;
             _minNodesToDistances = _minNodesToSolveTsp;
             _minNodesToGraph = 1;
 
@@ -133,6 +133,13 @@ namespace App.Gui
             }
 
             SolveTsp(res.Setup);
+        }
+
+        private void _mniClearResult_Click(object sender, System.EventArgs e)
+        {
+            ClearResult();
+
+            UpdateApp();
         }
 
         private void _minGenerateDistances_Click(object sender, System.EventArgs e)

@@ -161,7 +161,10 @@ namespace App.Gui
         #region Menu Help
         private void _mniAbout_Click(object sender, System.EventArgs e)
         {
-
+            using (var frmAbout = new FrmAbout())
+            {
+                var res = frmAbout.ShowDialog();
+            }
         }
         #endregion
 

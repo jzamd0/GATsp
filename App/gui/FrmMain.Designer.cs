@@ -56,7 +56,6 @@ namespace App.Gui
             this._tabControlResults = new System.Windows.Forms.TabControl();
             this._tabSummary = new System.Windows.Forms.TabPage();
             this._dgvSummary = new System.Windows.Forms.DataGridView();
-            this._tabResultData = new System.Windows.Forms.TabPage();
             this._tabPopulation = new System.Windows.Forms.TabPage();
             this._tablePanelPopulation = new System.Windows.Forms.TableLayoutPanel();
             this._dgvInitialPopulation = new System.Windows.Forms.DataGridView();
@@ -442,7 +441,6 @@ namespace App.Gui
             // _tabControlResults
             // 
             this._tabControlResults.Controls.Add(this._tabSummary);
-            this._tabControlResults.Controls.Add(this._tabResultData);
             this._tabControlResults.Controls.Add(this._tabPopulation);
             this._tabControlResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabControlResults.Location = new System.Drawing.Point(0, 0);
@@ -479,16 +477,6 @@ namespace App.Gui
             this._dgvSummary.RowTemplate.Height = 25;
             this._dgvSummary.Size = new System.Drawing.Size(570, 93);
             this._dgvSummary.TabIndex = 0;
-            // 
-            // _tabResultData
-            // 
-            this._tabResultData.Location = new System.Drawing.Point(4, 24);
-            this._tabResultData.Name = "_tabResultData";
-            this._tabResultData.Padding = new System.Windows.Forms.Padding(3);
-            this._tabResultData.Size = new System.Drawing.Size(576, 99);
-            this._tabResultData.TabIndex = 2;
-            this._tabResultData.Text = "Data";
-            this._tabResultData.UseVisualStyleBackColor = true;
             // 
             // _tabPopulation
             // 
@@ -933,7 +921,6 @@ namespace App.Gui
         private System.Windows.Forms.DataGridView _dgvLastPopulation;
         private System.Windows.Forms.Label _lblInitialPopulation;
         private System.Windows.Forms.Label _lblLastPopulation;
-        private System.Windows.Forms.TabPage _tabResultData;
     }
 }
 

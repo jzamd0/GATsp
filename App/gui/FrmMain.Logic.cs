@@ -17,7 +17,6 @@ namespace App.Gui
     public partial class FrmMain
     {
         private FrmGASetup _frmGASetup { get; set; }
-        private FrmGAResultData _frmGAResultData { get; set; }
 
         private string _programTitle { get; set; }
         private string _fileTitle { get; set; }
@@ -97,16 +96,6 @@ namespace App.Gui
             _frmGASetup.FormBorderStyle = FormBorderStyle.None;
             _frmGASetup.Dock = DockStyle.Fill;
             _frmGASetup.Show();
-        }
-
-        private void AddGAResultDataPanel()
-        {
-            _frmGAResultData = new FrmGAResultData();
-            _frmGAResultData.TopLevel = false;
-            _tabResultData.Controls.Add(_frmGAResultData);
-            _frmGAResultData.FormBorderStyle = FormBorderStyle.None;
-            _frmGAResultData.Dock = DockStyle.Fill;
-            _frmGAResultData.Show();
         }
 
         #region File
@@ -412,8 +401,6 @@ namespace App.Gui
             ((DataTable)_dgvSummary.DataSource).Rows.Clear();
             ((DataTable)_dgvInitialPopulation.DataSource).Rows.Clear();
             ((DataTable)_dgvLastPopulation.DataSource).Rows.Clear();
-            _tabResultData.Controls.Remove(_frmGAResultData);
-            _frmGAResultData = null;
             _tablePanelPopulation.Visible = false;
             _dgvSummary.Visible = false;
 
@@ -642,8 +629,6 @@ namespace App.Gui
 
             DisplaySummary(shortestPath, setup.GenotypeSize, started, finished, swGA.ElapsedMilliseconds, swTotal.ElapsedMilliseconds);
             DisplayPopulation();
-            AddGAResultDataPanel();
-            DisplayData();
 
             UpdateApp();
         }
@@ -727,11 +712,6 @@ namespace App.Gui
             }
 
             _tablePanelPopulation.Visible = true;
-        }
-
-        private void DisplayData()
-        {
-            _frmGAResultData.DisplayData(_result, _decimalsToRound);
         }
 
         private void PrintTo(string message, bool? debug = false)

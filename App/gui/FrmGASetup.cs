@@ -7,17 +7,17 @@ namespace App.Gui
 {
     public partial class FrmGASetup : Form
     {
-        public string MessageWarningValidNumber { get; private set; }
-        public string MessageWarningPositiveNumber { get; private set; }
-        public string MessageWarningRatesInterval { get; private set; }
+        private string _messageWarningValidNumber { get; set; }
+        private string _messageWarningPositiveNumber { get; set; }
+        private string _messageWarningRatesInterval { get; set; }
 
         public FrmGASetup()
         {
             InitializeComponent();
 
-            MessageWarningValidNumber = "Please enter a valid number.";
-            MessageWarningPositiveNumber = "Please enter a positive number.";
-            MessageWarningRatesInterval = "Rate values must be between 0 and 1.";
+            _messageWarningValidNumber = "Please enter a valid number.";
+            _messageWarningPositiveNumber = "Please enter a positive number.";
+            _messageWarningRatesInterval = "Rate values must be between 0 and 1.";
         }
 
         private void FrmGASetup_Load(object sender, EventArgs e)
@@ -56,29 +56,29 @@ namespace App.Gui
         {
             if (!int.TryParse(_tbxPopulationSize.Text, out int popSize))
             {
-                return (false, null, MessageWarningValidNumber);
+                return (false, null, _messageWarningValidNumber);
             }
             if (!int.TryParse(_tbxGenerations.Text, out int generations))
             {
-                return (false, null, MessageWarningValidNumber);
+                return (false, null, _messageWarningValidNumber);
             }
             if (!double.TryParse(_tbxCrossoverRate.Text, out double px))
             {
-                return (false, null, MessageWarningValidNumber);
+                return (false, null, _messageWarningValidNumber);
             }
             if (!double.TryParse(_tbxMutationRate.Text, out double pm))
             {
-                return (false, null, MessageWarningValidNumber);
+                return (false, null, _messageWarningValidNumber);
             }
             if (!double.TryParse(_tbxElitismRate.Text, out double pe))
             {
-                return (false, null, MessageWarningValidNumber);
+                return (false, null, _messageWarningValidNumber);
             }
 
             // check for negative numbers
             if (popSize < 0 || generations < 0 || px < 0 || pm < 0 || pe < 0)
             {
-                return (false, null, MessageWarningPositiveNumber);
+                return (false, null, _messageWarningPositiveNumber);
             }
 
             if (popSize < GA.MinPopulationSize)
@@ -97,7 +97,7 @@ namespace App.Gui
             // check for rate interval
             if (!(0 <= px && px <= 1) || !(0 <= pm && pm <= 1) || !(0 <= pe && pe <= 1))
             {
-                return (false, null, MessageWarningRatesInterval);
+                return (false, null, _messageWarningRatesInterval);
             }
 
             var setup = new GASetup();

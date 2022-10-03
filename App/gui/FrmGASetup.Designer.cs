@@ -50,6 +50,7 @@ namespace App.Gui
             // _tablePanelMain
             // 
             this._tablePanelMain.AutoSize = true;
+            this._tablePanelMain.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._tablePanelMain.ColumnCount = 3;
             this._tablePanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this._tablePanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -96,7 +97,7 @@ namespace App.Gui
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this._tablePanelMain.Size = new System.Drawing.Size(180, 388);
+            this._tablePanelMain.Size = new System.Drawing.Size(153, 388);
             this._tablePanelMain.TabIndex = 0;
             // 
             // _lblPopulationSize
@@ -149,7 +150,7 @@ namespace App.Gui
             this._tbxPopulationSize.Dock = System.Windows.Forms.DockStyle.Top;
             this._tbxPopulationSize.Location = new System.Drawing.Point(8, 28);
             this._tbxPopulationSize.Name = "_tbxPopulationSize";
-            this._tbxPopulationSize.Size = new System.Drawing.Size(164, 23);
+            this._tbxPopulationSize.Size = new System.Drawing.Size(137, 23);
             this._tbxPopulationSize.TabIndex = 5;
             this._tbxPopulationSize.Text = "0";
             // 
@@ -158,7 +159,7 @@ namespace App.Gui
             this._tbxGenerations.Dock = System.Windows.Forms.DockStyle.Top;
             this._tbxGenerations.Location = new System.Drawing.Point(8, 82);
             this._tbxGenerations.Name = "_tbxGenerations";
-            this._tbxGenerations.Size = new System.Drawing.Size(164, 23);
+            this._tbxGenerations.Size = new System.Drawing.Size(137, 23);
             this._tbxGenerations.TabIndex = 6;
             this._tbxGenerations.Text = "0";
             // 
@@ -167,7 +168,7 @@ namespace App.Gui
             this._tbxCrossoverRate.Dock = System.Windows.Forms.DockStyle.Top;
             this._tbxCrossoverRate.Location = new System.Drawing.Point(8, 136);
             this._tbxCrossoverRate.Name = "_tbxCrossoverRate";
-            this._tbxCrossoverRate.Size = new System.Drawing.Size(164, 23);
+            this._tbxCrossoverRate.Size = new System.Drawing.Size(137, 23);
             this._tbxCrossoverRate.TabIndex = 7;
             this._tbxCrossoverRate.Text = "0.0";
             // 
@@ -176,7 +177,7 @@ namespace App.Gui
             this._tbxMutationRate.Dock = System.Windows.Forms.DockStyle.Top;
             this._tbxMutationRate.Location = new System.Drawing.Point(8, 190);
             this._tbxMutationRate.Name = "_tbxMutationRate";
-            this._tbxMutationRate.Size = new System.Drawing.Size(164, 23);
+            this._tbxMutationRate.Size = new System.Drawing.Size(137, 23);
             this._tbxMutationRate.TabIndex = 8;
             this._tbxMutationRate.Text = "0.0";
             // 
@@ -185,7 +186,7 @@ namespace App.Gui
             this._tbxElitismRate.Dock = System.Windows.Forms.DockStyle.Top;
             this._tbxElitismRate.Location = new System.Drawing.Point(8, 244);
             this._tbxElitismRate.Name = "_tbxElitismRate";
-            this._tbxElitismRate.Size = new System.Drawing.Size(164, 23);
+            this._tbxElitismRate.Size = new System.Drawing.Size(137, 23);
             this._tbxElitismRate.TabIndex = 9;
             this._tbxElitismRate.Text = "0.0";
             // 
@@ -205,7 +206,7 @@ namespace App.Gui
             this._cbxCrossoverType.FormattingEnabled = true;
             this._cbxCrossoverType.Location = new System.Drawing.Point(8, 298);
             this._cbxCrossoverType.Name = "_cbxCrossoverType";
-            this._cbxCrossoverType.Size = new System.Drawing.Size(164, 23);
+            this._cbxCrossoverType.Size = new System.Drawing.Size(137, 23);
             this._cbxCrossoverType.TabIndex = 11;
             // 
             // _lblMutationType
@@ -224,19 +225,19 @@ namespace App.Gui
             this._cbxMutationType.FormattingEnabled = true;
             this._cbxMutationType.Location = new System.Drawing.Point(8, 352);
             this._cbxMutationType.Name = "_cbxMutationType";
-            this._cbxMutationType.Size = new System.Drawing.Size(164, 23);
+            this._cbxMutationType.Size = new System.Drawing.Size(137, 23);
             this._cbxMutationType.TabIndex = 14;
             // 
             // FrmGASetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
+            this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(180, 388);
+            this.ClientSize = new System.Drawing.Size(170, 200);
             this.Controls.Add(this._tablePanelMain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.MinimumSize = new System.Drawing.Size(180, 300);
+            this.MinimumSize = new System.Drawing.Size(170, 200);
             this.Name = "FrmGASetup";
             this.Text = "GA Setup";
             this.Load += new System.EventHandler(this.FrmGASetup_Load);

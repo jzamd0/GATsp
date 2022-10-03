@@ -47,9 +47,13 @@ namespace App.Gui
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
             _mniSolveTsp.Enabled = false;
+            _mniClearResult.Enabled = false;
             _mniGenerateDistances.Enabled = false;
             _mniClearDistances.Enabled = false;
             _mniClearNodes.Enabled = false;
+
+            _tablePanelPopulation.Visible = false;
+            _dgvSummary.Visible = false;
         }
 
         #region Menu File

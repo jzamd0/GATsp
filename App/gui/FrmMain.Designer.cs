@@ -56,7 +56,13 @@ namespace App.Gui
             this._tabControlResults = new System.Windows.Forms.TabControl();
             this._tabSummary = new System.Windows.Forms.TabPage();
             this._dgvSummary = new System.Windows.Forms.DataGridView();
+            this._tabResultData = new System.Windows.Forms.TabPage();
             this._tabPopulation = new System.Windows.Forms.TabPage();
+            this._tablePanelPopulation = new System.Windows.Forms.TableLayoutPanel();
+            this._dgvInitialPopulation = new System.Windows.Forms.DataGridView();
+            this._dgvLastPopulation = new System.Windows.Forms.DataGridView();
+            this._lblInitialPopulation = new System.Windows.Forms.Label();
+            this._lblLastPopulation = new System.Windows.Forms.Label();
             this._statusMain = new System.Windows.Forms.StatusStrip();
             this._menuStripMain = new System.Windows.Forms.MenuStrip();
             this._menuFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,11 +93,6 @@ namespace App.Gui
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this._tablePanelPopulation = new System.Windows.Forms.TableLayoutPanel();
-            this._dgvInitialPopulation = new System.Windows.Forms.DataGridView();
-            this._dgvLastPopulation = new System.Windows.Forms.DataGridView();
-            this._lblInitialPopulation = new System.Windows.Forms.Label();
-            this._lblLastPopulation = new System.Windows.Forms.Label();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -123,10 +124,10 @@ namespace App.Gui
             this._tabSummary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvSummary)).BeginInit();
             this._tabPopulation.SuspendLayout();
-            this._menuStripMain.SuspendLayout();
             this._tablePanelPopulation.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvInitialPopulation)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._dgvLastPopulation)).BeginInit();
+            this._menuStripMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // _pnlMain
@@ -209,7 +210,6 @@ namespace App.Gui
             // 
             // _tabSetup
             // 
-            this._tabSetup.AutoScroll = true;
             this._tabSetup.Location = new System.Drawing.Point(4, 24);
             this._tabSetup.Name = "_tabSetup";
             this._tabSetup.Padding = new System.Windows.Forms.Padding(3);
@@ -442,6 +442,7 @@ namespace App.Gui
             // _tabControlResults
             // 
             this._tabControlResults.Controls.Add(this._tabSummary);
+            this._tabControlResults.Controls.Add(this._tabResultData);
             this._tabControlResults.Controls.Add(this._tabPopulation);
             this._tabControlResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabControlResults.Location = new System.Drawing.Point(0, 0);
@@ -479,6 +480,16 @@ namespace App.Gui
             this._dgvSummary.Size = new System.Drawing.Size(570, 93);
             this._dgvSummary.TabIndex = 0;
             // 
+            // _tabResultData
+            // 
+            this._tabResultData.Location = new System.Drawing.Point(4, 24);
+            this._tabResultData.Name = "_tabResultData";
+            this._tabResultData.Padding = new System.Windows.Forms.Padding(3);
+            this._tabResultData.Size = new System.Drawing.Size(576, 99);
+            this._tabResultData.TabIndex = 2;
+            this._tabResultData.Text = "Data";
+            this._tabResultData.UseVisualStyleBackColor = true;
+            // 
             // _tabPopulation
             // 
             this._tabPopulation.Controls.Add(this._tablePanelPopulation);
@@ -489,6 +500,80 @@ namespace App.Gui
             this._tabPopulation.TabIndex = 1;
             this._tabPopulation.Text = "Population";
             this._tabPopulation.UseVisualStyleBackColor = true;
+            // 
+            // _tablePanelPopulation
+            // 
+            this._tablePanelPopulation.ColumnCount = 3;
+            this._tablePanelPopulation.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this._tablePanelPopulation.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this._tablePanelPopulation.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this._tablePanelPopulation.Controls.Add(this._dgvInitialPopulation, 0, 2);
+            this._tablePanelPopulation.Controls.Add(this._dgvLastPopulation, 2, 2);
+            this._tablePanelPopulation.Controls.Add(this._lblInitialPopulation, 0, 1);
+            this._tablePanelPopulation.Controls.Add(this._lblLastPopulation, 2, 1);
+            this._tablePanelPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._tablePanelPopulation.Location = new System.Drawing.Point(3, 3);
+            this._tablePanelPopulation.Name = "_tablePanelPopulation";
+            this._tablePanelPopulation.RowCount = 3;
+            this._tablePanelPopulation.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 15F));
+            this._tablePanelPopulation.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tablePanelPopulation.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this._tablePanelPopulation.Size = new System.Drawing.Size(570, 93);
+            this._tablePanelPopulation.TabIndex = 0;
+            // 
+            // _dgvInitialPopulation
+            // 
+            this._dgvInitialPopulation.AllowUserToAddRows = false;
+            this._dgvInitialPopulation.AllowUserToDeleteRows = false;
+            this._dgvInitialPopulation.AllowUserToResizeRows = false;
+            this._dgvInitialPopulation.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvInitialPopulation.BackgroundColor = System.Drawing.Color.White;
+            this._dgvInitialPopulation.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._dgvInitialPopulation.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._dgvInitialPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dgvInitialPopulation.Location = new System.Drawing.Point(3, 33);
+            this._dgvInitialPopulation.Name = "_dgvInitialPopulation";
+            this._dgvInitialPopulation.ReadOnly = true;
+            this._dgvInitialPopulation.RowHeadersVisible = false;
+            this._dgvInitialPopulation.RowTemplate.Height = 25;
+            this._dgvInitialPopulation.Size = new System.Drawing.Size(274, 57);
+            this._dgvInitialPopulation.TabIndex = 0;
+            // 
+            // _dgvLastPopulation
+            // 
+            this._dgvLastPopulation.AllowUserToAddRows = false;
+            this._dgvLastPopulation.AllowUserToDeleteRows = false;
+            this._dgvLastPopulation.AllowUserToResizeRows = false;
+            this._dgvLastPopulation.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvLastPopulation.BackgroundColor = System.Drawing.Color.White;
+            this._dgvLastPopulation.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._dgvLastPopulation.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._dgvLastPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dgvLastPopulation.Location = new System.Drawing.Point(293, 33);
+            this._dgvLastPopulation.Name = "_dgvLastPopulation";
+            this._dgvLastPopulation.ReadOnly = true;
+            this._dgvLastPopulation.RowHeadersVisible = false;
+            this._dgvLastPopulation.RowTemplate.Height = 25;
+            this._dgvLastPopulation.Size = new System.Drawing.Size(274, 57);
+            this._dgvLastPopulation.TabIndex = 1;
+            // 
+            // _lblInitialPopulation
+            // 
+            this._lblInitialPopulation.AutoSize = true;
+            this._lblInitialPopulation.Location = new System.Drawing.Point(3, 15);
+            this._lblInitialPopulation.Name = "_lblInitialPopulation";
+            this._lblInitialPopulation.Size = new System.Drawing.Size(97, 15);
+            this._lblInitialPopulation.TabIndex = 2;
+            this._lblInitialPopulation.Text = "Initial Population";
+            // 
+            // _lblLastPopulation
+            // 
+            this._lblLastPopulation.AutoSize = true;
+            this._lblLastPopulation.Location = new System.Drawing.Point(293, 15);
+            this._lblLastPopulation.Name = "_lblLastPopulation";
+            this._lblLastPopulation.Size = new System.Drawing.Size(89, 15);
+            this._lblLastPopulation.TabIndex = 3;
+            this._lblLastPopulation.Text = "Last Population";
             // 
             // _statusMain
             // 
@@ -675,7 +760,7 @@ namespace App.Gui
             // 
             this._mniClearResult.Name = "_mniClearResult";
             this._mniClearResult.Size = new System.Drawing.Size(215, 22);
-            this._mniClearResult.Text = "Clear Result";
+            this._mniClearResult.Text = "Clear TSP Result";
             this._mniClearResult.Click += new System.EventHandler(this._mniClearResult_Click);
             // 
             // _mniGenerateDistancesAndEdgesSep
@@ -725,80 +810,6 @@ namespace App.Gui
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
             // 
-            // _tablePanelPopulation
-            // 
-            this._tablePanelPopulation.ColumnCount = 3;
-            this._tablePanelPopulation.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this._tablePanelPopulation.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-            this._tablePanelPopulation.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this._tablePanelPopulation.Controls.Add(this._dgvInitialPopulation, 0, 2);
-            this._tablePanelPopulation.Controls.Add(this._dgvLastPopulation, 2, 2);
-            this._tablePanelPopulation.Controls.Add(this._lblInitialPopulation, 0, 1);
-            this._tablePanelPopulation.Controls.Add(this._lblLastPopulation, 2, 1);
-            this._tablePanelPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._tablePanelPopulation.Location = new System.Drawing.Point(3, 3);
-            this._tablePanelPopulation.Name = "_tablePanelPopulation";
-            this._tablePanelPopulation.RowCount = 3;
-            this._tablePanelPopulation.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-            this._tablePanelPopulation.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this._tablePanelPopulation.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this._tablePanelPopulation.Size = new System.Drawing.Size(570, 93);
-            this._tablePanelPopulation.TabIndex = 0;
-            // 
-            // _dgvInitialPopulation
-            // 
-            this._dgvInitialPopulation.AllowUserToAddRows = false;
-            this._dgvInitialPopulation.AllowUserToDeleteRows = false;
-            this._dgvInitialPopulation.AllowUserToResizeRows = false;
-            this._dgvInitialPopulation.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this._dgvInitialPopulation.BackgroundColor = System.Drawing.Color.White;
-            this._dgvInitialPopulation.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this._dgvInitialPopulation.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._dgvInitialPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dgvInitialPopulation.Location = new System.Drawing.Point(3, 28);
-            this._dgvInitialPopulation.Name = "_dgvInitialPopulation";
-            this._dgvInitialPopulation.ReadOnly = true;
-            this._dgvInitialPopulation.RowHeadersVisible = false;
-            this._dgvInitialPopulation.RowTemplate.Height = 25;
-            this._dgvInitialPopulation.Size = new System.Drawing.Size(274, 62);
-            this._dgvInitialPopulation.TabIndex = 0;
-            // 
-            // _dgvLastPopulation
-            // 
-            this._dgvLastPopulation.AllowUserToAddRows = false;
-            this._dgvLastPopulation.AllowUserToDeleteRows = false;
-            this._dgvLastPopulation.AllowUserToResizeRows = false;
-            this._dgvLastPopulation.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this._dgvLastPopulation.BackgroundColor = System.Drawing.Color.White;
-            this._dgvLastPopulation.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this._dgvLastPopulation.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._dgvLastPopulation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dgvLastPopulation.Location = new System.Drawing.Point(293, 28);
-            this._dgvLastPopulation.Name = "_dgvLastPopulation";
-            this._dgvLastPopulation.ReadOnly = true;
-            this._dgvLastPopulation.RowHeadersVisible = false;
-            this._dgvLastPopulation.RowTemplate.Height = 25;
-            this._dgvLastPopulation.Size = new System.Drawing.Size(274, 62);
-            this._dgvLastPopulation.TabIndex = 1;
-            // 
-            // _lblInitialPopulation
-            // 
-            this._lblInitialPopulation.AutoSize = true;
-            this._lblInitialPopulation.Location = new System.Drawing.Point(3, 10);
-            this._lblInitialPopulation.Name = "_lblInitialPopulation";
-            this._lblInitialPopulation.Size = new System.Drawing.Size(97, 15);
-            this._lblInitialPopulation.TabIndex = 2;
-            this._lblInitialPopulation.Text = "Initial Population";
-            // 
-            // _lblLastPopulation
-            // 
-            this._lblLastPopulation.AutoSize = true;
-            this._lblLastPopulation.Location = new System.Drawing.Point(293, 10);
-            this._lblLastPopulation.Name = "_lblLastPopulation";
-            this._lblLastPopulation.Size = new System.Drawing.Size(89, 15);
-            this._lblLastPopulation.TabIndex = 3;
-            this._lblLastPopulation.Text = "Last Population";
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -847,12 +858,12 @@ namespace App.Gui
             this._tabSummary.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._dgvSummary)).EndInit();
             this._tabPopulation.ResumeLayout(false);
-            this._menuStripMain.ResumeLayout(false);
-            this._menuStripMain.PerformLayout();
             this._tablePanelPopulation.ResumeLayout(false);
             this._tablePanelPopulation.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvInitialPopulation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._dgvLastPopulation)).EndInit();
+            this._menuStripMain.ResumeLayout(false);
+            this._menuStripMain.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -922,6 +933,7 @@ namespace App.Gui
         private System.Windows.Forms.DataGridView _dgvLastPopulation;
         private System.Windows.Forms.Label _lblInitialPopulation;
         private System.Windows.Forms.Label _lblLastPopulation;
+        private System.Windows.Forms.TabPage _tabResultData;
     }
 }
 

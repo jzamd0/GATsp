@@ -17,6 +17,7 @@ namespace App.Gui
     public partial class FrmMain
     {
         private FrmGASetup _frmGASetup { get; set; }
+        private FrmGAResultData _frmGAResultData { get; set; }
 
         private string _programTitle { get; set; }
         private string _fileTitle { get; set; }
@@ -94,8 +95,18 @@ namespace App.Gui
             _frmGASetup.TopLevel = false;
             _tabSetup.Controls.Add(_frmGASetup);
             _frmGASetup.FormBorderStyle = FormBorderStyle.None;
-            _frmGASetup.Dock = DockStyle.Top;
+            _frmGASetup.Dock = DockStyle.Fill;
             _frmGASetup.Show();
+        }
+
+        private void AddGAResultDataPanel()
+        {
+            _frmGAResultData = new FrmGAResultData();
+            _frmGAResultData.TopLevel = false;
+            _tabResultData.Controls.Add(_frmGAResultData);
+            _frmGAResultData.FormBorderStyle = FormBorderStyle.None;
+            _frmGAResultData.Dock = DockStyle.Fill;
+            _frmGAResultData.Show();
         }
 
         #region File
@@ -323,10 +334,12 @@ namespace App.Gui
         private void EnableOrDisableMenuItems()
         {
             _mniSolveTsp.Enabled = _data.Nodes.Count >= _minNodesToSolveTsp;
+
             _mniExportTspToDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
             _mniGenerateDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
-            _mniClearDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
-            _mniClearNodes.Enabled = _data.Nodes.Count >= _minNodesToGraph;
+            _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
+            _mniClearNodes.Enabled = !_data.Nodes.IsNullOrEmpty();
+            _mniClearResult.Enabled = _result != null;
             _mniExportTspToGraph.Enabled = _data.Nodes.Count >= _minNodesToGraph;
         }
 
@@ -350,7 +363,11 @@ namespace App.Gui
             _dgvCoordinates.DataSource = dtCoordinates;
 
             _dgvDistances.DataSource = new DataTable();
-            _dgvSummary.DataSource = new DataTable();
+
+            var dtSummary = new DataTable();
+            dtSummary.Columns.Add("Data", typeof(string));
+            dtSummary.Columns.Add("Values", typeof(string));
+            _dgvSummary.DataSource = dtSummary;
 
             var dtInitialPopulation = new DataTable();
             dtInitialPopulation.Columns.Add("Path", typeof(string));
@@ -380,7 +397,7 @@ namespace App.Gui
             ((DataTable)_dgvNodes.DataSource).Rows.Clear();
             ((DataTable)_dgvEdges.DataSource).Rows.Clear();
             ((DataTable)_dgvCoordinates.DataSource).Rows.Clear();
-            _dgvDistances.DataSource = new DataTable();
+            ((DataTable)_dgvDistances.DataSource).Rows.Clear();
             ClearResult();
 
             _data = null;
@@ -392,9 +409,13 @@ namespace App.Gui
 
         private void ClearResult()
         {
-            _dgvSummary.DataSource = new DataTable();
+            ((DataTable)_dgvSummary.DataSource).Rows.Clear();
             ((DataTable)_dgvInitialPopulation.DataSource).Rows.Clear();
             ((DataTable)_dgvLastPopulation.DataSource).Rows.Clear();
+            _tabResultData.Controls.Remove(_frmGAResultData);
+            _frmGAResultData = null;
+            _tablePanelPopulation.Visible = false;
+            _dgvSummary.Visible = false;
 
             _shortestPath = null;
             _resultSetup = null;
@@ -547,7 +568,7 @@ namespace App.Gui
 
             DisplayDistances();
 
-            UpdateLabels();
+            UpdateApp();
         }
 
         private (double[][] Distances, Edge<Node>[] Edges) GetDistances(List<Node> nodes)
@@ -589,7 +610,7 @@ namespace App.Gui
             _distances = null;
             _edges = null;
 
-            UpdateLabels();
+            UpdateApp();
         }
         #endregion
 
@@ -619,11 +640,12 @@ namespace App.Gui
             _resultSetup = setup;
             _result = res;
 
-            DisplaySummary(res, shortestPath, setup.GenotypeSize, started, finished, swGA.ElapsedMilliseconds, swTotal.ElapsedMilliseconds);
+            DisplaySummary(shortestPath, setup.GenotypeSize, started, finished, swGA.ElapsedMilliseconds, swTotal.ElapsedMilliseconds);
             DisplayPopulation();
+            AddGAResultDataPanel();
+            DisplayData();
 
             UpdateApp();
-
         }
         #endregion
 
@@ -672,23 +694,22 @@ namespace App.Gui
             }
         }
 
-        private void DisplaySummary(GAResult res, List<Node> shortestPath, int genotypeSize, DateTime started, DateTime finished, long gaDuration, long totalDuration)
+        private void DisplaySummary(List<Node> shortestPath, int genotypeSize, DateTime started, DateTime finished, long gaDuration, long totalDuration)
         {
             var dtSummary = (DataTable)_dgvSummary.DataSource;
-            dtSummary.Columns.Add("Data", typeof(string));
-            dtSummary.Columns.Add("Values", typeof(string));
-            _dgvSummary.DataSource = dtSummary;
 
             dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Genotype Size", genotypeSize);
             dtSummary.Rows.Add("Best Tour", string.Join(", ", shortestPath.Select(n => n.Name).ToArray()));
-            dtSummary.Rows.Add("Best Fitness", Math.Round(res.Best.Fitness, _decimalsToRound));
-            dtSummary.Rows.Add("Last Generation", res.LastGeneration);
-            dtSummary.Rows.Add("Has Converged", (res.HasConverged) ? "Yes" : "No");
-            dtSummary.Rows.Add("Last Convergence (%)", Math.Round(res.LastConvergence, _decimalsToRound));
+            dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
+            dtSummary.Rows.Add("Last Generation", _result.LastGeneration);
+            dtSummary.Rows.Add("Has Converged", (_result.HasConverged) ? "Yes" : "No");
+            dtSummary.Rows.Add("Last Convergence (%)", Math.Round(_result.LastConvergence, _decimalsToRound));
             dtSummary.Rows.Add("GA Duration (ms)", gaDuration);
             dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
+
+            _dgvSummary.Visible = true;
         }
 
         private void DisplayPopulation()
@@ -704,6 +725,13 @@ namespace App.Gui
             {
                 dtLastPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
             }
+
+            _tablePanelPopulation.Visible = true;
+        }
+
+        private void DisplayData()
+        {
+            _frmGAResultData.DisplayData(_result, _decimalsToRound);
         }
 
         private void PrintTo(string message, bool? debug = false)

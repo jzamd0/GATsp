@@ -1,6 +1,7 @@
 ﻿using Lib.Genetics.Operators;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Lib.Genetics
@@ -15,6 +16,20 @@ namespace Lib.Genetics
         protected int TourStart { get; set; }
         protected int TourEnd { get; set; }
         protected int TourRange { get; set; }
+
+        public GAResult SolveMeasured(GASetup setup, bool verbose = false)
+        {
+            var result = new GAResult();
+            var sw = new Stopwatch();
+
+            sw.Start();
+            result = new GA().Solve(setup, verbose);
+            sw.Stop();
+
+            result.Duration = sw.ElapsedMilliseconds;
+            
+            return result;
+        }
 
         public GAResult Solve(GASetup setup, bool verbose = false)
         {

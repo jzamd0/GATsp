@@ -27,7 +27,7 @@ namespace App.Gui
         private double[][] _distances { get; set; }
         private Edge<Node>[] _edges { get; set; }
         private List<Node> _shortestPath { get; set; }
-        private GASetup _resultSetup { get; set; }
+        private GASetup _setup { get; set; }
         private GAResult _result { get; set; }
 
         private int _distancesViewMinWidth { get; set; }
@@ -405,7 +405,7 @@ namespace App.Gui
             _dgvSummary.Visible = false;
 
             _shortestPath = null;
-            _resultSetup = null;
+            _setup = null;
             _result = null;
         }
 
@@ -608,26 +608,23 @@ namespace App.Gui
 
             var started = DateTime.Now;
             var swTotal = new Stopwatch();
-            var swGA = new Stopwatch();
 
             swTotal.Start();
             GenerateDistances();
             setup.Distances = _distances;
             setup.GenotypeSize = _data.Nodes.Count + 1;
 
-            swGA.Start();
-            var res = new GA().Solve(setup, false);
-            swGA.Stop();
+            var res = new GA().SolveMeasured(setup, false);
 
             var shortestPath = Helper.MapToPath(_data.Nodes, res.Best.Values);
             swTotal.Stop();
             var finished = DateTime.Now;
 
             _shortestPath = shortestPath;
-            _resultSetup = setup;
+            _setup = setup;
             _result = res;
 
-            DisplaySummary(shortestPath, setup.GenotypeSize, started, finished, swGA.ElapsedMilliseconds, swTotal.ElapsedMilliseconds);
+            DisplaySummary(shortestPath, started, finished, swTotal.ElapsedMilliseconds);
             DisplayPopulation();
 
             UpdateApp();
@@ -679,19 +676,18 @@ namespace App.Gui
             }
         }
 
-        private void DisplaySummary(List<Node> shortestPath, int genotypeSize, DateTime started, DateTime finished, long gaDuration, long totalDuration)
+        private void DisplaySummary(List<Node> shortestPath, DateTime started, DateTime finished, long totalDuration)
         {
             var dtSummary = (DataTable)_dgvSummary.DataSource;
 
             dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
-            dtSummary.Rows.Add("Genotype Size", genotypeSize);
             dtSummary.Rows.Add("Best Tour", string.Join(", ", shortestPath.Select(n => n.Name).ToArray()));
             dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
             dtSummary.Rows.Add("Last Generation", _result.LastGeneration);
             dtSummary.Rows.Add("Has Converged", (_result.HasConverged) ? "Yes" : "No");
             dtSummary.Rows.Add("Last Convergence (%)", Math.Round(_result.LastConvergence, _decimalsToRound));
-            dtSummary.Rows.Add("GA Duration (ms)", gaDuration);
+            dtSummary.Rows.Add("GA Duration (ms)", _result.Duration);
             dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
 
             _dgvSummary.Visible = true;

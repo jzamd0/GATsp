@@ -8,13 +8,9 @@ namespace Lib.Genetics.Operators
         Tournament,
     }
 
-    public class Selection
+    public static class Selection
     {
-        public Selection()
-        {
-        }
-
-        public Individual Tournament(Individual[] population, int populationSize, int tournamentSize, Random rand)
+        public static Individual Tournament(Individual[] population, int populationSize, int tournamentSize, Random rand)
         {
             Individual best = null;
 

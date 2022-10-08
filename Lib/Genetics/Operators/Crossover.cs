@@ -11,13 +11,9 @@ namespace Lib.Genetics.Operators
         TPX,
     }
 
-    public class Crossover
+    public static class Crossover
     {
-        public Crossover()
-        {
-        }
-
-        public double[] PPX(double[] parent1, double[] parent2, int genotypeSize, int[] mask)
+        public static double[] PPX(double[] parent1, double[] parent2, int genotypeSize, int[] mask)
         {
             var offspring = new double[genotypeSize];
             // index for parents 1 and 2
@@ -49,7 +45,7 @@ namespace Lib.Genetics.Operators
             return offspring;
         }
 
-        public double[] OBX(double[] parent1, double[] parent2, int genotypeSize, int[] mask)
+        public static double[] OBX(double[] parent1, double[] parent2, int genotypeSize, int[] mask)
         {
             var offspring = new double[genotypeSize];
             var i2 = 0;
@@ -78,7 +74,7 @@ namespace Lib.Genetics.Operators
             return offspring;
         }
 
-        public double[] TPX(double[] parent1, double[] parent2, int genotypeSize, int point1, int point2)
+        public static double[] TPX(double[] parent1, double[] parent2, int genotypeSize, int point1, int point2)
         {
             var offspring = new double[genotypeSize];
             var i2 = 0;

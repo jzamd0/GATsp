@@ -27,6 +27,16 @@ namespace App.Gui
 
         private void SetComboBoxes()
         {
+            _cbxSelectionType.DisplayMember = "Text";
+            _cbxSelectionType.ValueMember = "Value";
+
+            var selectionItems = new[] {
+                new { Text = "None", Value = SelectionType.None },
+                new { Text = "Tournament", Value = SelectionType.Tournament },
+            };
+
+            _cbxSelectionType.DataSource = selectionItems;
+
             _cbxCrossoverType.DisplayMember = "Text";
             _cbxCrossoverType.ValueMember = "Value";
 
@@ -106,6 +116,7 @@ namespace App.Gui
             setup.CrossoverRate = px;
             setup.MutationRate = pm;
             setup.ElitismRate = pe;
+            setup.SelectionType = (SelectionType)_cbxSelectionType.SelectedValue;
             setup.CrossoverType = (px == 0) ? CrossoverType.None : (CrossoverType)_cbxCrossoverType.SelectedValue;
             setup.MutationType = (pm == 0) ? MutationType.None : (MutationType)_cbxMutationType.SelectedValue;
 

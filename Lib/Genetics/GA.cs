@@ -19,15 +19,14 @@ namespace Lib.Genetics
 
         public GAResult SolveMeasured(GASetup setup, bool verbose = false)
         {
-            var result = new GAResult();
             var sw = new Stopwatch();
 
             sw.Start();
-            result = new GA().Solve(setup, verbose);
+            var result = new GA().Solve(setup, verbose);
             sw.Stop();
 
             result.Duration = sw.ElapsedMilliseconds;
-            
+
             return result;
         }
 
@@ -71,7 +70,7 @@ namespace Lib.Genetics
             List<double> convergences = new List<double>();
 
             var population = InitializePopulation(setup.PopulationSize, setup.GenotypeSize);
-            population = GenerateInitialPopulation(population, setup.PopulationSize, setup.GenotypeSize);
+            population = GenerateInitialPopulation(population, setup.PopulationSize);
 
             Array.Copy(population, initialPopulation, population.Length);
             initialPopulation = GenerateFitness(initialPopulation, setup.Distances, setup.PopulationSize, setup.GenotypeSize);
@@ -79,7 +78,7 @@ namespace Lib.Genetics
             while (true)
             {
                 population = GenerateFitness(population, setup.Distances, setup.PopulationSize, setup.GenotypeSize);
-                best = GetBestIndividual(population, setup.PopulationSize, setup.GenotypeSize);
+                best = GetBestIndividual(population, setup.PopulationSize);
 
                 // get average and best fitness
                 averageFitnesses.Add(GetAverageFitness(population));
@@ -100,7 +99,6 @@ namespace Lib.Genetics
                 if (hasConverged)
                 {
                     Util.Print($"Population has converged at generation {generation}.", verbose);
-                    Util.Print(null, verbose);
                     break;
                 }
 
@@ -110,7 +108,14 @@ namespace Lib.Genetics
                     break;
                 }
 
-                newPopulation = SelectPopulation(population, setup.PopulationSize, setup.GenotypeSize);
+                if (setup.SelectionType == SelectionType.Tournament)
+                {
+                    newPopulation = SelectPopulation(population, setup.PopulationSize);
+                }
+                else if (setup.SelectionType == SelectionType.None)
+                {
+                    newPopulation = CopyPopulation(population, setup.PopulationSize);
+                }
                 if (setup.CrossoverRate > 0 && setup.CrossoverType != CrossoverType.None)
                 {
                     newPopulation = CrossoverPopulation(newPopulation, setup.PopulationSize, setup.GenotypeSize, setup.CrossoverRate, setup.CrossoverType);
@@ -160,7 +165,7 @@ namespace Lib.Genetics
             return population;
         }
 
-        protected Individual[] GenerateInitialPopulation(Individual[] population, int populationSize, int genotypeSize)
+        protected Individual[] GenerateInitialPopulation(Individual[] population, int populationSize)
         {
             var rand = new Random();
 
@@ -182,13 +187,13 @@ namespace Lib.Genetics
         {
             for (var i = 0; i < populationSize; i++)
             {
-                population[i].Fitness = GetFitness(population[i].Values, distances, genotypeSize);
+                population[i].Fitness = GetFitness(population[i].Values, distances);
             }
 
             return population;
         }
 
-        protected double GetFitness(double[] values, double[][] distances, int genotypeSize)
+        protected double GetFitness(double[] values, double[][] distances)
         {
             double fitness = 0;
 
@@ -207,7 +212,7 @@ namespace Lib.Genetics
             return population.Average(i => i.Fitness);
         }
 
-        protected Individual GetBestIndividual(Individual[] population, int populationSize, int genotypeSize)
+        protected Individual GetBestIndividual(Individual[] population, int populationSize)
         {
             var best = population[0];
 
@@ -219,16 +224,15 @@ namespace Lib.Genetics
             return best;
         }
 
-        protected Individual[] SelectPopulation(Individual[] population, int populationSize, int genotypeSize)
+        protected Individual[] SelectPopulation(Individual[] population, int populationSize)
         {
             var rand = new Random();
-            var selop = new Selection();
             var selectedPopulation = new Individual[populationSize];
             var tournamentSize = 2;
 
             for (var i = 0; i < populationSize; i++)
             {
-                var best = selop.Tournament(population, populationSize, tournamentSize, rand);
+                var best = Selection.Tournament(population, populationSize, tournamentSize, rand);
                 selectedPopulation[i] = best;
             }
 
@@ -238,7 +242,6 @@ namespace Lib.Genetics
         protected Individual[] CrossoverPopulation(Individual[] population, int populationSize, int genotypeSize, double crossoverRate, CrossoverType xopType)
         {
             var rand = new Random();
-            var xop = new Crossover();
             var crossoverPopulation = new Individual[populationSize];
             var range = 1;
 
@@ -256,23 +259,23 @@ namespace Lib.Genetics
                     {
                         var mask = Enumerable.Repeat(0, TourRange).Select(n => rand.Next(0, 2)).ToArray();
 
-                        offspring1 = xop.OBX(parent1, parent2, TourRange, mask);
-                        offspring2 = xop.OBX(parent2, parent1, TourRange, mask);
+                        offspring1 = Crossover.OBX(parent1, parent2, TourRange, mask);
+                        offspring2 = Crossover.OBX(parent2, parent1, TourRange, mask);
                     }
                     else if (xopType == CrossoverType.PPX)
                     {
                         var mask = Enumerable.Repeat(0, TourRange).Select(n => rand.Next(0, 2)).ToArray();
 
-                        offspring1 = xop.PPX(parent1, parent2, TourRange, mask);
-                        offspring2 = xop.PPX(parent2, parent1, TourRange, mask);
+                        offspring1 = Crossover.PPX(parent1, parent2, TourRange, mask);
+                        offspring2 = Crossover.PPX(parent2, parent1, TourRange, mask);
                     }
                     else if (xopType == CrossoverType.TPX)
                     {
                         var point1 = rand.Next(0, TourEnd - 1 - range);
                         var point2 = rand.Next(point1 + 1 + range, TourEnd);
 
-                        offspring1 = xop.TPX(parent1, parent2, TourRange, point1, point2);
-                        offspring2 = xop.TPX(parent2, parent1, TourRange, point1, point2);
+                        offspring1 = Crossover.TPX(parent1, parent2, TourRange, point1, point2);
+                        offspring2 = Crossover.TPX(parent2, parent1, TourRange, point1, point2);
                     }
 
                     offspring1 = Util.Expand(offspring1, genotypeSize, TourStart, 0);
@@ -294,7 +297,6 @@ namespace Lib.Genetics
         protected Individual[] MutatePopulation(Individual[] population, int populationSize, int genotypeSize, double mutationRate, MutationType mutopType)
         {
             var rand = new Random();
-            var mutop = new Mutation();
             var mutatedPopulation = new Individual[populationSize];
 
             for (var i = 0; i < populationSize; i++)
@@ -306,17 +308,17 @@ namespace Lib.Genetics
 
                     if (mutopType == MutationType.Insert)
                     {
-                        var values = mutop.Insert(population[i].Values, genotypeSize, point1, point2);
+                        var values = Mutation.Insert(population[i].Values, genotypeSize, point1, point2);
                         mutatedPopulation[i] = new Individual(values, 0);
                     }
                     else if (mutopType == MutationType.Swap)
                     {
-                        var values = mutop.Swap(population[i].Values, genotypeSize, point1, point2);
+                        var values = Mutation.Swap(population[i].Values, genotypeSize, point1, point2);
                         mutatedPopulation[i] = new Individual(values, 0);
                     }
                     else if (mutopType == MutationType.Switch)
                     {
-                        var values = mutop.Switch(population[i].Values, genotypeSize, point1, point2);
+                        var values = Mutation.Switch(population[i].Values, genotypeSize, point1, point2);
                         mutatedPopulation[i] = new Individual(values, 0);
                     }
                 }

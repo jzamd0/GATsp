@@ -16,7 +16,6 @@ namespace GATest
         public void TournamentTest()
         {
             var rand = new Random(99519289);
-            var selop = new Selection();
 
             var population = new Individual[]
             {
@@ -39,7 +38,7 @@ namespace GATest
             var actual = new Individual[populationSize];
             for (var i = 0; i < populationSize; i++)
             {
-                var best = selop.Tournament(population, populationSize, tournamentSize, rand);
+                var best = Selection.Tournament(population, populationSize, tournamentSize, rand);
                 actual[i] = best;
 
                 Assert.AreEqual(expected[i].Values, actual[i].Values);

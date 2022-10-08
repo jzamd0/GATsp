@@ -10,9 +10,9 @@ namespace Lib.Genetics.Operators
         Switch,
     }
 
-    public class Mutation
+    public static class Mutation
     {
-        public double[] Insert(double[] values, int genotypeSize, int point1, int point2)
+        public static double[] Insert(double[] values, int genotypeSize, int point1, int point2)
         {
             var offspring = new double[genotypeSize];
             Array.Copy(values, offspring, genotypeSize);
@@ -37,7 +37,7 @@ namespace Lib.Genetics.Operators
             return offspring;
         }
 
-        public double[] Swap(double[] values, int genotypeSize, int point1, int point2)
+        public static double[] Swap(double[] values, int genotypeSize, int point1, int point2)
         {
             var offspring = new double[genotypeSize];
             Array.Copy(values, offspring, genotypeSize);
@@ -49,7 +49,7 @@ namespace Lib.Genetics.Operators
             return offspring;
         }
 
-        public double[] Switch(double[] values, int genotypeSize, int point1, int point2)
+        public static double[] Switch(double[] values, int genotypeSize, int point1, int point2)
         {
             var offspring = new double[genotypeSize];
             Array.Copy(values, offspring, genotypeSize);

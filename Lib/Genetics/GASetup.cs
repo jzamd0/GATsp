@@ -11,6 +11,7 @@ namespace Lib.Genetics
         public double CrossoverRate { get; set; }
         public double MutationRate { get; set; }
         public double ElitismRate { get; set; }
+        public SelectionType SelectionType { get; set; }
         public CrossoverType CrossoverType { get; set; }
         public MutationType MutationType { get; set; }
 
@@ -18,7 +19,7 @@ namespace Lib.Genetics
         {
         }
 
-        public GASetup(double[][] distances, int genotypeSize, int populationSize, int generations, double crossoverRate, double mutationRate, double elitismRate, CrossoverType crossoverType, MutationType mutationType)
+        public GASetup(double[][] distances, int genotypeSize, int populationSize, int generations, double crossoverRate, double mutationRate, double elitismRate, SelectionType selectionType, CrossoverType crossoverType, MutationType mutationType)
         {
             Distances = distances;
             GenotypeSize = genotypeSize;
@@ -27,6 +28,7 @@ namespace Lib.Genetics
             CrossoverRate = crossoverRate;
             MutationRate = mutationRate;
             ElitismRate = elitismRate;
+            SelectionType = selectionType;
             CrossoverType = crossoverType;
             MutationType = mutationType;
         }

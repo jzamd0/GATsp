@@ -44,6 +44,8 @@ namespace App.Gui
             this._cbxCrossoverType = new System.Windows.Forms.ComboBox();
             this._lblMutationType = new System.Windows.Forms.Label();
             this._cbxMutationType = new System.Windows.Forms.ComboBox();
+            this._lblSelectionType = new System.Windows.Forms.Label();
+            this._cbxSelectionType = new System.Windows.Forms.ComboBox();
             this._tablePanelMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,14 +67,16 @@ namespace App.Gui
             this._tablePanelMain.Controls.Add(this._tbxCrossoverRate, 1, 8);
             this._tablePanelMain.Controls.Add(this._tbxMutationRate, 1, 11);
             this._tablePanelMain.Controls.Add(this._tbxElitismRate, 1, 14);
-            this._tablePanelMain.Controls.Add(this._lblCrossoverType, 1, 16);
-            this._tablePanelMain.Controls.Add(this._cbxCrossoverType, 1, 17);
-            this._tablePanelMain.Controls.Add(this._lblMutationType, 1, 19);
-            this._tablePanelMain.Controls.Add(this._cbxMutationType, 1, 20);
+            this._tablePanelMain.Controls.Add(this._lblCrossoverType, 1, 19);
+            this._tablePanelMain.Controls.Add(this._cbxCrossoverType, 1, 20);
+            this._tablePanelMain.Controls.Add(this._lblMutationType, 1, 22);
+            this._tablePanelMain.Controls.Add(this._cbxMutationType, 1, 23);
+            this._tablePanelMain.Controls.Add(this._lblSelectionType, 1, 16);
+            this._tablePanelMain.Controls.Add(this._cbxSelectionType, 1, 17);
             this._tablePanelMain.Dock = System.Windows.Forms.DockStyle.Top;
             this._tablePanelMain.Location = new System.Drawing.Point(0, 0);
             this._tablePanelMain.Name = "_tablePanelMain";
-            this._tablePanelMain.RowCount = 22;
+            this._tablePanelMain.RowCount = 25;
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -95,9 +99,10 @@ namespace App.Gui
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this._tablePanelMain.Size = new System.Drawing.Size(153, 388);
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this._tablePanelMain.Size = new System.Drawing.Size(153, 442);
             this._tablePanelMain.TabIndex = 0;
             // 
             // _lblPopulationSize
@@ -193,7 +198,7 @@ namespace App.Gui
             // _lblCrossoverType
             // 
             this._lblCrossoverType.AutoSize = true;
-            this._lblCrossoverType.Location = new System.Drawing.Point(8, 280);
+            this._lblCrossoverType.Location = new System.Drawing.Point(8, 334);
             this._lblCrossoverType.Name = "_lblCrossoverType";
             this._lblCrossoverType.Size = new System.Drawing.Size(86, 15);
             this._lblCrossoverType.TabIndex = 10;
@@ -204,15 +209,15 @@ namespace App.Gui
             this._cbxCrossoverType.Dock = System.Windows.Forms.DockStyle.Top;
             this._cbxCrossoverType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._cbxCrossoverType.FormattingEnabled = true;
-            this._cbxCrossoverType.Location = new System.Drawing.Point(8, 298);
+            this._cbxCrossoverType.Location = new System.Drawing.Point(8, 352);
             this._cbxCrossoverType.Name = "_cbxCrossoverType";
             this._cbxCrossoverType.Size = new System.Drawing.Size(137, 23);
-            this._cbxCrossoverType.TabIndex = 11;
+            this._cbxCrossoverType.TabIndex = 15;
             // 
             // _lblMutationType
             // 
             this._lblMutationType.AutoSize = true;
-            this._lblMutationType.Location = new System.Drawing.Point(8, 334);
+            this._lblMutationType.Location = new System.Drawing.Point(8, 388);
             this._lblMutationType.Name = "_lblMutationType";
             this._lblMutationType.Size = new System.Drawing.Size(83, 15);
             this._lblMutationType.TabIndex = 13;
@@ -223,10 +228,30 @@ namespace App.Gui
             this._cbxMutationType.Dock = System.Windows.Forms.DockStyle.Top;
             this._cbxMutationType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._cbxMutationType.FormattingEnabled = true;
-            this._cbxMutationType.Location = new System.Drawing.Point(8, 352);
+            this._cbxMutationType.Location = new System.Drawing.Point(8, 406);
             this._cbxMutationType.Name = "_cbxMutationType";
             this._cbxMutationType.Size = new System.Drawing.Size(137, 23);
-            this._cbxMutationType.TabIndex = 14;
+            this._cbxMutationType.TabIndex = 16;
+            // 
+            // _lblSelectionType
+            // 
+            this._lblSelectionType.AutoSize = true;
+            this._lblSelectionType.Dock = System.Windows.Forms.DockStyle.Left;
+            this._lblSelectionType.Location = new System.Drawing.Point(8, 280);
+            this._lblSelectionType.Name = "_lblSelectionType";
+            this._lblSelectionType.Size = new System.Drawing.Size(82, 15);
+            this._lblSelectionType.TabIndex = 15;
+            this._lblSelectionType.Text = "Selection Type";
+            // 
+            // _cbxSelectionType
+            // 
+            this._cbxSelectionType.Dock = System.Windows.Forms.DockStyle.Top;
+            this._cbxSelectionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._cbxSelectionType.FormattingEnabled = true;
+            this._cbxSelectionType.Location = new System.Drawing.Point(8, 298);
+            this._cbxSelectionType.Name = "_cbxSelectionType";
+            this._cbxSelectionType.Size = new System.Drawing.Size(137, 23);
+            this._cbxSelectionType.TabIndex = 14;
             // 
             // FrmGASetup
             // 
@@ -264,5 +289,7 @@ namespace App.Gui
         private System.Windows.Forms.ComboBox _cbxCrossoverType;
         private System.Windows.Forms.Label _lblMutationType;
         private System.Windows.Forms.ComboBox _cbxMutationType;
+        private System.Windows.Forms.Label _lblSelectionType;
+        private System.Windows.Forms.ComboBox _cbxSelectionType;
     }
 }

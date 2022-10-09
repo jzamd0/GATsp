@@ -29,9 +29,12 @@ namespace Lib.Genetics
 
             result.Duration = sw.ElapsedMilliseconds;
 
-            Util.Print($"Result:                    {result.Best.Fitness} ({string.Join(", ", result.Best.Values)})", verbose.Result);
-            Util.Print($"Elapsed time:              {result.Duration} ms", verbose.Result);
-            Util.Print("---\n", verbose.Result);
+            if (verbose.Result)
+            {
+                Console.WriteLine($"Result:                    {result.Best.Fitness} ({string.Join(", ", result.Best.Values)})");
+                Console.WriteLine($"Elapsed time:              {result.Duration} ms");
+                Console.WriteLine("---\n");
+            }
 
             return result;
         }
@@ -96,25 +99,34 @@ namespace Lib.Genetics
                 convergence = GetPopulationConvergence(population, setup.PopulationSize, best);
                 convergences.Add(convergence);
 
-                Util.Print($"Generation:                {generation}", verbose.Generation);
-                Util.Print($"Average fitness:           {averageFitnesses.Last()}", verbose.Generation);
-                Util.Print($"Best fitness:              {bestFitnesses.Last()}", verbose.Generation);
-                Util.Print($"Convergence for best ind.: {convergence} %", verbose.Generation);
-                Util.Print("---", verbose.Generation);
+                if (verbose.Generation)
+                {
+                    Console.WriteLine($"Generation:                {generation}");
+                    Console.WriteLine($"Average fitness:           {averageFitnesses.Last()}");
+                    Console.WriteLine($"Best fitness:              {bestFitnesses.Last()}");
+                    Console.WriteLine($"Convergence for best ind.: {convergence} %");
+                    Console.WriteLine("---");
+                }
 
                 // stop algorithm when all individuals from the population are the same
                 hasConverged = HasPopulationConverged(population);
                 if (hasConverged)
                 {
-                    Util.Print($"Population has converged at generation {generation}.", verbose.Enabled);
-                    Util.Print("---", verbose.Enabled);
+                    if (verbose.Enabled)
+                    {
+                        Console.WriteLine($"Population has converged at generation {generation}.");
+                        Console.WriteLine("---");
+                    }
                     break;
                 }
 
                 if (generation == setup.Generations)
                 {
-                    Util.Print($"Algorithm has reached {setup.Generations} generation(s).", verbose.Enabled);
-                    Util.Print("---", verbose.Enabled);
+                    if (verbose.Enabled)
+                    {
+                        Console.WriteLine($"Algorithm has reached {setup.Generations} generation(s).");
+                        Console.WriteLine("---");
+                    }
                     break;
                 }
 
@@ -262,9 +274,12 @@ namespace Lib.Genetics
                     var parent1 = Util.Extract(population[i].Values, TourStart, TourRange);
                     var parent2 = Util.Extract(population[i + 1].Values, TourStart, TourRange);
 
-                    Util.Print($"Crossover with parent 1:   {i} ({string.Join(", ", parent1)})", verbose);
-                    Util.Print($"Crossover with parent 2:   {i + 1} ({string.Join(", ", parent2)})", verbose);
-                    Util.Print($"Operator used:             {xopType}", verbose);
+                    if (verbose)
+                    {
+                        Console.WriteLine($"Crossover with parent 1:   {i} ({string.Join(", ", parent1)})");
+                        Console.WriteLine($"Crossover with parent 2:   {i + 1} ({string.Join(", ", parent2)})");
+                        Console.WriteLine($"Operator used:             {xopType}");
+                    }
 
                     var offspring1 = new double[TourRange];
                     var offspring2 = new double[TourRange];
@@ -273,7 +288,10 @@ namespace Lib.Genetics
                     {
                         var mask = GenerateMask(TourRange, rand);
 
-                        Util.Print($"Mask:                      ({string.Join(", ", mask)})", verbose);
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Mask:                      ({string.Join(", ", mask)})");
+                        }
 
                         offspring1 = Crossover.OBX(parent1, parent2, TourRange, mask);
                         offspring2 = Crossover.OBX(parent2, parent1, TourRange, mask);
@@ -282,7 +300,10 @@ namespace Lib.Genetics
                     {
                         var mask = GenerateMask(TourRange, rand);
 
-                        Util.Print($"Mask:                      ({string.Join(", ", mask)})", verbose);
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Mask:                      ({string.Join(", ", mask)})");
+                        }
 
                         offspring1 = Crossover.PPX(parent1, parent2, TourRange, mask);
                         offspring2 = Crossover.PPX(parent2, parent1, TourRange, mask);
@@ -292,15 +313,21 @@ namespace Lib.Genetics
                         var point1 = rand.Next(0, TourEnd - 1 - range);
                         var point2 = rand.Next(point1 + 1 + range, TourEnd);
 
-                        Util.Print($"Points:                    ({point1}, {point2})", verbose);
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Points:                    ({point1}, {point2})");
+                        }
 
                         offspring1 = Crossover.TPX(parent1, parent2, TourRange, point1, point2);
                         offspring2 = Crossover.TPX(parent2, parent1, TourRange, point1, point2);
                     }
 
-                    Util.Print($"Offspring 1:               {string.Join(", ", offspring1)}", verbose);
-                    Util.Print($"Offspring 2:               {string.Join(", ", offspring2)}", verbose);
-                    Util.Print("---", verbose);
+                    if (verbose)
+                    {
+                        Console.WriteLine($"Offspring 1:               {string.Join(", ", offspring1)}");
+                        Console.WriteLine($"Offspring 2:               {string.Join(", ", offspring2)}");
+                        Console.WriteLine("---");
+                    }
 
                     offspring1 = Util.Expand(offspring1, genotypeSize, TourStart, 0);
                     offspring2 = Util.Expand(offspring2, genotypeSize, TourStart, 0);
@@ -330,9 +357,12 @@ namespace Lib.Genetics
                     var point1 = rand.Next(1, TourEnd - 1);
                     var point2 = rand.Next(point1 + 1, TourEnd);
 
-                    Util.Print($"Mutation to:               {i} ({string.Join(", ", population[i].Values)})", verbose);
-                    Util.Print($"Operator used:             {mutopType}", verbose);
-                    Util.Print($"Points:                    ({point1}, {point2})", verbose);
+                    if (verbose)
+                    {
+                        Console.WriteLine($"Mutation to:               {i} ({string.Join(", ", population[i].Values)})");
+                        Console.WriteLine($"Operator used:             {mutopType}");
+                        Console.WriteLine($"Points:                    ({point1}, {point2})");
+                    }
 
                     if (mutopType == MutationType.Insert)
                     {
@@ -350,8 +380,11 @@ namespace Lib.Genetics
                         mutatedPopulation[i] = new Individual(values, 0);
                     }
 
-                    Util.Print($"Mutated individual:        ({string.Join(", ", mutatedPopulation[i].Values)})", verbose);
-                    Util.Print("---", verbose);
+                    if (verbose)
+                    {
+                        Console.WriteLine($"Mutated individual:        ({string.Join(", ", mutatedPopulation[i].Values)})");
+                        Console.WriteLine("---");
+                    }
                 }
                 else
                 {
@@ -360,6 +393,11 @@ namespace Lib.Genetics
             }
 
             return mutatedPopulation;
+        }
+
+        protected int[] GenerateMask(int range, Random rand)
+        {
+            return Enumerable.Repeat(0, range).Select(n => rand.Next(0, 2)).ToArray();
         }
 
         protected Individual[] ReplacePopulationWithElite(Individual[] population, int populationSize, Individual[] originalPopulation, double elitismRate)
@@ -422,11 +460,6 @@ namespace Lib.Genetics
             }
 
             return verbose;
-        }
-
-        protected int[] GenerateMask(int range, Random rand)
-        {
-            return Enumerable.Repeat(0, range).Select(n => rand.Next(0, 2)).ToArray();
         }
     }
 }

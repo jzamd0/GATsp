@@ -24,14 +24,6 @@ namespace Lib
             return rand.NextDouble() * (maximum - minimum) + minimum;
         }
 
-        public static void Print(string message, bool verbose = false)
-        {
-            if (verbose)
-            {
-                Console.WriteLine(message);
-            }
-        }
-
         public static bool HasEqualSize<T>(this IEnumerable<IEnumerable<T>> table)
         {
             var size = table.Count();

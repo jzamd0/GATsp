@@ -48,16 +48,7 @@ namespace App.Gui
         // program options
         private GAVerboseOptions _verbose { get; set; }
         private int _decimalsToRound { get; set; }
-
-        // canvas options
-        private int _pointWidth { get; set; }
-        private int _pointHeight { get; set; }
-        private Color _nodeColor { get; set; }
-        private Color _firstNodeColor { get; set; }
-        private Color _nodeTextColor { get; set; }
-        private Font _nodeFont { get; set; }
-        private Color _lineColor { get; set; }
-        private Color _backColor { get; set; }
+        private CanvasOptions _canvas { get; set; }
 
         private Pen _pen { get; set; }
         private SolidBrush _brush { get; set; }
@@ -71,23 +62,24 @@ namespace App.Gui
             _verbose = new GAVerboseOptions(false, false, false, false, false, false);
             _decimalsToRound = 3;
 
-            _pointWidth = 10;
-            _pointHeight = 10;
-            _nodeColor = Color.DodgerBlue;
-            _firstNodeColor = Color.GreenYellow;
-            _nodeTextColor = Color.Black;
-            _nodeFont = new Font("Arial", 9);
-            _lineColor = Color.Black;
-            _backColor = Color.White;
+            _canvas = new CanvasOptions();
+            _canvas.PointWidth = 10;
+            _canvas.PointHeight = 10;
+            _canvas.NodeColor = Color.DodgerBlue;
+            _canvas.FirstNodeColor = Color.GreenYellow;
+            _canvas.NodeTextColor = Color.Black;
+            _canvas.NodeFont = new Font("Arial", 9);
+            _canvas.LineColor = Color.Black;
+            _canvas.BackColor = Color.White;
 
-            _pen = new Pen(_nodeColor);
-            _brush = new SolidBrush(_nodeColor);
-            _firstPen = new Pen(_firstNodeColor);
-            _firstBrush = new SolidBrush(_firstNodeColor);
-            _nodeTextBrush = new SolidBrush(_nodeTextColor);
-            _linePen = new Pen(_lineColor);
+            _pen = new Pen(_canvas.NodeColor);
+            _brush = new SolidBrush(_canvas.NodeColor);
+            _firstPen = new Pen(_canvas.FirstNodeColor);
+            _firstBrush = new SolidBrush(_canvas.FirstNodeColor);
+            _nodeTextBrush = new SolidBrush(_canvas.NodeTextColor);
+            _linePen = new Pen(_canvas.LineColor);
 
-            _pbxCanvas.BackColor = _backColor;
+            _pbxCanvas.BackColor = _canvas.BackColor;
         }
 
         private void AddGASetupPanel()
@@ -293,14 +285,14 @@ namespace App.Gui
                         var minX = _data.Nodes.Select(n => n.Coord.X).Min();
                         var minY = _data.Nodes.Select(n => n.Coord.Y).Min();
                         // get furthest x coordinate using the node coordinate with the text width added
-                        var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _nodeFont).ToSize().Width).Max();
+                        var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _canvas.NodeFont).ToSize().Width).Max();
                         var width = maxX + (_canvasPadding * 2) - minX;
                         var height = _data.Nodes.Select(n => n.Coord.Y).Max() + (_canvasPadding * 2) - minY;
 
                         var bmap = new Bitmap(width, height);
                         var g = Graphics.FromImage(bmap);
 
-                        g.Clear(_backColor);
+                        g.Clear(_canvas.BackColor);
                         DrawNodesForImage(g, new Point(minX, minY), _canvasPadding);
                         DrawShortestPathForImage(g, new Point(minX, minY), _canvasPadding);
 
@@ -731,7 +723,7 @@ namespace App.Gui
             if (!_data.Nodes.IsNullOrEmpty())
             {
                 // check for the furthest node coordinates to extend the canvas panel to a proper size
-                var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _nodeFont).ToSize().Width).Max();
+                var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _canvas.NodeFont).ToSize().Width).Max();
                 var maxY = _data.Nodes.Select(n => n.Coord.Y).Max();
 
                 _pnlCanvas.AutoScrollMinSize = new Size(maxX + _canvasPadding, maxY + _canvasPadding);
@@ -744,17 +736,20 @@ namespace App.Gui
         #endregion
 
         #region Drawing
+        private void ClearCanvas(Graphics graphics)
+        {
+            if (_canOverwriteDraw)
+            {
+                graphics.Clear(_canvas.BackColor);
+                _canOverwriteDraw = false;
+            }
+        }
+
         private void DrawNodes(Graphics graphics)
         {
             if (_data == null || _data.Nodes.IsNullOrEmpty())
             {
                 return;
-            }
-
-            if (_canOverwriteDraw)
-            {
-                graphics.Clear(_backColor);
-                _canOverwriteDraw = false;
             }
 
             for (var i = 0; i < _data.Nodes.Count; i++)
@@ -764,17 +759,17 @@ namespace App.Gui
 
                 if (i > 0)
                 {
-                    graphics.DrawEllipse(_pen, p.X, p.Y, _pointWidth, _pointHeight);
-                    graphics.FillEllipse(_brush, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.DrawEllipse(_pen, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
+                    graphics.FillEllipse(_brush, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
                 }
                 else
                 {
                     // draw the first point with another color
-                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _pointWidth, _pointHeight);
-                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
+                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
                 }
 
-                graphics.DrawString(header, _nodeFont, _nodeTextBrush, p);
+                graphics.DrawString(header, _canvas.NodeFont, _nodeTextBrush, p);
             }
         }
 
@@ -805,17 +800,17 @@ namespace App.Gui
 
                 if (i > 0)
                 {
-                    graphics.DrawEllipse(_pen, p.X, p.Y, _pointWidth, _pointHeight);
-                    graphics.FillEllipse(_brush, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.DrawEllipse(_pen, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
+                    graphics.FillEllipse(_brush, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
                 }
                 else
                 {
                     // draw the first point with another color
-                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _pointWidth, _pointHeight);
-                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
+                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
                 }
 
-                graphics.DrawString(header, _nodeFont, _nodeTextBrush, p);
+                graphics.DrawString(header, _canvas.NodeFont, _nodeTextBrush, p);
             }
         }
 

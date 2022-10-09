@@ -614,7 +614,7 @@ namespace App.Gui
             setup.Distances = _distances;
             setup.GenotypeSize = _data.Nodes.Count + 1;
 
-            var res = new GA().SolveMeasured(setup, false);
+            var res = new GA().SolveMeasured(setup, new GAVerboseOptions { Enabled = true, All = true });
 
             var shortestPath = Helper.MapToPath(_data.Nodes, res.Best.Values);
             swTotal.Stop();

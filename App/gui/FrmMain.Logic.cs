@@ -46,6 +46,7 @@ namespace App.Gui
         private bool _canOverwriteDraw { get; set; }
 
         // program options
+        private GAVerboseOptions _verbose { get; set; }
         private int _decimalsToRound { get; set; }
 
         // canvas options
@@ -67,6 +68,7 @@ namespace App.Gui
 
         private void SetConfiguration()
         {
+            _verbose = new GAVerboseOptions(false, false, false, false, false, false);
             _decimalsToRound = 3;
 
             _pointWidth = 10;
@@ -614,7 +616,7 @@ namespace App.Gui
             setup.Distances = _distances;
             setup.GenotypeSize = _data.Nodes.Count + 1;
 
-            var res = new GA().SolveMeasured(setup, new GAVerboseOptions { Enabled = true, All = true });
+            var res = new GA().SolveMeasured(setup, _verbose);
 
             var shortestPath = Helper.MapToPath(_data.Nodes, res.Best.Values);
             swTotal.Stop();

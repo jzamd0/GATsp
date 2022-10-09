@@ -92,6 +92,8 @@ namespace App.Gui
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniPreferencesSep = new System.Windows.Forms.ToolStripSeparator();
+            this._mniPreferences = new System.Windows.Forms.ToolStripMenuItem();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -593,6 +595,8 @@ namespace App.Gui
             this._mniSaveTspAs,
             this._mniTspPropertiesSep,
             this._mniTspProperties,
+            this._mniPreferencesSep,
+            this._mniPreferences,
             this._mniExportTspSep,
             this._mniExportTsp,
             this._mniExitSep,
@@ -798,6 +802,18 @@ namespace App.Gui
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
             // 
+            // _mniPreferencesSep
+            // 
+            this._mniPreferencesSep.Name = "_mniPreferencesSep";
+            this._mniPreferencesSep.Size = new System.Drawing.Size(192, 6);
+            // 
+            // _mniPreferences
+            // 
+            this._mniPreferences.Name = "_mniPreferences";
+            this._mniPreferences.Size = new System.Drawing.Size(195, 22);
+            this._mniPreferences.Text = "Preferences...";
+            this._mniPreferences.Click += new System.EventHandler(this._mniPreferences_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -921,6 +937,8 @@ namespace App.Gui
         private System.Windows.Forms.DataGridView _dgvLastPopulation;
         private System.Windows.Forms.Label _lblInitialPopulation;
         private System.Windows.Forms.Label _lblLastPopulation;
+        private System.Windows.Forms.ToolStripSeparator _mniPreferencesSep;
+        private System.Windows.Forms.ToolStripMenuItem _mniPreferences;
     }
 }
 

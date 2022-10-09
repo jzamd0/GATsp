@@ -91,6 +91,19 @@ namespace App.Gui
             }
         }
 
+        private void _mniPreferences_Click(object sender, System.EventArgs e)
+        {
+            using (var frmPreferences = new FrmPreferences(_verbose))
+            {
+                var res = frmPreferences.ShowDialog();
+
+                if (res == DialogResult.OK)
+                {
+                    _verbose = frmPreferences.Verbose;
+                }
+            }
+        }
+
         private void _mniExportTspToDistances_Click(object sender, System.EventArgs e)
         {
             ExportProjectToCSV();

@@ -208,8 +208,9 @@ namespace App.Gui
         #region Canvas
         private void _pbxCanvas_Paint(object sender, PaintEventArgs e)
         {
-            DrawNodes(e.Graphics);
+            ClearCanvas(e.Graphics);
             DrawShortestPath(e.Graphics);
+            DrawNodes(e.Graphics);
         }
 
         private void _pbxCanvas_MouseClick(object sender, MouseEventArgs e)

@@ -45,6 +45,7 @@ namespace App.Gui
                 new { Text = "OBX", Value = CrossoverType.OBX },
                 new { Text = "PPX", Value = CrossoverType.PPX },
                 new { Text = "TPX", Value = CrossoverType.TPX },
+                new { Text = "OSX", Value = CrossoverType.OSX },
             };
 
             _cbxCrossoverType.DataSource = crossoverItems;

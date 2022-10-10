@@ -33,7 +33,11 @@ namespace Lib.Genetics
             {
                 Console.WriteLine($"Result:                    {result.Best.Fitness} ({string.Join(", ", result.Best.Values)})");
                 Console.WriteLine($"Elapsed time:              {result.Duration} ms");
-                Console.WriteLine("---\n");
+                Console.WriteLine("---");
+            }
+            if (verbose.Enabled)
+            {
+                Console.WriteLine();
             }
 
             return result;
@@ -320,6 +324,19 @@ namespace Lib.Genetics
 
                         offspring1 = Crossover.TPX(parent1, parent2, TourRange, point1, point2);
                         offspring2 = Crossover.TPX(parent2, parent1, TourRange, point1, point2);
+                    }
+                    else if (xopType == CrossoverType.OSX)
+                    {
+                        var point1 = rand.Next(0, TourEnd - 1 - range);
+                        var point2 = rand.Next(point1 + 1 + range, TourEnd);
+
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Points:                    ({point1}, {point2})");
+                        }
+
+                        offspring1 = Crossover.OSX(parent1, parent2, TourRange, point1, point2);
+                        offspring2 = Crossover.OSX(parent2, parent1, TourRange, point1, point2);
                     }
 
                     if (verbose)

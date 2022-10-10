@@ -94,5 +94,35 @@ namespace GATest
 
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void OSXTestFirstParentToSecondParent()
+        {
+            var point1 = 3;
+            var point2 = 7;
+            var parent1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            var parent2 = new double[] { 5, 4, 6, 3, 1, 9, 2, 7, 8 };
+            var expected = new double[] { 1, 2, 3, 4, 5, 6, 9, 7, 8 };
+            var size = expected.Length;
+
+            var actual = Crossover.OSX(parent1, parent2, size, point1, point2);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void OSXTestSecondParentToFristParent()
+        {
+            var point1 = 3;
+            var point2 = 7;
+            var parent1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            var parent2 = new double[] { 5, 4, 6, 3, 1, 9, 2, 7, 8 };
+            var expected = new double[] { 5, 4, 6, 3, 1, 2, 7, 8, 9 };
+            var size = expected.Length;
+
+            var actual = Crossover.OSX(parent2, parent1, size, point1, point2);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

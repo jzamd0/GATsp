@@ -11,7 +11,7 @@ namespace GATest
         }
 
         [Test]
-        public void PPXTestFirstParentToSecondParent()
+        public void PPXFirstParentToSecondParentTest()
         {
             var mask = new int[] { 1, 0, 0, 0, 1, 1, 0, 1, 1 };
             var parent1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -25,7 +25,7 @@ namespace GATest
         }
 
         [Test]
-        public void PPXTestSecondParentToFirstParent()
+        public void PPXSecondParentToFirstParentTest()
         {
             var mask = new int[] { 1, 0, 0, 0, 1, 1, 0, 1, 1 };
             var parent1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -39,7 +39,7 @@ namespace GATest
         }
 
         [Test]
-        public void OBXTestFirstParentToSecondParent()
+        public void OBXFirstParentToSecondParentTest()
         {
             var mask = new int[] { 1, 0, 0, 0, 1, 1, 0, 1, 1 };
             var parent1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -52,7 +52,7 @@ namespace GATest
             Assert.AreEqual(expected, actual);
         }
         [Test]
-        public void OBXTestSecondParentToFirstParent()
+        public void OBXSecondParentToFirstParentTest()
         {
             var mask = new int[] { 1, 0, 0, 0, 1, 1, 0, 1, 1 };
             var parent1 = new double[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -66,7 +66,7 @@ namespace GATest
         }
 
         [Test]
-        public void TPXTestFirstParentToSecondParent()
+        public void TPXFirstParentToSecondParentTest()
         {
             var point1 = 3;
             var point2 = 7;
@@ -81,7 +81,7 @@ namespace GATest
         }
 
         [Test]
-        public void TPXTestSecondParentToFirstParent()
+        public void TPXSecondParentToFirstParentTest()
         {
             var point1 = 3;
             var point2 = 7;
@@ -96,7 +96,7 @@ namespace GATest
         }
 
         [Test]
-        public void OSXTestFirstParentToSecondParent()
+        public void OSXFirstParentToSecondParentTest()
         {
             var point1 = 3;
             var point2 = 7;
@@ -111,7 +111,7 @@ namespace GATest
         }
 
         [Test]
-        public void OSXTestSecondParentToFristParent()
+        public void OSXSecondParentToFristParentTest()
         {
             var point1 = 3;
             var point2 = 7;

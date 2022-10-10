@@ -1,4 +1,5 @@
 ﻿using Lib;
+using Lib.Genetics;
 using Lib.Tsp;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace App.Gui
 {
     public partial class FrmMain
     {
+        private FrmGASetup _frmGASetup { get; set; }
+
         private string _programTitle { get; set; }
         private string _fileTitle { get; set; }
         private string _lastLocation { get; set; }
@@ -24,6 +27,8 @@ namespace App.Gui
         private double[][] _distances { get; set; }
         private Edge<Node>[] _edges { get; set; }
         private List<Node> _shortestPath { get; set; }
+        private GASetup _setup { get; set; }
+        private GAResult _result { get; set; }
 
         private int _distancesViewMinWidth { get; set; }
         private int _edgesViewMinWidth { get; set; }
@@ -41,17 +46,9 @@ namespace App.Gui
         private bool _canOverwriteDraw { get; set; }
 
         // program options
+        private GAVerboseOptions _verbose { get; set; }
         private int _decimalsToRound { get; set; }
-
-        // canvas options
-        private int _pointWidth { get; set; }
-        private int _pointHeight { get; set; }
-        private Color _nodeColor { get; set; }
-        private Color _firstNodeColor { get; set; }
-        private Color _nodeTextColor { get; set; }
-        private Font _nodeFont { get; set; }
-        private Color _lineColor { get; set; }
-        private Color _backColor { get; set; }
+        private CanvasOptions _canvas { get; set; }
 
         private Pen _pen { get; set; }
         private SolidBrush _brush { get; set; }
@@ -62,25 +59,37 @@ namespace App.Gui
 
         private void SetConfiguration()
         {
+            _verbose = new GAVerboseOptions(false, false, false, false, false, false);
             _decimalsToRound = 3;
 
-            _pointWidth = 10;
-            _pointHeight = 10;
-            _nodeColor = Color.DodgerBlue;
-            _firstNodeColor = Color.GreenYellow;
-            _nodeTextColor = Color.Black;
-            _nodeFont = new Font("Arial", 9);
-            _lineColor = Color.Black;
-            _backColor = Color.White;
+            _canvas = new CanvasOptions();
+            _canvas.PointWidth = 10;
+            _canvas.PointHeight = 10;
+            _canvas.NodeColor = Color.DodgerBlue;
+            _canvas.FirstNodeColor = Color.GreenYellow;
+            _canvas.NodeTextColor = Color.Black;
+            _canvas.NodeFont = new Font("Arial", 9);
+            _canvas.LineColor = Color.Black;
+            _canvas.BackColor = Color.White;
 
-            _pen = new Pen(_nodeColor);
-            _brush = new SolidBrush(_nodeColor);
-            _firstPen = new Pen(_firstNodeColor);
-            _firstBrush = new SolidBrush(_firstNodeColor);
-            _nodeTextBrush = new SolidBrush(_nodeTextColor);
-            _linePen = new Pen(_lineColor);
+            _pen = new Pen(_canvas.NodeColor);
+            _brush = new SolidBrush(_canvas.NodeColor);
+            _firstPen = new Pen(_canvas.FirstNodeColor);
+            _firstBrush = new SolidBrush(_canvas.FirstNodeColor);
+            _nodeTextBrush = new SolidBrush(_canvas.NodeTextColor);
+            _linePen = new Pen(_canvas.LineColor);
 
-            _pbxCanvas.BackColor = _backColor;
+            _pbxCanvas.BackColor = _canvas.BackColor;
+        }
+
+        private void AddGASetupPanel()
+        {
+            _frmGASetup = new FrmGASetup();
+            _frmGASetup.TopLevel = false;
+            _tabSetup.Controls.Add(_frmGASetup);
+            _frmGASetup.FormBorderStyle = FormBorderStyle.None;
+            _frmGASetup.Dock = DockStyle.Fill;
+            _frmGASetup.Show();
         }
 
         #region File
@@ -276,16 +285,16 @@ namespace App.Gui
                         var minX = _data.Nodes.Select(n => n.Coord.X).Min();
                         var minY = _data.Nodes.Select(n => n.Coord.Y).Min();
                         // get furthest x coordinate using the node coordinate with the text width added
-                        var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _nodeFont).ToSize().Width).Max();
+                        var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _canvas.NodeFont).ToSize().Width).Max();
                         var width = maxX + (_canvasPadding * 2) - minX;
                         var height = _data.Nodes.Select(n => n.Coord.Y).Max() + (_canvasPadding * 2) - minY;
 
                         var bmap = new Bitmap(width, height);
                         var g = Graphics.FromImage(bmap);
 
-                        g.Clear(_backColor);
-                        DrawNodesForImage(g, new Point(minX, minY), _canvasPadding);
+                        g.Clear(_canvas.BackColor);
                         DrawShortestPathForImage(g, new Point(minX, minY), _canvasPadding);
+                        DrawNodesForImage(g, new Point(minX, minY), _canvasPadding);
 
                         bmap.Save(fullFileName, ImageFormat.Png);
                         g.Dispose();
@@ -308,10 +317,12 @@ namespace App.Gui
         private void EnableOrDisableMenuItems()
         {
             _mniSolveTsp.Enabled = _data.Nodes.Count >= _minNodesToSolveTsp;
+
             _mniExportTspToDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
             _mniGenerateDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
-            _mniClearDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
-            _mniClearNodes.Enabled = _data.Nodes.Count >= _minNodesToGraph;
+            _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
+            _mniClearNodes.Enabled = !_data.Nodes.IsNullOrEmpty();
+            _mniClearResult.Enabled = _result != null;
             _mniExportTspToGraph.Enabled = _data.Nodes.Count >= _minNodesToGraph;
         }
 
@@ -336,6 +347,21 @@ namespace App.Gui
 
             _dgvDistances.DataSource = new DataTable();
 
+            var dtSummary = new DataTable();
+            dtSummary.Columns.Add("Data", typeof(string));
+            dtSummary.Columns.Add("Values", typeof(string));
+            _dgvSummary.DataSource = dtSummary;
+
+            var dtInitialPopulation = new DataTable();
+            dtInitialPopulation.Columns.Add("Path", typeof(string));
+            dtInitialPopulation.Columns.Add("Fitness", typeof(double));
+            _dgvInitialPopulation.DataSource = dtInitialPopulation;
+
+            var dtLastPopulation = new DataTable();
+            dtLastPopulation.Columns.Add("Path", typeof(string));
+            dtLastPopulation.Columns.Add("Fitness", typeof(double));
+            _dgvLastPopulation.DataSource = dtLastPopulation;
+
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
             SetColumnWidth(_dgvCoordinates, _coordinatesViewMinWidth);
@@ -354,13 +380,27 @@ namespace App.Gui
             ((DataTable)_dgvNodes.DataSource).Rows.Clear();
             ((DataTable)_dgvEdges.DataSource).Rows.Clear();
             ((DataTable)_dgvCoordinates.DataSource).Rows.Clear();
-            _dgvDistances.DataSource = new DataTable();
+            ((DataTable)_dgvDistances.DataSource).Rows.Clear();
+            ClearResult();
 
             _data = null;
             _fileTitle = null;
             _fullFileName = null;
             _distances = null;
             _edges = null;
+        }
+
+        private void ClearResult()
+        {
+            ((DataTable)_dgvSummary.DataSource).Rows.Clear();
+            ((DataTable)_dgvInitialPopulation.DataSource).Rows.Clear();
+            ((DataTable)_dgvLastPopulation.DataSource).Rows.Clear();
+            _tablePanelPopulation.Visible = false;
+            _dgvSummary.Visible = false;
+
+            _shortestPath = null;
+            _setup = null;
+            _result = null;
         }
 
         private void UpdateApp()
@@ -422,6 +462,11 @@ namespace App.Gui
 
             ((DataTable)_dgvNodes.DataSource).Rows.RemoveAt(index);
             ((DataTable)_dgvCoordinates.DataSource).Rows.RemoveAt(index);
+            // remove shortest path only if a node from the path is removed
+            if (!_shortestPath.IsNullOrEmpty() && _shortestPath.Contains(node))
+            {
+                _shortestPath = null;
+            }
 
             UpdateApp();
         }
@@ -442,10 +487,17 @@ namespace App.Gui
                 return (false, "File does not contain a list for nodes. Create a list to add nodes.");
             }
 
-            // check of duplicated ids
+            // check for duplicate ids
             if (Helper.HasDuplicateId(nodes))
             {
-                return (false, "The list of nodes contain duplicated IDs. Change the IDs for thoese nodes");
+                return (false, "Some nodes contain duplicate IDs. Change the IDs for thoese nodes");
+            }
+
+            // check for dupblicate names
+            if (Helper.HasDuplicateName(nodes))
+            {
+                return (false, "Some nodes contain duplicate names. Change the names for thoese nodes");
+
             }
 
             for (var i = 0; i < nodes.Count; i++)
@@ -497,7 +549,7 @@ namespace App.Gui
 
             DisplayDistances();
 
-            UpdateLabels();
+            UpdateApp();
         }
 
         private (double[][] Distances, Edge<Node>[] Edges) GetDistances(List<Node> nodes)
@@ -539,7 +591,37 @@ namespace App.Gui
             _distances = null;
             _edges = null;
 
-            UpdateLabels();
+            UpdateApp();
+        }
+        #endregion
+
+        #region TSP
+        private void SolveTsp(GASetup setup)
+        {
+            ClearResult();
+
+            var started = DateTime.Now;
+            var swTotal = new Stopwatch();
+
+            swTotal.Start();
+            GenerateDistances();
+            setup.Distances = _distances;
+            setup.GenotypeSize = _data.Nodes.Count + 1;
+
+            var res = new GA().SolveMeasured(setup, _verbose);
+
+            var shortestPath = Helper.MapToPath(_data.Nodes, res.Best.Values);
+            swTotal.Stop();
+            var finished = DateTime.Now;
+
+            _shortestPath = shortestPath;
+            _setup = setup;
+            _result = res;
+
+            DisplaySummary(shortestPath, started, finished, swTotal.ElapsedMilliseconds);
+            DisplayPopulation();
+
+            UpdateApp();
         }
         #endregion
 
@@ -588,6 +670,40 @@ namespace App.Gui
             }
         }
 
+        private void DisplaySummary(List<Node> shortestPath, DateTime started, DateTime finished, long totalDuration)
+        {
+            var dtSummary = (DataTable)_dgvSummary.DataSource;
+
+            dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Best Tour", string.Join(", ", shortestPath.Select(n => n.Name).ToArray()));
+            dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
+            dtSummary.Rows.Add("Last Generation", _result.LastGeneration);
+            dtSummary.Rows.Add("Has Converged", (_result.HasConverged) ? "Yes" : "No");
+            dtSummary.Rows.Add("Last Convergence (%)", Math.Round(_result.LastConvergence, _decimalsToRound));
+            dtSummary.Rows.Add("GA Duration (ms)", _result.Duration);
+            dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
+
+            _dgvSummary.Visible = true;
+        }
+
+        private void DisplayPopulation()
+        {
+            var dtInitialPopulation = (DataTable)_dgvInitialPopulation.DataSource;
+            foreach (var ind in _result.InitialPopulation)
+            {
+                dtInitialPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+            }
+
+            var dtLastPopulation = (DataTable)_dgvLastPopulation.DataSource;
+            foreach (var ind in _result.LastPopulation)
+            {
+                dtLastPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+            }
+
+            _tablePanelPopulation.Visible = true;
+        }
+
         private void PrintTo(string message, bool? debug = false)
         {
             MessageBox.Show(message, _programTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -607,7 +723,7 @@ namespace App.Gui
             if (!_data.Nodes.IsNullOrEmpty())
             {
                 // check for the furthest node coordinates to extend the canvas panel to a proper size
-                var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _nodeFont).ToSize().Width).Max();
+                var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _canvas.NodeFont).ToSize().Width).Max();
                 var maxY = _data.Nodes.Select(n => n.Coord.Y).Max();
 
                 _pnlCanvas.AutoScrollMinSize = new Size(maxX + _canvasPadding, maxY + _canvasPadding);
@@ -620,17 +736,20 @@ namespace App.Gui
         #endregion
 
         #region Drawing
+        private void ClearCanvas(Graphics graphics)
+        {
+            if (_canOverwriteDraw)
+            {
+                graphics.Clear(_canvas.BackColor);
+                _canOverwriteDraw = false;
+            }
+        }
+
         private void DrawNodes(Graphics graphics)
         {
             if (_data == null || _data.Nodes.IsNullOrEmpty())
             {
                 return;
-            }
-
-            if (_canOverwriteDraw)
-            {
-                graphics.Clear(_backColor);
-                _canOverwriteDraw = false;
             }
 
             for (var i = 0; i < _data.Nodes.Count; i++)
@@ -640,17 +759,17 @@ namespace App.Gui
 
                 if (i > 0)
                 {
-                    graphics.DrawEllipse(_pen, p.X, p.Y, _pointWidth, _pointHeight);
-                    graphics.FillEllipse(_brush, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.DrawEllipse(_pen, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
+                    graphics.FillEllipse(_brush, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
                 }
                 else
                 {
                     // draw the first point with another color
-                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _pointWidth, _pointHeight);
-                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
+                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
                 }
 
-                graphics.DrawString(header, _nodeFont, _nodeTextBrush, p);
+                graphics.DrawString(header, _canvas.NodeFont, _nodeTextBrush, p);
             }
         }
 
@@ -664,8 +783,8 @@ namespace App.Gui
             for (var i = 0; i < _shortestPath.Count - 1; i++)
             {
                 // get points to and draw them
-                var pBefore = _data.Nodes[i].Coord;
-                var pNext = _data.Nodes[i + 1].Coord;
+                var pBefore = _shortestPath[i].Coord;
+                var pNext = _shortestPath[i + 1].Coord;
 
                 graphics.DrawLine(_linePen, pBefore, pNext);
             }
@@ -681,17 +800,17 @@ namespace App.Gui
 
                 if (i > 0)
                 {
-                    graphics.DrawEllipse(_pen, p.X, p.Y, _pointWidth, _pointHeight);
-                    graphics.FillEllipse(_brush, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.DrawEllipse(_pen, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
+                    graphics.FillEllipse(_brush, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
                 }
                 else
                 {
                     // draw the first point with another color
-                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _pointWidth, _pointHeight);
-                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _pointWidth, _pointHeight);
+                    graphics.DrawEllipse(_firstPen, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
+                    graphics.FillEllipse(_firstBrush, p.X, p.Y, _canvas.PointWidth, _canvas.PointHeight);
                 }
 
-                graphics.DrawString(header, _nodeFont, _nodeTextBrush, p);
+                graphics.DrawString(header, _canvas.NodeFont, _nodeTextBrush, p);
             }
         }
 
@@ -707,8 +826,8 @@ namespace App.Gui
                 // get points to and draw them
                 var coordBefore = _shortestPath[i].Coord;
                 var coordNext = _shortestPath[i + 1].Coord;
-                var pBefore = new Point(coordBefore.X - start.X, coordBefore.Y - start.Y + padding);
-                var pNext = new Point(coordNext.X - start.X, coordNext.Y - start.Y);
+                var pBefore = new Point(coordBefore.X - start.X + padding, coordBefore.Y - start.Y + padding);
+                var pNext = new Point(coordNext.X - start.X + padding, coordNext.Y - start.Y + padding);
 
                 graphics.DrawLine(_linePen, pBefore, pNext);
             }

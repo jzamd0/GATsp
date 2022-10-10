@@ -1,4 +1,5 @@
-﻿using Lib.Tsp;
+﻿using Lib.Genetics;
+using Lib.Tsp;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -26,14 +27,15 @@ namespace App.Gui
 
             _canvasPadding = 40;
 
-            _minNodesToSolveTsp = 3;
-            _minNodesToDistances = 2;
+            _minNodesToSolveTsp = GA.MinGenotypeSize - 1;
+            _minNodesToDistances = _minNodesToSolveTsp;
             _minNodesToGraph = 1;
 
             _canOverwriteDraw = false;
 
             SetConfiguration();
             SetDataTables();
+            AddGASetupPanel();
         }
 
         private void FrmMain_Load(object sender, System.EventArgs e)
@@ -45,9 +47,13 @@ namespace App.Gui
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
             _mniSolveTsp.Enabled = false;
+            _mniClearResult.Enabled = false;
             _mniGenerateDistances.Enabled = false;
             _mniClearDistances.Enabled = false;
             _mniClearNodes.Enabled = false;
+
+            _tablePanelPopulation.Visible = false;
+            _dgvSummary.Visible = false;
         }
 
         #region Menu File
@@ -81,6 +87,19 @@ namespace App.Gui
                 {
                     _data.Name = frmProperties.ProjectName;
                     _data.Comment = frmProperties.Comment;
+                }
+            }
+        }
+
+        private void _mniPreferences_Click(object sender, System.EventArgs e)
+        {
+            using (var frmPreferences = new FrmPreferences(_verbose))
+            {
+                var res = frmPreferences.ShowDialog();
+
+                if (res == DialogResult.OK)
+                {
+                    _verbose = frmPreferences.Verbose;
                 }
             }
         }
@@ -122,7 +141,22 @@ namespace App.Gui
         #region Menu TSP
         private void _mniSolveTsp_Click(object sender, System.EventArgs e)
         {
+            var res = _frmGASetup.GetGASetup();
 
+            if (!res.Valid)
+            {
+                PrintTo(res.Message);
+                return;
+            }
+
+            SolveTsp(res.Setup);
+        }
+
+        private void _mniClearResult_Click(object sender, System.EventArgs e)
+        {
+            ClearResult();
+
+            UpdateApp();
         }
 
         private void _minGenerateDistances_Click(object sender, System.EventArgs e)
@@ -144,7 +178,10 @@ namespace App.Gui
         #region Menu Help
         private void _mniAbout_Click(object sender, System.EventArgs e)
         {
-
+            using (var frmAbout = new FrmAbout())
+            {
+                var res = frmAbout.ShowDialog();
+            }
         }
         #endregion
 
@@ -171,8 +208,9 @@ namespace App.Gui
         #region Canvas
         private void _pbxCanvas_Paint(object sender, PaintEventArgs e)
         {
-            DrawNodes(e.Graphics);
+            ClearCanvas(e.Graphics);
             DrawShortestPath(e.Graphics);
+            DrawNodes(e.Graphics);
         }
 
         private void _pbxCanvas_MouseClick(object sender, MouseEventArgs e)

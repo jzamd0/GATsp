@@ -114,6 +114,11 @@ namespace App.Gui
             ExportProjectToImage();
         }
 
+        private void _mniExportToSpreadsheet_Click(object sender, System.EventArgs e)
+        {
+            ExportSolutionToSpreadsheet();
+        }
+
         private void _mniExit_Click(object sender, System.EventArgs e)
         {
             this.Close();

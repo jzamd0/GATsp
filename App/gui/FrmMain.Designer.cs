@@ -73,6 +73,8 @@ namespace App.Gui
             this._mniSaveTspAs = new System.Windows.Forms.ToolStripMenuItem();
             this._mniTspPropertiesSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniTspProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniPreferencesSep = new System.Windows.Forms.ToolStripSeparator();
+            this._mniPreferences = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniExportTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToDistances = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,8 +94,7 @@ namespace App.Gui
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniPreferencesSep = new System.Windows.Forms.ToolStripSeparator();
-            this._mniPreferences = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportToSpreadsheet = new System.Windows.Forms.ToolStripMenuItem();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -660,6 +661,18 @@ namespace App.Gui
             this._mniTspProperties.Text = "Properties...";
             this._mniTspProperties.Click += new System.EventHandler(this._mniTspProperties_Click);
             // 
+            // _mniPreferencesSep
+            // 
+            this._mniPreferencesSep.Name = "_mniPreferencesSep";
+            this._mniPreferencesSep.Size = new System.Drawing.Size(192, 6);
+            // 
+            // _mniPreferences
+            // 
+            this._mniPreferences.Name = "_mniPreferences";
+            this._mniPreferences.Size = new System.Drawing.Size(195, 22);
+            this._mniPreferences.Text = "Preferences...";
+            this._mniPreferences.Click += new System.EventHandler(this._mniPreferences_Click);
+            // 
             // _mniExportTspSep
             // 
             this._mniExportTspSep.Name = "_mniExportTspSep";
@@ -669,7 +682,8 @@ namespace App.Gui
             // 
             this._mniExportTsp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._mniExportTspToDistances,
-            this._mniExportTspToGraph});
+            this._mniExportTspToGraph,
+            this._mniExportToSpreadsheet});
             this._mniExportTsp.Name = "_mniExportTsp";
             this._mniExportTsp.Size = new System.Drawing.Size(195, 22);
             this._mniExportTsp.Text = "Export";
@@ -677,14 +691,14 @@ namespace App.Gui
             // _mniExportTspToDistances
             // 
             this._mniExportTspToDistances.Name = "_mniExportTspToDistances";
-            this._mniExportTspToDistances.Size = new System.Drawing.Size(133, 22);
+            this._mniExportTspToDistances.Size = new System.Drawing.Size(180, 22);
             this._mniExportTspToDistances.Text = "Distances...";
             this._mniExportTspToDistances.Click += new System.EventHandler(this._mniExportTspToDistances_Click);
             // 
             // _mniExportTspToGraph
             // 
             this._mniExportTspToGraph.Name = "_mniExportTspToGraph";
-            this._mniExportTspToGraph.Size = new System.Drawing.Size(133, 22);
+            this._mniExportTspToGraph.Size = new System.Drawing.Size(180, 22);
             this._mniExportTspToGraph.Text = "Graph...";
             this._mniExportTspToGraph.Click += new System.EventHandler(this._mniExportTspToGraph_Click);
             // 
@@ -802,17 +816,12 @@ namespace App.Gui
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
             // 
-            // _mniPreferencesSep
+            // _mniExporToSpreadsheet
             // 
-            this._mniPreferencesSep.Name = "_mniPreferencesSep";
-            this._mniPreferencesSep.Size = new System.Drawing.Size(192, 6);
-            // 
-            // _mniPreferences
-            // 
-            this._mniPreferences.Name = "_mniPreferences";
-            this._mniPreferences.Size = new System.Drawing.Size(195, 22);
-            this._mniPreferences.Text = "Preferences...";
-            this._mniPreferences.Click += new System.EventHandler(this._mniPreferences_Click);
+            this._mniExportToSpreadsheet.Name = "_mniExporToSpreadsheet";
+            this._mniExportToSpreadsheet.Size = new System.Drawing.Size(180, 22);
+            this._mniExportToSpreadsheet.Text = "Solution...";
+            this._mniExportToSpreadsheet.Click += new System.EventHandler(this._mniExportToSpreadsheet_Click);
             // 
             // FrmMain
             // 
@@ -939,6 +948,7 @@ namespace App.Gui
         private System.Windows.Forms.Label _lblLastPopulation;
         private System.Windows.Forms.ToolStripSeparator _mniPreferencesSep;
         private System.Windows.Forms.ToolStripMenuItem _mniPreferences;
+        private System.Windows.Forms.ToolStripMenuItem _mniExportToSpreadsheet;
     }
 }
 

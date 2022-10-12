@@ -306,6 +306,35 @@ namespace App.Gui
                 }
             }
         }
+
+        private void ExportSolutionToSpreadsheet()
+        {
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export To Spreadsheet";
+                exportDialog.Filter = "XLSX (*.xlsx)|*.xlsx";
+                exportDialog.DefaultExt = "xlsx";
+                exportDialog.AddExtension = true;
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        //var res = GetDistances(_data.Nodes);
+
+                        var fullFileName = exportDialog.FileName;
+                        //var values = Helper.ConvertToCsv(res.Distances);
+                        //File.WriteAllLines(fullFileName, values);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+        }
         #endregion
 
         private void SetWindowTitle(string file)
@@ -324,6 +353,7 @@ namespace App.Gui
             _mniClearNodes.Enabled = !_data.Nodes.IsNullOrEmpty();
             _mniClearResult.Enabled = _result != null;
             _mniExportTspToGraph.Enabled = _data.Nodes.Count >= _minNodesToGraph;
+            _mniExportToSpreadsheet.Enabled = _result != null;
         }
 
         private void SetDataTables()

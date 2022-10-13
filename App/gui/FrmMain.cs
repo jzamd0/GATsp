@@ -1,6 +1,6 @@
-﻿using Lib.Genetics;
+﻿using Lib;
+using Lib.Genetics;
 using Lib.Tsp;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,8 +17,7 @@ namespace App.Gui
             _lastLocation = Application.StartupPath;
             _fullFileName = null;
 
-            _data = new Graph();
-            _data.Nodes = new List<Node>();
+            _project = new GAProject();
 
             _distancesViewMinWidth = 50;
             _edgesViewMinWidth = 50;
@@ -79,14 +78,14 @@ namespace App.Gui
 
         private void _mniTspProperties_Click(object sender, System.EventArgs e)
         {
-            using (var frmProperties = new FrmProperties(_data.Name, _data.Comment))
+            using (var frmProperties = new FrmProperties(_project.Name, _project.Comment))
             {
                 var res = frmProperties.ShowDialog();
 
                 if (res == DialogResult.OK)
                 {
-                    _data.Name = frmProperties.ProjectName;
-                    _data.Comment = frmProperties.Comment;
+                    _project.Name = frmProperties.ProjectName;
+                    _project.Comment = frmProperties.Comment;
                 }
             }
         }
@@ -106,12 +105,12 @@ namespace App.Gui
 
         private void _mniExportTspToDistances_Click(object sender, System.EventArgs e)
         {
-            ExportProjectToCSV();
+            ExportDistancesToCsv();
         }
 
         private void _mniExportTspToGraph_Click(object sender, System.EventArgs e)
         {
-            ExportProjectToImage();
+            ExportGraphToImage();
         }
 
         private void _mniExit_Click(object sender, System.EventArgs e)
@@ -150,7 +149,7 @@ namespace App.Gui
             }
 
             var setup = _frmGASetup.GetGASetup();
-            SolveTsp(setup);
+            SolveGA(setup);
         }
 
         private void _mniClearGASetup_Click(object sender, System.EventArgs e)
@@ -233,11 +232,11 @@ namespace App.Gui
             }
             else if (e.Button == MouseButtons.Right)
             {
-                if (_data.Nodes.Count > 0)
+                if (_graph.Nodes.Count > 0)
                 {
                     var offset = 5;
                     var selection = new Rectangle(e.X - offset, e.Y - offset, offset * 2, offset * 2);
-                    var found = _data.Nodes.FirstOrDefault(node => selection.Contains(node.Coord));
+                    var found = _graph.Nodes.FirstOrDefault(node => selection.Contains(node.Coord));
 
                     if (found != null)
                     {

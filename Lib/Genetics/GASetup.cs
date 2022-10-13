@@ -6,7 +6,6 @@ namespace Lib.Genetics
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public double[][] Distances { get; set; }
         public int GenotypeSize { get; set; }
         public int PopulationSize { get; set; }
         public int Generations { get; set; }
@@ -21,11 +20,10 @@ namespace Lib.Genetics
         {
         }
 
-        public GASetup(string id, string name, double[][] distances, int genotypeSize, int populationSize, int generations, double crossoverRate, double mutationRate, double elitismRate, SelectionType selectionType, CrossoverType crossoverType, MutationType mutationType)
+        public GASetup(string id, string name, int genotypeSize, int populationSize, int generations, double crossoverRate, double mutationRate, double elitismRate, SelectionType selectionType, CrossoverType crossoverType, MutationType mutationType)
         {
             Id = id;
             Name = name;
-            Distances = distances;
             GenotypeSize = genotypeSize;
             PopulationSize = populationSize;
             Generations = generations;

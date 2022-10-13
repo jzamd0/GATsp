@@ -11,13 +11,14 @@ namespace Lib.Tsp
 
         public Graph()
         {
+            Nodes = new List<Node>();
         }
 
         public Graph(string name, string comment, List<Node> nodes)
         {
             Name = name;
             Comment = comment;
-            Nodes = nodes ?? new List<Node>();
+            Nodes = nodes;
         }
 
         public override string ToString()

@@ -17,14 +17,14 @@ namespace Lib.Genetics
         protected int TourEnd { get; set; }
         protected int TourRange { get; set; }
 
-        public GAResult SolveMeasured(GASetup setup, GAVerboseOptions verbose = null)
+        public GAResult SolveMeasured(GASetup setup, double[][] distances, GAVerboseOptions verbose = null)
         {
             verbose = ConfigureVerboseOptions(verbose);
 
             var sw = new Stopwatch();
 
             sw.Start();
-            var result = new GA().Solve(setup, verbose);
+            var result = new GA().Solve(setup, distances, verbose);
             sw.Stop();
 
             result.Duration = sw.ElapsedMilliseconds;
@@ -43,7 +43,7 @@ namespace Lib.Genetics
             return result;
         }
 
-        public GAResult Solve(GASetup setup, GAVerboseOptions verbose = null)
+        public GAResult Solve(GASetup setup, double[][] distances, GAVerboseOptions verbose = null)
         {
             if (setup.Generations < MinGenerations)
             {
@@ -61,9 +61,9 @@ namespace Lib.Genetics
             {
                 throw new ArgumentOutOfRangeException($"Genotype size must be greater than {MinGenotypeSize - 1}.", nameof(setup.GenotypeSize));
             }
-            if (setup.Distances.IsNullOrEmpty())
+            if (distances.IsNullOrEmpty())
             {
-                throw new ArgumentNullException($"Distances cannot be null or empty", nameof(setup.Distances));
+                throw new ArgumentNullException($"Distances cannot be null or empty", nameof(distances));
             }
 
             verbose = ConfigureVerboseOptions(verbose);
@@ -88,11 +88,11 @@ namespace Lib.Genetics
             population = GenerateInitialPopulation(population, setup.PopulationSize);
 
             Array.Copy(population, initialPopulation, population.Length);
-            initialPopulation = GenerateFitness(initialPopulation, setup.Distances, setup.PopulationSize, setup.GenotypeSize);
+            initialPopulation = GenerateFitness(initialPopulation, distances, setup.PopulationSize, setup.GenotypeSize);
 
             while (true)
             {
-                population = GenerateFitness(population, setup.Distances, setup.PopulationSize, setup.GenotypeSize);
+                population = GenerateFitness(population, distances, setup.PopulationSize, setup.GenotypeSize);
                 best = GetBestIndividual(population, setup.PopulationSize);
 
                 // get average and best fitness

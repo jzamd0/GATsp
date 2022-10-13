@@ -98,7 +98,6 @@ namespace App.Gui
             ClearData();
 
             _data = new Graph();
-            _data.Nodes = new List<Node>();
 
             _fullFileName = null;
             SetWindowTitle("Untitled");
@@ -612,10 +611,9 @@ namespace App.Gui
 
             swTotal.Start();
             GenerateDistances();
-            setup.Distances = _distances;
             setup.GenotypeSize = _data.Nodes.Count + 1;
 
-            var res = new GA().SolveMeasured(setup, _verbose);
+            var res = new GA().SolveMeasured(setup, _distances, _verbose);
 
             var shortestPath = Helper.MapToPath(_data.Nodes, res.Best.Values);
             swTotal.Stop();

@@ -176,6 +176,7 @@ namespace App.Gui
             this._tbxCrossoverRate.Size = new System.Drawing.Size(137, 23);
             this._tbxCrossoverRate.TabIndex = 7;
             this._tbxCrossoverRate.Text = "0.0";
+            this._tbxCrossoverRate.TextChanged += new System.EventHandler(this._tbxCrossoverRate_TextChanged);
             // 
             // _tbxMutationRate
             // 
@@ -185,6 +186,7 @@ namespace App.Gui
             this._tbxMutationRate.Size = new System.Drawing.Size(137, 23);
             this._tbxMutationRate.TabIndex = 8;
             this._tbxMutationRate.Text = "0.0";
+            this._tbxMutationRate.TextChanged += new System.EventHandler(this._tbxMutationRate_TextChanged);
             // 
             // _tbxElitismRate
             // 

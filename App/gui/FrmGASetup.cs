@@ -19,6 +19,9 @@ namespace App.Gui
         private void FrmGASetup_Load(object sender, EventArgs e)
         {
             SetComboBoxes();
+
+            ChangeCrossoverTypeStatus();
+            ChangeMutationTypeStatus();
         }
 
         private void SetComboBoxes()
@@ -126,6 +129,28 @@ namespace App.Gui
             setup.MutationType = (setup.MutationRate == 0) ? MutationType.None : (MutationType)_cbxMutationType.SelectedValue;
             
             return setup;
+        }
+
+        private void _tbxCrossoverRate_TextChanged(object sender, EventArgs e)
+        {
+            ChangeCrossoverTypeStatus();
+        }
+
+        private void _tbxMutationRate_TextChanged(object sender, EventArgs e)
+        {
+            ChangeMutationTypeStatus();
+        }
+
+        private void ChangeCrossoverTypeStatus()
+        {
+            var valid = double.TryParse(_tbxCrossoverRate.Text, out var crossoverRate);
+            _cbxCrossoverType.Enabled = valid && crossoverRate > 0;
+        }
+
+        private void ChangeMutationTypeStatus()
+        {
+            var valid = double.TryParse(_tbxMutationRate.Text, out var mutationRate);
+            _cbxMutationType.Enabled = valid && mutationRate > 0;
         }
     }
 }

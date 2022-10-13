@@ -9,7 +9,7 @@ namespace App.Gui
     public partial class FrmGASetup : Form
     {
         private static readonly string _defaultSetupName = "default";
-        
+
         private static readonly string _messageWarningValidNumber = "Please enter a valid number.";
         private static readonly string _messageWarningPositiveNumber = "Please enter a positive number.";
         private static readonly string _messageWarningRatesInterval = "Rate values must be between 0 and 1.";
@@ -24,7 +24,7 @@ namespace App.Gui
             SetComboBoxes();
 
             _tbxName.Text = _defaultSetupName;
-            
+
             ChangeCrossoverTypeStatus();
             ChangeMutationTypeStatus();
         }
@@ -147,7 +147,7 @@ namespace App.Gui
 
             setup.CrossoverType = (setup.CrossoverRate == 0) ? CrossoverType.None : (CrossoverType)_cbxCrossoverType.SelectedValue;
             setup.MutationType = (setup.MutationRate == 0) ? MutationType.None : (MutationType)_cbxMutationType.SelectedValue;
-            
+
             return setup;
         }
 

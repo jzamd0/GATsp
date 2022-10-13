@@ -1,5 +1,5 @@
-using Lib.Tsp;
 using Lib.Genetics;
+using Lib.Tsp;
 
 namespace Lib
 {

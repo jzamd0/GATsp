@@ -26,12 +26,13 @@ namespace App.Gui
         private GAProject _project { get; set; }
         private Graph _graph
         {
-            get { return _project.Graph; } 
-            set { _project.Graph = value; }
+            get => _project.Graph;
+            set => _project.Graph = value;
         }
-        private GASetup _setup { 
-            get { return _project.Setup; }
-            set { _project.Setup = value; }
+        private GASetup _setup
+        {
+            get => _project.Setup;
+            set => _project.Setup = value;
         }
         private GAResult _result { get; set; }
         private double[][] _distances { get; set; }

@@ -69,7 +69,7 @@ namespace App.Gui
 
         public void SetGASetup(GASetup setup)
         {
-            _tbxName.Text = _defaultSetupName;
+            _tbxName.Text = setup.Name;
             _tbxPopulationSize.Text = setup.PopulationSize.ToString();
             _tbxGenerations.Text = setup.Generations.ToString();
             _tbxCrossoverRate.Text = setup.CrossoverRate.ToString();
@@ -153,6 +153,7 @@ namespace App.Gui
 
         public void ClearGASetup()
         {
+            _tbxName.Text = _defaultSetupName;
             _tbxPopulationSize.Text = "0";
             _tbxGenerations.Text = "0";
             _tbxCrossoverRate.Text = "0.0";

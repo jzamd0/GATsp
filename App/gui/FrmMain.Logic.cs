@@ -1,4 +1,5 @@
-﻿using Lib;
+﻿using GASpreadsheets;
+using Lib;
 using Lib.Genetics;
 using Lib.Tsp;
 using System;
@@ -322,13 +323,19 @@ namespace App.Gui
                 {
                     try
                     {
-                        //var res = GetDistances(_data.Nodes);
+                        var exporter = new ExcelExporter();
+                        var data = new ExcelData
+                        {
+                            Title = _data.Name,
+                            Graph = _data,
+                            Setup = _setup,
+                            Result = _result,
+                        };
 
                         var fullFileName = exportDialog.FileName;
-                        //var values = Helper.ConvertToCsv(res.Distances);
-                        //File.WriteAllLines(fullFileName, values);
+                        exporter.SaveToSpreadsheet(fullFileName, data);
                     }
-                    catch (Exception ex) when (ex is IOException)
+                    catch (Exception ex) when (ex is IOException || ex is InvalidOperationException)
                     {
                         PrintTo(ex.Message, true);
                     }
@@ -640,7 +647,7 @@ namespace App.Gui
 
             var res = new GA().SolveMeasured(setup, _verbose);
 
-            var shortestPath = Helper.MapToPath(_data.Nodes, res.Best.Values);
+            var shortestPath = Tsp.MapNodesToPath(_data.Nodes, res.Best.Values);
             swTotal.Stop();
             var finished = DateTime.Now;
 
@@ -722,13 +729,13 @@ namespace App.Gui
             var dtInitialPopulation = (DataTable)_dgvInitialPopulation.DataSource;
             foreach (var ind in _result.InitialPopulation)
             {
-                dtInitialPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+                dtInitialPopulation.Rows.Add(string.Join(", ", Tsp.MapHeadersToPath(_data.Nodes, ind.Values)), Math.Round(ind.Fitness, _decimalsToRound));
             }
 
             var dtLastPopulation = (DataTable)_dgvLastPopulation.DataSource;
             foreach (var ind in _result.LastPopulation)
             {
-                dtLastPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+                dtLastPopulation.Rows.Add(string.Join(", ", Tsp.MapHeadersToPath(_data.Nodes, ind.Values)), Math.Round(ind.Fitness, _decimalsToRound));
             }
 
             _tablePanelPopulation.Visible = true;

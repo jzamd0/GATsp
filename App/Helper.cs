@@ -19,18 +19,6 @@ namespace App
             return nodes.Any(n => Util.GetDistance(n.Coord, p) == 0);
         }
 
-        public static List<Node> MapToPath(List<Node> nodes, double[] values)
-        {
-            var path = new List<Node>();
-
-            for (var i = 0; i < values.Length; i++)
-            {
-                path.Add(nodes[(int)values[i]]);
-            }
-
-            return path;
-        }
-
         public static bool HasDuplicateId(List<Node> nodes)
         {
             return nodes.GroupBy(x => x.Id).Any(g => g.Count() > 1);

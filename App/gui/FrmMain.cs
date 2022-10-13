@@ -141,15 +141,16 @@ namespace App.Gui
         #region Menu TSP
         private void _mniSolveTsp_Click(object sender, System.EventArgs e)
         {
-            var res = _frmGASetup.GetGASetup();
+            var valid = _frmGASetup.ValidateGASetup();
 
-            if (!res.Valid)
+            if (!valid.Valid)
             {
-                PrintTo(res.Message);
+                PrintTo(valid.Message);
                 return;
             }
 
-            SolveTsp(res.Setup);
+            var setup = _frmGASetup.GetGASetup();
+            SolveTsp(setup);
         }
 
         private void _mniClearResult_Click(object sender, System.EventArgs e)

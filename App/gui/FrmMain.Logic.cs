@@ -152,14 +152,8 @@ namespace App.Gui
                         ClearData();
 
                         _data = data;
-                        if (_data.Nodes.Count > 0)
-                        {
-                            DisplayNodes();
-                        }
-                        if (_data.Nodes.Count >= _minNodesToDistances)
-                        {
-                            GenerateDistances();
-                        }
+
+                        LoadProject();
 
                         _fullFileName = fullFileName;
                         _lastLocation = filePath;
@@ -172,6 +166,18 @@ namespace App.Gui
                         PrintTo(ex.Message, true);
                     }
                 }
+            }
+        }
+
+        private void LoadProject()
+        {
+            if (_data.Nodes.Count > 0)
+            {
+                DisplayNodes();
+            }
+            if (_data.Nodes.Count >= _minNodesToDistances)
+            {
+                GenerateDistances();
             }
         }
 
@@ -237,12 +243,12 @@ namespace App.Gui
             File.WriteAllText(fullFileName, json);
         }
 
-        private void ExportProjectToCSV()
+        private void ExportDistancesToCsv()
         {
             using (var exportDialog = new SaveFileDialog())
             {
                 exportDialog.InitialDirectory = _lastLocation;
-                exportDialog.Title = "Export To CSV";
+                exportDialog.Title = "Export Distances To CSV";
                 exportDialog.Filter = "CSV (*.csv)|*.csv";
                 exportDialog.DefaultExt = "csv";
                 exportDialog.AddExtension = true;
@@ -266,7 +272,7 @@ namespace App.Gui
             }
         }
 
-        private void ExportProjectToImage()
+        private void ExportGraphToImage()
         {
             using (var exportDialog = new SaveFileDialog())
             {
@@ -601,8 +607,8 @@ namespace App.Gui
         }
         #endregion
 
-        #region TSP
-        private void SolveTsp(GASetup setup)
+        #region GA
+        private void SolveGA(GASetup setup)
         {
             ClearResult();
 
@@ -614,16 +620,14 @@ namespace App.Gui
             setup.GenotypeSize = _data.Nodes.Count + 1;
 
             var res = new GA().SolveMeasured(setup, _distances, _verbose);
-
-            var shortestPath = Helper.MapToPath(_data.Nodes, res.Best.Values);
             swTotal.Stop();
             var finished = DateTime.Now;
 
-            _shortestPath = shortestPath;
             _setup = setup;
             _result = res;
+            _shortestPath = Helper.MapToPath(_data.Nodes, _result.Best.Values);
 
-            DisplaySummary(shortestPath, started, finished, swTotal.ElapsedMilliseconds);
+            DisplaySummary(started, finished, swTotal.ElapsedMilliseconds);
             DisplayPopulation();
 
             UpdateApp();
@@ -675,14 +679,14 @@ namespace App.Gui
             }
         }
 
-        private void DisplaySummary(List<Node> shortestPath, DateTime started, DateTime finished, long totalDuration)
+        private void DisplaySummary(DateTime started, DateTime finished, long totalDuration)
         {
             var dtSummary = (DataTable)_dgvSummary.DataSource;
 
             dtSummary.Rows.Add("Setup", _setup.Name);
             dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
-            dtSummary.Rows.Add("Best Tour", string.Join(", ", shortestPath.Select(n => n.Name).ToArray()));
+            dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
             dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
             dtSummary.Rows.Add("Last Generation", _result.LastGeneration);
             dtSummary.Rows.Add("Has Converged", (_result.HasConverged) ? "Yes" : "No");

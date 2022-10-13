@@ -106,12 +106,12 @@ namespace App.Gui
 
         private void _mniExportTspToDistances_Click(object sender, System.EventArgs e)
         {
-            ExportProjectToCSV();
+            ExportDistancesToCsv();
         }
 
         private void _mniExportTspToGraph_Click(object sender, System.EventArgs e)
         {
-            ExportProjectToImage();
+            ExportGraphToImage();
         }
 
         private void _mniExit_Click(object sender, System.EventArgs e)
@@ -150,7 +150,7 @@ namespace App.Gui
             }
 
             var setup = _frmGASetup.GetGASetup();
-            SolveTsp(setup);
+            SolveGA(setup);
         }
 
         private void _mniClearGASetup_Click(object sender, System.EventArgs e)

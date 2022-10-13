@@ -681,6 +681,7 @@ namespace App.Gui
         {
             var dtSummary = (DataTable)_dgvSummary.DataSource;
 
+            dtSummary.Rows.Add("Setup", _setup.Name);
             dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Best Tour", string.Join(", ", shortestPath.Select(n => n.Name).ToArray()));

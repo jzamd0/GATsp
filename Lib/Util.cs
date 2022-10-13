@@ -7,6 +7,11 @@ namespace Lib
 {
     public static class Util
     {
+        public static string CreateShortId()
+        {
+            return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+        }
+
         public static double GetDistance(Point a, Point b)
         {
             return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));

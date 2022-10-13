@@ -1,4 +1,5 @@
-﻿using Lib.Genetics;
+﻿using Lib;
+using Lib.Genetics;
 using Lib.Genetics.Operators;
 using System;
 using System.Windows.Forms;
@@ -7,6 +8,8 @@ namespace App.Gui
 {
     public partial class FrmGASetup : Form
     {
+        private static readonly string _defaultSetupName = "default";
+        
         private static readonly string _messageWarningValidNumber = "Please enter a valid number.";
         private static readonly string _messageWarningPositiveNumber = "Please enter a positive number.";
         private static readonly string _messageWarningRatesInterval = "Rate values must be between 0 and 1.";
@@ -20,6 +23,8 @@ namespace App.Gui
         {
             SetComboBoxes();
 
+            _tbxName.Text = _defaultSetupName;
+            
             ChangeCrossoverTypeStatus();
             ChangeMutationTypeStatus();
         }
@@ -64,6 +69,7 @@ namespace App.Gui
 
         public void SetGASetup(GASetup setup)
         {
+            _tbxName.Text = _defaultSetupName;
             _tbxPopulationSize.Text = setup.PopulationSize.ToString();
             _tbxGenerations.Text = setup.Generations.ToString();
             _tbxCrossoverRate.Text = setup.CrossoverRate.ToString();
@@ -129,6 +135,8 @@ namespace App.Gui
         {
             var setup = new GASetup
             {
+                Id = Util.CreateShortId(),
+                Name = (_tbxName.Text.IsNullOrEmpty()) ? _defaultSetupName : _tbxName.Text,
                 PopulationSize = int.Parse(_tbxPopulationSize.Text),
                 Generations = int.Parse(_tbxGenerations.Text),
                 CrossoverRate = double.Parse(_tbxCrossoverRate.Text),

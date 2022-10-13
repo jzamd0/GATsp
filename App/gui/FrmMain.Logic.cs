@@ -316,13 +316,13 @@ namespace App.Gui
 
         private void EnableOrDisableMenuItems()
         {
-            _mniSolveTsp.Enabled = _data.Nodes.Count >= _minNodesToSolveTsp;
+            _mniSolveGA.Enabled = _data.Nodes.Count >= _minNodesToSolveTsp;
 
             _mniExportTspToDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
             _mniGenerateDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
             _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
             _mniClearNodes.Enabled = !_data.Nodes.IsNullOrEmpty();
-            _mniClearResult.Enabled = _result != null;
+            _mniClearGAResult.Enabled = _result != null;
             _mniExportTspToGraph.Enabled = _data.Nodes.Count >= _minNodesToGraph;
         }
 
@@ -381,6 +381,7 @@ namespace App.Gui
             ((DataTable)_dgvEdges.DataSource).Rows.Clear();
             ((DataTable)_dgvCoordinates.DataSource).Rows.Clear();
             ((DataTable)_dgvDistances.DataSource).Rows.Clear();
+            ClearSetup();
             ClearResult();
 
             _data = null;
@@ -388,6 +389,13 @@ namespace App.Gui
             _fullFileName = null;
             _distances = null;
             _edges = null;
+        }
+
+        private void ClearSetup()
+        {
+            _frmGASetup.ClearGASetup();
+
+            _setup = null;
         }
 
         private void ClearResult()
@@ -399,7 +407,6 @@ namespace App.Gui
             _dgvSummary.Visible = false;
 
             _shortestPath = null;
-            _setup = null;
             _result = null;
         }
 

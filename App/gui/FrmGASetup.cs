@@ -62,6 +62,18 @@ namespace App.Gui
             _cbxMutationType.DataSource = mutationItems;
         }
 
+        public void SetGASetup(GASetup setup)
+        {
+            _tbxPopulationSize.Text = setup.PopulationSize.ToString();
+            _tbxGenerations.Text = setup.Generations.ToString();
+            _tbxCrossoverRate.Text = setup.CrossoverRate.ToString();
+            _tbxMutationRate.Text = setup.MutationRate.ToString();
+            _tbxElitismRate.Text = setup.ElitismRate.ToString();
+            _cbxSelectionType.SelectedValue = setup.SelectionType;
+            _cbxCrossoverType.SelectedValue = setup.CrossoverType;
+            _cbxMutationType.SelectedValue = setup.MutationType;
+        }
+
         public (bool Valid, string Message) ValidateGASetup()
         {
             if (!int.TryParse(_tbxPopulationSize.Text, out int popSize))
@@ -129,6 +141,18 @@ namespace App.Gui
             setup.MutationType = (setup.MutationRate == 0) ? MutationType.None : (MutationType)_cbxMutationType.SelectedValue;
             
             return setup;
+        }
+
+        public void ClearGASetup()
+        {
+            _tbxPopulationSize.Text = "0";
+            _tbxGenerations.Text = "0";
+            _tbxCrossoverRate.Text = "0.0";
+            _tbxMutationRate.Text = "0.0";
+            _tbxElitismRate.Text = "0.0";
+            _cbxSelectionType.SelectedIndex = 0;
+            _cbxCrossoverType.SelectedIndex = 0;
+            _cbxMutationType.SelectedIndex = 0;
         }
 
         private void _tbxCrossoverRate_TextChanged(object sender, EventArgs e)

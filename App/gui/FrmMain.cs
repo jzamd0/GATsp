@@ -46,8 +46,8 @@ namespace App.Gui
             _mniExportTspToGraph.Enabled = false;
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
-            _mniSolveTsp.Enabled = false;
-            _mniClearResult.Enabled = false;
+            _mniSolveGA.Enabled = false;
+            _mniClearGAResult.Enabled = false;
             _mniGenerateDistances.Enabled = false;
             _mniClearDistances.Enabled = false;
             _mniClearNodes.Enabled = false;
@@ -138,8 +138,8 @@ namespace App.Gui
         }
         #endregion
 
-        #region Menu TSP
-        private void _mniSolveTsp_Click(object sender, System.EventArgs e)
+        #region Menu GA
+        private void _mniSolveGA_Click(object sender, System.EventArgs e)
         {
             var valid = _frmGASetup.ValidateGASetup();
 
@@ -153,13 +153,22 @@ namespace App.Gui
             SolveTsp(setup);
         }
 
-        private void _mniClearResult_Click(object sender, System.EventArgs e)
+        private void _mniClearGASetup_Click(object sender, System.EventArgs e)
+        {
+            ClearSetup();
+
+            UpdateApp();
+        }
+
+        private void _mniClearGAResult_Click(object sender, System.EventArgs e)
         {
             ClearResult();
 
             UpdateApp();
         }
+        #endregion
 
+        #region Menu TSP
         private void _minGenerateDistances_Click(object sender, System.EventArgs e)
         {
             GenerateDistances();

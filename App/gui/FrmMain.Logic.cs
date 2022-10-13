@@ -23,12 +23,20 @@ namespace App.Gui
         private string _lastLocation { get; set; }
         private string _fullFileName { get; set; }
 
-        private Graph _data { get; set; }
+        private GAProject _project { get; set; }
+        private Graph _graph
+        {
+            get { return _project.Graph; } 
+            set { _project.Graph = value; }
+        }
+        private GASetup _setup { 
+            get { return _project.Setup; }
+            set { _project.Setup = value; }
+        }
+        private GAResult _result { get; set; }
         private double[][] _distances { get; set; }
         private Edge<Node>[] _edges { get; set; }
         private List<Node> _shortestPath { get; set; }
-        private GASetup _setup { get; set; }
-        private GAResult _result { get; set; }
 
         private int _distancesViewMinWidth { get; set; }
         private int _edgesViewMinWidth { get; set; }
@@ -97,7 +105,7 @@ namespace App.Gui
         {
             ClearData();
 
-            _data = new Graph();
+            _project = new GAProject();
 
             _fullFileName = null;
             SetWindowTitle("Untitled");
@@ -115,7 +123,7 @@ namespace App.Gui
             using (var openDialog = new OpenFileDialog())
             {
                 openDialog.InitialDirectory = _lastLocation;
-                openDialog.Title = "Open JSON File";
+                openDialog.Title = "Open Project";
                 openDialog.Filter = "JSON (*.json)|*.json";
                 openDialog.FilterIndex = 1;
                 openDialog.RestoreDirectory = true;
@@ -135,14 +143,14 @@ namespace App.Gui
                             return;
                         }
 
-                        // deserialize json to tsp data
+                        // deserialize json to project data
                         var options = new JsonSerializerOptions
                         {
                             PropertyNameCaseInsensitive = true,
                         };
-                        var data = (Graph)JsonSerializer.Deserialize(inputData, typeof(Graph), options);
+                        var project = (GAProject)JsonSerializer.Deserialize(inputData, typeof(GAProject), options);
 
-                        var valid = AreNodesValid(data.Nodes);
+                        var valid = AreNodesValid(project.Graph.Nodes);
                         if (!valid.Valid)
                         {
                             PrintTo(valid.Message, true);
@@ -151,7 +159,7 @@ namespace App.Gui
 
                         ClearData();
 
-                        _data = data;
+                        _project = project;
 
                         LoadProject();
 
@@ -171,13 +179,17 @@ namespace App.Gui
 
         private void LoadProject()
         {
-            if (_data.Nodes.Count > 0)
+            if (_graph.Nodes.Count > 0)
             {
                 DisplayNodes();
             }
-            if (_data.Nodes.Count >= _minNodesToDistances)
+            if (_graph.Nodes.Count >= _minNodesToDistances)
             {
                 GenerateDistances();
+            }
+            if (_setup != null)
+            {
+                DisplaySetup();
             }
         }
 
@@ -202,7 +214,7 @@ namespace App.Gui
             using (var saveDialog = new SaveFileDialog())
             {
                 saveDialog.InitialDirectory = _lastLocation;
-                saveDialog.Title = "Save Graph As JSON";
+                saveDialog.Title = "Save Project";
                 saveDialog.Filter = "JSON (*.json)|*.json";
                 saveDialog.DefaultExt = "json";
                 saveDialog.AddExtension = true;
@@ -239,7 +251,7 @@ namespace App.Gui
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
             };
-            var json = JsonSerializer.Serialize(_data, typeof(Graph), options);
+            var json = JsonSerializer.Serialize(_project, typeof(GAProject), options);
             File.WriteAllText(fullFileName, json);
         }
 
@@ -258,7 +270,7 @@ namespace App.Gui
                 {
                     try
                     {
-                        var res = GetDistances(_data.Nodes);
+                        var res = GetDistances(_graph.Nodes);
 
                         var fullFileName = exportDialog.FileName;
                         var values = Helper.ConvertToCsv(res.Distances);
@@ -287,12 +299,12 @@ namespace App.Gui
                     {
                         var fullFileName = exportDialog.FileName;
 
-                        var minX = _data.Nodes.Select(n => n.Coord.X).Min();
-                        var minY = _data.Nodes.Select(n => n.Coord.Y).Min();
+                        var minX = _graph.Nodes.Select(n => n.Coord.X).Min();
+                        var minY = _graph.Nodes.Select(n => n.Coord.Y).Min();
                         // get furthest x coordinate using the node coordinate with the text width added
-                        var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _canvas.NodeFont).ToSize().Width).Max();
+                        var maxX = _graph.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _canvas.NodeFont).ToSize().Width).Max();
                         var width = maxX + (_canvasPadding * 2) - minX;
-                        var height = _data.Nodes.Select(n => n.Coord.Y).Max() + (_canvasPadding * 2) - minY;
+                        var height = _graph.Nodes.Select(n => n.Coord.Y).Max() + (_canvasPadding * 2) - minY;
 
                         var bmap = new Bitmap(width, height);
                         var g = Graphics.FromImage(bmap);
@@ -321,14 +333,14 @@ namespace App.Gui
 
         private void EnableOrDisableMenuItems()
         {
-            _mniSolveGA.Enabled = _data.Nodes.Count >= _minNodesToSolveTsp;
+            _mniSolveGA.Enabled = _graph.Nodes.Count >= _minNodesToSolveTsp;
 
-            _mniExportTspToDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
-            _mniGenerateDistances.Enabled = _data.Nodes.Count >= _minNodesToDistances;
+            _mniExportTspToDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
+            _mniGenerateDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
             _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
-            _mniClearNodes.Enabled = !_data.Nodes.IsNullOrEmpty();
+            _mniClearNodes.Enabled = !_graph.Nodes.IsNullOrEmpty();
             _mniClearGAResult.Enabled = _result != null;
-            _mniExportTspToGraph.Enabled = _data.Nodes.Count >= _minNodesToGraph;
+            _mniExportTspToGraph.Enabled = _graph.Nodes.Count >= _minNodesToGraph;
         }
 
         private void SetDataTables()
@@ -389,7 +401,7 @@ namespace App.Gui
             ClearSetup();
             ClearResult();
 
-            _data = null;
+            _project = null;
             _fileTitle = null;
             _fullFileName = null;
             _distances = null;
@@ -425,13 +437,13 @@ namespace App.Gui
         private void UpdateLabels()
         {
             // update node count label
-            if (_data.Nodes.IsNullOrEmpty())
+            if (_graph.Nodes.IsNullOrEmpty())
             {
                 _lblNodesCount.Text = "0 node(s)";
             }
-            else if (_data.Nodes.Count > 0)
+            else if (_graph.Nodes.Count > 0)
             {
-                _lblNodesCount.Text = $"{_data.Nodes.Count} node(s)";
+                _lblNodesCount.Text = $"{_graph.Nodes.Count} node(s)";
             }
 
             if (_edges.IsNullOrEmpty())
@@ -447,19 +459,19 @@ namespace App.Gui
         #region Nodes
         private int GetNodeId()
         {
-            return (_data.Nodes.Count > 0) ? _data.Nodes.Max(n => n.Id) + 1 : 1;
+            return (_graph.Nodes.Count > 0) ? _graph.Nodes.Max(n => n.Id) + 1 : 1;
         }
 
         private void AddNode(Node node)
         {
             // check any node has same coordinates and where distance between both is 0
-            if (Helper.HasSameCoordinates(_data.Nodes, node.Coord))
+            if (Helper.HasSameCoordinates(_graph.Nodes, node.Coord))
             {
                 PrintTo("The node has the same coordinate as another node.", true);
                 return;
             }
 
-            _data.Nodes.Add(node);
+            _graph.Nodes.Add(node);
 
             ((DataTable)_dgvNodes.DataSource).Rows.Add(node.Id, node.Name);
             ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
@@ -469,8 +481,8 @@ namespace App.Gui
 
         private void RemoveNode(Node node)
         {
-            var index = _data.Nodes.IndexOf(node);
-            _data.Nodes.Remove(node);
+            var index = _graph.Nodes.IndexOf(node);
+            _graph.Nodes.Remove(node);
 
             ((DataTable)_dgvNodes.DataSource).Rows.RemoveAt(index);
             ((DataTable)_dgvCoordinates.DataSource).Rows.RemoveAt(index);
@@ -485,9 +497,9 @@ namespace App.Gui
 
         private void ClearNodes()
         {
-            for (var i = _data.Nodes.Count - 1; i > -1; i--)
+            for (var i = _graph.Nodes.Count - 1; i > -1; i--)
             {
-                RemoveNode(_data.Nodes[i]);
+                RemoveNode(_graph.Nodes[i]);
             }
         }
 
@@ -554,7 +566,7 @@ namespace App.Gui
         {
             ClearDistances();
 
-            var res = GetDistances(_data.Nodes);
+            var res = GetDistances(_graph.Nodes);
 
             _distances = res.Distances;
             _edges = res.Edges;
@@ -617,7 +629,7 @@ namespace App.Gui
 
             swTotal.Start();
             GenerateDistances();
-            setup.GenotypeSize = _data.Nodes.Count + 1;
+            setup.GenotypeSize = _graph.Nodes.Count + 1;
 
             var res = new GA().SolveMeasured(setup, _distances, _verbose);
             swTotal.Stop();
@@ -625,7 +637,7 @@ namespace App.Gui
 
             _setup = setup;
             _result = res;
-            _shortestPath = Helper.MapToPath(_data.Nodes, _result.Best.Values);
+            _shortestPath = Helper.MapToPath(_graph.Nodes, _result.Best.Values);
 
             DisplaySummary(started, finished, swTotal.ElapsedMilliseconds);
             DisplayPopulation();
@@ -640,7 +652,7 @@ namespace App.Gui
             var dtNodes = (DataTable)_dgvNodes.DataSource;
             var dtCoordinates = (DataTable)_dgvCoordinates.DataSource;
 
-            foreach (var node in _data.Nodes)
+            foreach (var node in _graph.Nodes)
             {
                 dtNodes.Rows.Add(node.Id, node.Name);
                 dtCoordinates.Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
@@ -651,7 +663,7 @@ namespace App.Gui
         {
             // display distances and edges to view
             var dtDistances = (DataTable)_dgvDistances.DataSource;
-            var headers = _data.Nodes.Select(x => x.Name).ToArray();
+            var headers = _graph.Nodes.Select(x => x.Name).ToArray();
 
             // create columns for distances view
             for (var i = 0; i < headers.Length; i++)
@@ -679,6 +691,11 @@ namespace App.Gui
             }
         }
 
+        private void DisplaySetup()
+        {
+            _frmGASetup.SetGASetup(_setup);
+        }
+
         private void DisplaySummary(DateTime started, DateTime finished, long totalDuration)
         {
             var dtSummary = (DataTable)_dgvSummary.DataSource;
@@ -702,13 +719,13 @@ namespace App.Gui
             var dtInitialPopulation = (DataTable)_dgvInitialPopulation.DataSource;
             foreach (var ind in _result.InitialPopulation)
             {
-                dtInitialPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+                dtInitialPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_graph.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
             }
 
             var dtLastPopulation = (DataTable)_dgvLastPopulation.DataSource;
             foreach (var ind in _result.LastPopulation)
             {
-                dtLastPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_data.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+                dtLastPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_graph.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
             }
 
             _tablePanelPopulation.Visible = true;
@@ -730,11 +747,11 @@ namespace App.Gui
 
         private void SetMinimumSizeCanvas()
         {
-            if (!_data.Nodes.IsNullOrEmpty())
+            if (!_graph.Nodes.IsNullOrEmpty())
             {
                 // check for the furthest node coordinates to extend the canvas panel to a proper size
-                var maxX = _data.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _canvas.NodeFont).ToSize().Width).Max();
-                var maxY = _data.Nodes.Select(n => n.Coord.Y).Max();
+                var maxX = _graph.Nodes.Select(n => n.Coord.X + Helper.MeasureString(n.Name, _canvas.NodeFont).ToSize().Width).Max();
+                var maxY = _graph.Nodes.Select(n => n.Coord.Y).Max();
 
                 _pnlCanvas.AutoScrollMinSize = new Size(maxX + _canvasPadding, maxY + _canvasPadding);
             }
@@ -757,15 +774,15 @@ namespace App.Gui
 
         private void DrawNodes(Graphics graphics)
         {
-            if (_data == null || _data.Nodes.IsNullOrEmpty())
+            if (_graph == null || _graph.Nodes.IsNullOrEmpty())
             {
                 return;
             }
 
-            for (var i = 0; i < _data.Nodes.Count; i++)
+            for (var i = 0; i < _graph.Nodes.Count; i++)
             {
-                var p = _data.Nodes[i].Coord;
-                var header = _data.Nodes[i].Name;
+                var p = _graph.Nodes[i].Coord;
+                var header = _graph.Nodes[i].Name;
 
                 if (i > 0)
                 {
@@ -802,11 +819,11 @@ namespace App.Gui
 
         private void DrawNodesForImage(Graphics graphics, Point start, int padding)
         {
-            for (var i = 0; i < _data.Nodes.Count; i++)
+            for (var i = 0; i < _graph.Nodes.Count; i++)
             {
-                var coord = _data.Nodes[i].Coord;
+                var coord = _graph.Nodes[i].Coord;
                 var p = new Point(coord.X - start.X + padding, coord.Y - start.Y + padding);
-                var header = _data.Nodes[i].Name;
+                var header = _graph.Nodes[i].Name;
 
                 if (i > 0)
                 {

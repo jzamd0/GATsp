@@ -43,9 +43,9 @@ namespace GATest
         public void InsertTest()
         {
             var values = new double[] { 1, 4, 7, 2, 5, 8, 3, 6, 9 };
-            var expected = new double[] { 1, 4, 7, 6, 2, 5, 8, 3, 9 };
+            var expected = new double[] { 1, 4, 6, 7, 2, 5, 8, 3, 9 };
             var point1 = 7;
-            var point2 = 3;
+            var point2 = 2;
             var size = expected.Length;
 
             var actual = Mutation.Insert(values, size, point1, point2);

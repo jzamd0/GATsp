@@ -137,7 +137,6 @@ namespace App.Gui
         {
             var setup = new GASetup
             {
-                Id = Util.CreateShortId(),
                 Name = (_tbxName.Text.IsNullOrEmpty()) ? _defaultSetupName : _tbxName.Text,
                 PopulationSize = int.Parse(_tbxPopulationSize.Text),
                 Generations = int.Parse(_tbxGenerations.Text),

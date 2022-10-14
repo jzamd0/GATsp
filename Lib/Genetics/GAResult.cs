@@ -4,6 +4,7 @@ namespace Lib.Genetics
 {
     public class GAResult
     {
+        public string SetupId { get; set; }
         public Individual Best { get; set; }
         public Individual[] InitialPopulation { get; set; }
         public Individual[] LastPopulation { get; set; }
@@ -19,8 +20,9 @@ namespace Lib.Genetics
         {
         }
 
-        public GAResult(Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, List<double> averageFitnesses, List<double> bestFitnesses, List<double> convergences, long duration)
+        public GAResult(string setupId, Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, List<double> averageFitnesses, List<double> bestFitnesses, List<double> convergences, long duration)
         {
+            SetupId = setupId;
             Best = best;
             InitialPopulation = initialPopulation;
             LastPopulation = lastPopulation;

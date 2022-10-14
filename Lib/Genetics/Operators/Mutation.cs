@@ -37,11 +37,12 @@ namespace Lib.Genetics.Operators
             return offspring;
         }
 
-        public static double[] Switch(double[] values, int genotypeSize, int point1, int point2)
+        public static double[] Switch(double[] values, int genotypeSize, int point1)
         {
             var offspring = new double[genotypeSize];
             Array.Copy(values, offspring, genotypeSize);
 
+            var point2 = point1 + 1;
             var temp = offspring[point1];
             offspring[point1] = offspring[point2];
             offspring[point2] = temp;

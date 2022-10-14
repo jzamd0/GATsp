@@ -73,6 +73,8 @@ namespace App.Gui
             this._mniSaveTspAs = new System.Windows.Forms.ToolStripMenuItem();
             this._mniTspPropertiesSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniTspProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniPreferencesSep = new System.Windows.Forms.ToolStripSeparator();
+            this._mniPreferences = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniExportTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToDistances = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,18 +84,18 @@ namespace App.Gui
             this._menuView = new System.Windows.Forms.ToolStripMenuItem();
             this._mniViewSetup = new System.Windows.Forms.ToolStripMenuItem();
             this._mniViewResults = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuGA = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniSolveGA = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniClearGASetupSep = new System.Windows.Forms.ToolStripSeparator();
+            this._mniClearGASetup = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniClearGAResult = new System.Windows.Forms.ToolStripMenuItem();
             this._menuTsp = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniSolveTsp = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniClearResult = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniGenerateDistancesAndEdgesSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniGenerateDistances = new System.Windows.Forms.ToolStripMenuItem();
             this._mniClearDistances = new System.Windows.Forms.ToolStripMenuItem();
             this._mniClearNodesSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniPreferencesSep = new System.Windows.Forms.ToolStripSeparator();
-            this._mniPreferences = new System.Windows.Forms.ToolStripMenuItem();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -577,6 +579,7 @@ namespace App.Gui
             this._menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._menuFile,
             this._menuView,
+            this._menuGA,
             this._menuTsp,
             this._menuHelp});
             this._menuStripMain.Location = new System.Drawing.Point(0, 0);
@@ -660,6 +663,18 @@ namespace App.Gui
             this._mniTspProperties.Text = "Properties...";
             this._mniTspProperties.Click += new System.EventHandler(this._mniTspProperties_Click);
             // 
+            // _mniPreferencesSep
+            // 
+            this._mniPreferencesSep.Name = "_mniPreferencesSep";
+            this._mniPreferencesSep.Size = new System.Drawing.Size(192, 6);
+            // 
+            // _mniPreferences
+            // 
+            this._mniPreferences.Name = "_mniPreferences";
+            this._mniPreferences.Size = new System.Drawing.Size(195, 22);
+            this._mniPreferences.Text = "Preferences...";
+            this._mniPreferences.Click += new System.EventHandler(this._mniPreferences_Click);
+            // 
             // _mniExportTspSep
             // 
             this._mniExportTspSep.Name = "_mniExportTspSep";
@@ -726,12 +741,47 @@ namespace App.Gui
             this._mniViewResults.Text = "Results";
             this._mniViewResults.Click += new System.EventHandler(this._mniViewResults_Click);
             // 
+            // _menuGA
+            // 
+            this._menuGA.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._mniSolveGA,
+            this._mniClearGASetupSep,
+            this._mniClearGASetup,
+            this._mniClearGAResult});
+            this._menuGA.Name = "_menuGA";
+            this._menuGA.Size = new System.Drawing.Size(35, 20);
+            this._menuGA.Text = "GA";
+            // 
+            // _mniSolveGA
+            // 
+            this._mniSolveGA.Name = "_mniSolveGA";
+            this._mniSolveGA.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
+            this._mniSolveGA.Size = new System.Drawing.Size(180, 22);
+            this._mniSolveGA.Text = "Solve";
+            this._mniSolveGA.Click += new System.EventHandler(this._mniSolveGA_Click);
+            // 
+            // _mniClearGASetupSep
+            // 
+            this._mniClearGASetupSep.Name = "_mniClearGASetupSep";
+            this._mniClearGASetupSep.Size = new System.Drawing.Size(177, 6);
+            // 
+            // _mniClearGASetup
+            // 
+            this._mniClearGASetup.Name = "_mniClearGASetup";
+            this._mniClearGASetup.Size = new System.Drawing.Size(180, 22);
+            this._mniClearGASetup.Text = "Clear Setup";
+            this._mniClearGASetup.Click += new System.EventHandler(this._mniClearGASetup_Click);
+            // 
+            // _mniClearGAResult
+            // 
+            this._mniClearGAResult.Name = "_mniClearGAResult";
+            this._mniClearGAResult.Size = new System.Drawing.Size(180, 22);
+            this._mniClearGAResult.Text = "Clear Result";
+            this._mniClearGAResult.Click += new System.EventHandler(this._mniClearGAResult_Click);
+            // 
             // _menuTsp
             // 
             this._menuTsp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._mniSolveTsp,
-            this._mniClearResult,
-            this._mniGenerateDistancesAndEdgesSep,
             this._mniGenerateDistances,
             this._mniClearDistances,
             this._mniClearNodesSep,
@@ -739,26 +789,6 @@ namespace App.Gui
             this._menuTsp.Name = "_menuTsp";
             this._menuTsp.Size = new System.Drawing.Size(38, 20);
             this._menuTsp.Text = "TSP";
-            // 
-            // _mniSolveTsp
-            // 
-            this._mniSolveTsp.Name = "_mniSolveTsp";
-            this._mniSolveTsp.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
-            this._mniSolveTsp.Size = new System.Drawing.Size(215, 22);
-            this._mniSolveTsp.Text = "Solve TSP";
-            this._mniSolveTsp.Click += new System.EventHandler(this._mniSolveTsp_Click);
-            // 
-            // _mniClearResult
-            // 
-            this._mniClearResult.Name = "_mniClearResult";
-            this._mniClearResult.Size = new System.Drawing.Size(215, 22);
-            this._mniClearResult.Text = "Clear TSP Result";
-            this._mniClearResult.Click += new System.EventHandler(this._mniClearResult_Click);
-            // 
-            // _mniGenerateDistancesAndEdgesSep
-            // 
-            this._mniGenerateDistancesAndEdgesSep.Name = "_mniGenerateDistancesAndEdgesSep";
-            this._mniGenerateDistancesAndEdgesSep.Size = new System.Drawing.Size(212, 6);
             // 
             // _mniGenerateDistances
             // 
@@ -801,18 +831,6 @@ namespace App.Gui
             this._mniAbout.Size = new System.Drawing.Size(107, 22);
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
-            // 
-            // _mniPreferencesSep
-            // 
-            this._mniPreferencesSep.Name = "_mniPreferencesSep";
-            this._mniPreferencesSep.Size = new System.Drawing.Size(192, 6);
-            // 
-            // _mniPreferences
-            // 
-            this._mniPreferences.Name = "_mniPreferences";
-            this._mniPreferences.Size = new System.Drawing.Size(195, 22);
-            this._mniPreferences.Text = "Preferences...";
-            this._mniPreferences.Click += new System.EventHandler(this._mniPreferences_Click);
             // 
             // FrmMain
             // 
@@ -883,7 +901,6 @@ namespace App.Gui
         private System.Windows.Forms.ToolStripMenuItem _mniExit;
         private System.Windows.Forms.ToolStripMenuItem _menuTsp;
         private System.Windows.Forms.SplitContainer _splitMain;
-        private System.Windows.Forms.ToolStripMenuItem _mniSolveTsp;
         private System.Windows.Forms.ToolStripMenuItem _menuHelp;
         private System.Windows.Forms.ToolStripMenuItem _mniAbout;
         private System.Windows.Forms.Panel _pnlSetup;
@@ -920,7 +937,6 @@ namespace App.Gui
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem _mniSaveTsp;
         private System.Windows.Forms.ToolStripMenuItem _mniSaveTspAs;
-        private System.Windows.Forms.ToolStripSeparator _mniGenerateDistancesAndEdgesSep;
         private System.Windows.Forms.ToolStripMenuItem _mniGenerateDistances;
         private System.Windows.Forms.ToolStripMenuItem _mniClearDistances;
         private System.Windows.Forms.ToolStripSeparator _mniClearNodesSep;
@@ -931,7 +947,6 @@ namespace App.Gui
         private System.Windows.Forms.ToolStripStatusLabel _lblNodesCount;
         private System.Windows.Forms.StatusStrip _statusEdges;
         private System.Windows.Forms.ToolStripStatusLabel _lblEdgesCount;
-        private System.Windows.Forms.ToolStripMenuItem _mniClearResult;
         private System.Windows.Forms.TableLayoutPanel _tablePanelPopulation;
         private System.Windows.Forms.DataGridView _dgvInitialPopulation;
         private System.Windows.Forms.DataGridView _dgvLastPopulation;
@@ -939,6 +954,11 @@ namespace App.Gui
         private System.Windows.Forms.Label _lblLastPopulation;
         private System.Windows.Forms.ToolStripSeparator _mniPreferencesSep;
         private System.Windows.Forms.ToolStripMenuItem _mniPreferences;
+        private System.Windows.Forms.ToolStripMenuItem _menuGA;
+        private System.Windows.Forms.ToolStripMenuItem _mniSolveGA;
+        private System.Windows.Forms.ToolStripSeparator _mniClearGASetupSep;
+        private System.Windows.Forms.ToolStripMenuItem _mniClearGASetup;
+        private System.Windows.Forms.ToolStripMenuItem _mniClearGAResult;
     }
 }
 

@@ -1,6 +1,6 @@
-﻿using Lib.Genetics;
+﻿using Lib;
+using Lib.Genetics;
 using Lib.Tsp;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,8 +17,7 @@ namespace App.Gui
             _lastLocation = Application.StartupPath;
             _fullFileName = null;
 
-            _data = new Graph();
-            _data.Nodes = new List<Node>();
+            _project = new GAProject();
 
             _distancesViewMinWidth = 50;
             _edgesViewMinWidth = 50;
@@ -46,8 +45,8 @@ namespace App.Gui
             _mniExportTspToGraph.Enabled = false;
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
-            _mniSolveTsp.Enabled = false;
-            _mniClearResult.Enabled = false;
+            _mniSolveGA.Enabled = false;
+            _mniClearGAResult.Enabled = false;
             _mniGenerateDistances.Enabled = false;
             _mniClearDistances.Enabled = false;
             _mniClearNodes.Enabled = false;
@@ -79,14 +78,14 @@ namespace App.Gui
 
         private void _mniTspProperties_Click(object sender, System.EventArgs e)
         {
-            using (var frmProperties = new FrmProperties(_data.Name, _data.Comment))
+            using (var frmProperties = new FrmProperties(_project.Name, _project.Comment))
             {
                 var res = frmProperties.ShowDialog();
 
                 if (res == DialogResult.OK)
                 {
-                    _data.Name = frmProperties.ProjectName;
-                    _data.Comment = frmProperties.Comment;
+                    _project.Name = frmProperties.ProjectName;
+                    _project.Comment = frmProperties.Comment;
                 }
             }
         }
@@ -106,12 +105,12 @@ namespace App.Gui
 
         private void _mniExportTspToDistances_Click(object sender, System.EventArgs e)
         {
-            ExportProjectToCSV();
+            ExportDistancesToCsv();
         }
 
         private void _mniExportTspToGraph_Click(object sender, System.EventArgs e)
         {
-            ExportProjectToImage();
+            ExportGraphToImage();
         }
 
         private void _mniExit_Click(object sender, System.EventArgs e)
@@ -138,27 +137,37 @@ namespace App.Gui
         }
         #endregion
 
-        #region Menu TSP
-        private void _mniSolveTsp_Click(object sender, System.EventArgs e)
+        #region Menu GA
+        private void _mniSolveGA_Click(object sender, System.EventArgs e)
         {
-            var res = _frmGASetup.GetGASetup();
+            var valid = _frmGASetup.ValidateGASetup();
 
-            if (!res.Valid)
+            if (!valid.Valid)
             {
-                PrintTo(res.Message);
+                PrintTo(valid.Message);
                 return;
             }
 
-            SolveTsp(res.Setup);
+            var setup = _frmGASetup.GetGASetup();
+            SolveGA(setup);
         }
 
-        private void _mniClearResult_Click(object sender, System.EventArgs e)
+        private void _mniClearGASetup_Click(object sender, System.EventArgs e)
+        {
+            ClearSetup();
+
+            UpdateApp();
+        }
+
+        private void _mniClearGAResult_Click(object sender, System.EventArgs e)
         {
             ClearResult();
 
             UpdateApp();
         }
+        #endregion
 
+        #region Menu TSP
         private void _minGenerateDistances_Click(object sender, System.EventArgs e)
         {
             GenerateDistances();
@@ -223,11 +232,11 @@ namespace App.Gui
             }
             else if (e.Button == MouseButtons.Right)
             {
-                if (_data.Nodes.Count > 0)
+                if (_graph.Nodes.Count > 0)
                 {
                     var offset = 5;
                     var selection = new Rectangle(e.X - offset, e.Y - offset, offset * 2, offset * 2);
-                    var found = _data.Nodes.FirstOrDefault(node => selection.Contains(node.Coord));
+                    var found = _graph.Nodes.FirstOrDefault(node => selection.Contains(node.Coord));
 
                     if (found != null)
                     {

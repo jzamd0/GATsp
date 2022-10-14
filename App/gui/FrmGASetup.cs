@@ -1,4 +1,5 @@
-﻿using Lib.Genetics;
+﻿using Lib;
+using Lib.Genetics;
 using Lib.Genetics.Operators;
 using System;
 using System.Windows.Forms;
@@ -7,22 +8,27 @@ namespace App.Gui
 {
     public partial class FrmGASetup : Form
     {
-        private string _messageWarningValidNumber { get; set; }
-        private string _messageWarningPositiveNumber { get; set; }
-        private string _messageWarningRatesInterval { get; set; }
+        private static readonly string _defaultSetupName = "default";
+
+        private static readonly string _messageWarningValidNumber = "Please enter a valid number.";
+        private static readonly string _messageWarningPositiveNumber = "Please enter a positive number.";
+        private static readonly string _messageWarningRatesInterval = "Rate values must be between 0 and 1.";
 
         public FrmGASetup()
         {
             InitializeComponent();
-
-            _messageWarningValidNumber = "Please enter a valid number.";
-            _messageWarningPositiveNumber = "Please enter a positive number.";
-            _messageWarningRatesInterval = "Rate values must be between 0 and 1.";
         }
 
         private void FrmGASetup_Load(object sender, EventArgs e)
         {
             SetComboBoxes();
+
+            _tbxName.Text = _defaultSetupName;
+            _tbxPopulationSize.Text = $"{GA.MinPopulationSize}";
+            _tbxGenerations.Text = $"{GA.MinGenerations}";
+
+            ChangeCrossoverTypeStatus();
+            ChangeMutationTypeStatus();
         }
 
         private void SetComboBoxes()
@@ -63,65 +69,122 @@ namespace App.Gui
             _cbxMutationType.DataSource = mutationItems;
         }
 
-        public (bool Valid, GASetup Setup, string Message) GetGASetup()
+        public void SetGASetup(GASetup setup)
+        {
+            _tbxName.Text = setup.Name;
+            _tbxPopulationSize.Text = setup.PopulationSize.ToString();
+            _tbxGenerations.Text = setup.Generations.ToString();
+            _tbxCrossoverRate.Text = setup.CrossoverRate.ToString();
+            _tbxMutationRate.Text = setup.MutationRate.ToString();
+            _tbxElitismRate.Text = setup.ElitismRate.ToString();
+            _cbxSelectionType.SelectedValue = setup.SelectionType;
+            _cbxCrossoverType.SelectedValue = setup.CrossoverType;
+            _cbxMutationType.SelectedValue = setup.MutationType;
+        }
+
+        public (bool Valid, string Message) ValidateGASetup()
         {
             if (!int.TryParse(_tbxPopulationSize.Text, out int popSize))
             {
-                return (false, null, _messageWarningValidNumber);
+                return (false, _messageWarningValidNumber);
             }
             if (!int.TryParse(_tbxGenerations.Text, out int generations))
             {
-                return (false, null, _messageWarningValidNumber);
+                return (false, _messageWarningValidNumber);
             }
             if (!double.TryParse(_tbxCrossoverRate.Text, out double px))
             {
-                return (false, null, _messageWarningValidNumber);
+                return (false, _messageWarningValidNumber);
             }
             if (!double.TryParse(_tbxMutationRate.Text, out double pm))
             {
-                return (false, null, _messageWarningValidNumber);
+                return (false, _messageWarningValidNumber);
             }
             if (!double.TryParse(_tbxElitismRate.Text, out double pe))
             {
-                return (false, null, _messageWarningValidNumber);
+                return (false, _messageWarningValidNumber);
             }
 
             // check for negative numbers
             if (popSize < 0 || generations < 0 || px < 0 || pm < 0 || pe < 0)
             {
-                return (false, null, _messageWarningPositiveNumber);
+                return (false, _messageWarningPositiveNumber);
             }
 
             if (popSize < GA.MinPopulationSize)
             {
-                return (false, null, $"Population size must be greater than {GA.MinPopulationSize - 1}.");
+                return (false, $"Population size must be greater than {GA.MinPopulationSize - 1}.");
             }
             if (generations < GA.MinGenerations)
             {
-                return (false, null, $"Generations must be greater than {GA.MinGenerations - 1}.");
+                return (false, $"Generations must be greater than {GA.MinGenerations - 1}.");
             }
             if (popSize % 2 != 0)
             {
-                return (false, null, "Population size must be even");
+                return (false, "Population size must be even");
             }
 
             // check for rate interval
             if (!(0 <= px && px <= 1) || !(0 <= pm && pm <= 1) || !(0 <= pe && pe <= 1))
             {
-                return (false, null, _messageWarningRatesInterval);
+                return (false, _messageWarningRatesInterval);
             }
 
-            var setup = new GASetup();
-            setup.PopulationSize = popSize;
-            setup.Generations = generations;
-            setup.CrossoverRate = px;
-            setup.MutationRate = pm;
-            setup.ElitismRate = pe;
-            setup.SelectionType = (SelectionType)_cbxSelectionType.SelectedValue;
-            setup.CrossoverType = (px == 0) ? CrossoverType.None : (CrossoverType)_cbxCrossoverType.SelectedValue;
-            setup.MutationType = (pm == 0) ? MutationType.None : (MutationType)_cbxMutationType.SelectedValue;
+            return (true, null);
+        }
 
-            return (true, setup, null);
+        public GASetup GetGASetup()
+        {
+            var setup = new GASetup
+            {
+                Name = (_tbxName.Text.IsNullOrEmpty()) ? _defaultSetupName : _tbxName.Text,
+                PopulationSize = int.Parse(_tbxPopulationSize.Text),
+                Generations = int.Parse(_tbxGenerations.Text),
+                CrossoverRate = double.Parse(_tbxCrossoverRate.Text),
+                MutationRate = double.Parse(_tbxMutationRate.Text),
+                ElitismRate = double.Parse(_tbxElitismRate.Text),
+                SelectionType = (SelectionType)_cbxSelectionType.SelectedValue,
+            };
+
+            setup.CrossoverType = (setup.CrossoverRate == 0) ? CrossoverType.None : (CrossoverType)_cbxCrossoverType.SelectedValue;
+            setup.MutationType = (setup.MutationRate == 0) ? MutationType.None : (MutationType)_cbxMutationType.SelectedValue;
+
+            return setup;
+        }
+
+        public void ClearGASetup()
+        {
+            _tbxName.Text = _defaultSetupName;
+            _tbxPopulationSize.Text = $"{GA.MinPopulationSize}";
+            _tbxGenerations.Text = $"{GA.MinGenerations}";
+            _tbxCrossoverRate.Text = "0.0";
+            _tbxMutationRate.Text = "0.0";
+            _tbxElitismRate.Text = "0.0";
+            _cbxSelectionType.SelectedIndex = 0;
+            _cbxCrossoverType.SelectedIndex = 0;
+            _cbxMutationType.SelectedIndex = 0;
+        }
+
+        private void _tbxCrossoverRate_TextChanged(object sender, EventArgs e)
+        {
+            ChangeCrossoverTypeStatus();
+        }
+
+        private void _tbxMutationRate_TextChanged(object sender, EventArgs e)
+        {
+            ChangeMutationTypeStatus();
+        }
+
+        private void ChangeCrossoverTypeStatus()
+        {
+            var valid = double.TryParse(_tbxCrossoverRate.Text, out var crossoverRate);
+            _cbxCrossoverType.Enabled = valid && crossoverRate > 0;
+        }
+
+        private void ChangeMutationTypeStatus()
+        {
+            var valid = double.TryParse(_tbxMutationRate.Text, out var mutationRate);
+            _cbxMutationType.Enabled = valid && mutationRate > 0;
         }
     }
 }

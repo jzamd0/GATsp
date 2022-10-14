@@ -372,7 +372,7 @@ namespace Lib.Genetics
                 if (rand.NextDouble() <= mutationRate)
                 {
                     var point1 = rand.Next(1, TourEnd - 1);
-                    var point2 = rand.Next(point1 + 1, TourEnd);
+                    var point2 = (mutopType != MutationType.Switch) ? rand.Next(point1 + 1, TourEnd) : 0;
 
                     if (verbose)
                     {
@@ -393,7 +393,7 @@ namespace Lib.Genetics
                     }
                     else if (mutopType == MutationType.Switch)
                     {
-                        var values = Mutation.Switch(population[i].Values, genotypeSize, point1, point2);
+                        var values = Mutation.Switch(population[i].Values, genotypeSize, point1);
                         mutatedPopulation[i] = new Individual(values, 0);
                     }
 

@@ -29,13 +29,12 @@ namespace GATest
         public void SwitchTest()
         {
             var values = new double[] { 1, 4, 7, 2, 5, 8, 3, 6, 9 };
-            var expected = new double[] { 1, 4, 6, 2, 5, 8, 3, 7, 9 };
+            var expected = new double[] { 1, 4, 7, 2, 5, 8, 3, 9, 6 };
 
-            var point1 = 2;
-            var point2 = 7;
+            var point1 = 7;
             var size = expected.Length;
 
-            var actual = Mutation.Switch(values, size, point1, point2);
+            var actual = Mutation.Switch(values, size, point1);
 
             Assert.AreEqual(expected, actual);
         }

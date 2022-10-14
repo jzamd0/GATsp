@@ -247,6 +247,17 @@ namespace App.Gui
 
         private void WriteProject(string fullFileName)
         {
+            var res = _frmGASetup.ValidateGASetup();
+            if (res.Valid)
+            {
+                _setup = _frmGASetup.GetGASetup();
+                _setup.GenotypeSize = _graph.Nodes.Count + 1;
+            }
+            else
+            {
+                PrintTo("Invalid setup parameters will not be saved. Please try entering valid data for the setup.\n" + res.Message);
+            }
+
             var options = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

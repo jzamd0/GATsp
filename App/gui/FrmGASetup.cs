@@ -24,6 +24,8 @@ namespace App.Gui
             SetComboBoxes();
 
             _tbxName.Text = _defaultSetupName;
+            _tbxPopulationSize.Text = $"{GA.MinPopulationSize}";
+            _tbxGenerations.Text = $"{GA.MinGenerations}";
 
             ChangeCrossoverTypeStatus();
             ChangeMutationTypeStatus();
@@ -154,8 +156,8 @@ namespace App.Gui
         public void ClearGASetup()
         {
             _tbxName.Text = _defaultSetupName;
-            _tbxPopulationSize.Text = "0";
-            _tbxGenerations.Text = "0";
+            _tbxPopulationSize.Text = $"{GA.MinPopulationSize}";
+            _tbxGenerations.Text = $"{GA.MinGenerations}";
             _tbxCrossoverRate.Text = "0.0";
             _tbxMutationRate.Text = "0.0";
             _tbxElitismRate.Text = "0.0";

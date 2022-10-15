@@ -21,6 +21,13 @@ namespace Lib.Genetics
         {
             verbose = ConfigureVerboseOptions(verbose);
 
+            if (verbose.Enabled)
+            {
+                Console.WriteLine("TSP GA Solver");
+                Console.WriteLine($"Setup:                     {setup.Name}");
+                Console.WriteLine("---");
+            }
+
             var sw = new Stopwatch();
 
             sw.Start();
@@ -29,9 +36,9 @@ namespace Lib.Genetics
 
             result.Duration = sw.ElapsedMilliseconds;
 
-            if (verbose.Result)
+            if (verbose.Enabled)
             {
-                Console.WriteLine($"Result:                    {result.Best.Fitness} ({string.Join(", ", result.Best.Values)})");
+                Console.WriteLine($"Best tour:                 {result.Best.Fitness} ({string.Join(", ", result.Best.Values)})");
                 Console.WriteLine($"Elapsed time:              {result.Duration} ms");
                 Console.WriteLine("---");
             }
@@ -469,11 +476,11 @@ namespace Lib.Genetics
         {
             if (verbose == null || !verbose.Enabled)
             {
-                verbose = new GAVerboseOptions(false, false, false, false, false, false);
+                verbose = new GAVerboseOptions(false, false, false, false, false);
             }
             else if (verbose.All)
             {
-                verbose = new GAVerboseOptions(true, true, true, true, true, true);
+                verbose = new GAVerboseOptions(true, true, true, true, true);
             }
 
             return verbose;

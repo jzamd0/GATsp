@@ -11,13 +11,12 @@ namespace App.Gui
         {
             InitializeComponent();
 
-            Verbose = new GAVerboseOptions(verbose.Enabled, verbose.All, verbose.Generation, verbose.Crossover, verbose.Mutation, verbose.Result);
+            Verbose = new GAVerboseOptions(verbose.Enabled, verbose.All, verbose.Generation, verbose.Crossover, verbose.Mutation);
 
             _chxVerboseEnabled.Checked = verbose.Enabled;
             _chxVerboseGeneration.Checked = verbose.Generation;
             _chxVerboseCrossover.Checked = verbose.Crossover;
             _chxVerboseMutation.Checked = verbose.Mutation;
-            _chxVerboseResult.Checked = verbose.Result;
 
             UpdateVerboseCheckboxesEnabled();
             UpdateVerboseAllState();
@@ -31,7 +30,6 @@ namespace App.Gui
                 _chxVerboseGeneration.Enabled = true;
                 _chxVerboseCrossover.Enabled = true;
                 _chxVerboseMutation.Enabled = true;
-                _chxVerboseResult.Enabled = true;
 
             }
             else
@@ -40,18 +38,17 @@ namespace App.Gui
                 _chxVerboseGeneration.Enabled = false;
                 _chxVerboseCrossover.Enabled = false;
                 _chxVerboseMutation.Enabled = false;
-                _chxVerboseResult.Enabled = false;
             }
         }
 
         private void UpdateVerboseAllState()
         {
-            if (Verbose.Generation && Verbose.Crossover && Verbose.Mutation && Verbose.Result)
+            if (Verbose.Generation && Verbose.Crossover && Verbose.Mutation)
             {
                 _chxVerboseAll.CheckState = CheckState.Checked;
                 Verbose.All = true;
             }
-            else if (Verbose.Generation || Verbose.Crossover || Verbose.Mutation || Verbose.Result)
+            else if (Verbose.Generation || Verbose.Crossover || Verbose.Mutation)
             {
                 _chxVerboseAll.CheckState = CheckState.Indeterminate;
                 Verbose.All = false;
@@ -80,8 +77,6 @@ namespace App.Gui
                 Verbose.Crossover = true;
                 _chxVerboseMutation.Checked = true;
                 Verbose.Mutation = true;
-                _chxVerboseResult.Checked = true;
-                Verbose.Result = true;
             }
             else if (_chxVerboseAll.CheckState == CheckState.Indeterminate)
             {
@@ -96,8 +91,6 @@ namespace App.Gui
                 Verbose.Crossover = false;
                 _chxVerboseMutation.Checked = false;
                 Verbose.Mutation = false;
-                _chxVerboseResult.Checked = false;
-                Verbose.Result = false;
             }
         }
 
@@ -116,12 +109,6 @@ namespace App.Gui
         private void _chxVerboseMutation_Click(object sender, System.EventArgs e)
         {
             Verbose.Mutation = _chxVerboseMutation.Checked;
-            UpdateVerboseAllState();
-        }
-
-        private void _chxVerboseResult_Click(object sender, System.EventArgs e)
-        {
-            Verbose.Result = _chxVerboseResult.Checked;
             UpdateVerboseAllState();
         }
 

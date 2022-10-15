@@ -68,7 +68,7 @@ namespace App.Gui
 
         private void SetConfiguration()
         {
-            _verbose = new GAVerboseOptions(false, false, false, false, false, false);
+            _verbose = new GAVerboseOptions(false, false, false, false, false);
             _decimalsToRound = 3;
 
             _canvas = new CanvasOptions();

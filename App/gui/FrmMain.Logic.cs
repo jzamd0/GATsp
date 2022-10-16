@@ -403,7 +403,7 @@ namespace App.Gui
             dtFitnesses.Columns.Add("Generation", typeof(int));
             dtFitnesses.Columns.Add("Avg. Fit.", typeof(double));
             dtFitnesses.Columns.Add("Best Fit.", typeof(double));
-            dtFitnesses.Columns.Add("Convergence", typeof(double));
+            dtFitnesses.Columns.Add("Convergence (%)", typeof(double));
             _dgvFitnesses.DataSource = dtFitnesses;
 
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
@@ -784,7 +784,7 @@ namespace App.Gui
             dtSummary.Rows.Add("Setup", _setup.Name);
             dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
-            dtSummary.Rows.Add("Solutions", _result.Results.Count);
+            dtSummary.Rows.Add("Results", _result.Results.Count);
             dtSummary.Rows.Add("Result with Best Fitness", _result.Number);
             dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
             dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));

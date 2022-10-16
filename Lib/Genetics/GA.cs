@@ -21,15 +21,17 @@ namespace Lib.Genetics
 
         public GAResult SolveMultiple(GASetup setup, double[][] distances, bool verbose = false)
         {
-            if (setup.Runs < MinMultipleRuns)
+            if (setup.RunTimes < MinMultipleRuns)
             {
-                throw new ArgumentOutOfRangeException($"Number of runs must be greater than {MinGenerations - 1}.", nameof(setup.Runs));
+                throw new ArgumentOutOfRangeException($"Number of runs must be greater than {MinGenerations - 1}.", nameof(setup.RunTimes));
             }
 
             if (verbose)
             {
                 Console.WriteLine("TSP GA Solver");
                 Console.WriteLine($"Setup:                     {setup.Name}");
+                Console.WriteLine($"Parallel:                  {setup.Parallel}");
+                Console.WriteLine($"Run Times:                 {setup.RunTimes}");
                 Console.WriteLine("---");
             }
 
@@ -39,7 +41,7 @@ namespace Lib.Genetics
             sw.Start();
             if (!setup.Parallel)
             {
-                for (var i = 0; i < setup.Runs; i++)
+                for (var i = 0; i < setup.RunTimes; i++)
                 {
                     var res = new GA().SolveMeasured(setup, distances);
                     res.Number = i;
@@ -55,7 +57,7 @@ namespace Lib.Genetics
             }
             else
             {
-                Parallel.For(0, setup.Runs, t =>
+                Parallel.For(0, setup.RunTimes, t =>
                 {
                     var res = new GA().SolveMeasured(setup, distances);
                     res.Number = t;

@@ -16,13 +16,13 @@ namespace Lib.Genetics
         public MutationType MutationType { get; set; }
         public bool Multiple { get; set; }
         public bool Parallel { get; set; }
-        public int Runs { get; set; }
+        public int RunTimes { get; set; }
 
         public GASetup()
         {
         }
 
-        public GASetup(string name, int genotypeSize, int populationSize, int generations, double crossoverRate, double mutationRate, double elitismRate, SelectionType selectionType, CrossoverType crossoverType, MutationType mutationType, bool multiple = false, bool parallel = false, int runs = 0)
+        public GASetup(string name, int genotypeSize, int populationSize, int generations, double crossoverRate, double mutationRate, double elitismRate, SelectionType selectionType, CrossoverType crossoverType, MutationType mutationType, bool multiple = false, bool parallel = false, int runTimes = 0)
         {
             Name = name;
             GenotypeSize = genotypeSize;
@@ -36,7 +36,7 @@ namespace Lib.Genetics
             MutationType = mutationType;
             Multiple = multiple;
             Parallel = parallel;
-            Runs = runs;
+            RunTimes = runTimes;
         }
     }
 }

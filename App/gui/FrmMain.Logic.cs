@@ -643,7 +643,15 @@ namespace App.Gui
             GenerateDistances();
             setup.GenotypeSize = _graph.Nodes.Count + 1;
 
-            var res = new GA().SolveMeasured(setup, _distances, _verbose);
+            GAResult res;
+            if (setup.Multiple)
+            {
+                res = new GA().SolveMultiple(setup, _distances, _verbose.Enabled);
+            }
+            else
+            {
+                res = new GA().SolveMeasured(setup, _distances, _verbose);
+            }
             swTotal.Stop();
             var finished = DateTime.Now;
 
@@ -651,8 +659,15 @@ namespace App.Gui
             _result = res;
             _shortestPath = Helper.MapToPath(_graph.Nodes, _result.Best.Values);
 
-            DisplaySummary(started, finished, swTotal.ElapsedMilliseconds);
-            DisplayPopulation();
+            if (setup.Multiple)
+            {
+                DisplaySummaryMultiple(started, finished, swTotal.ElapsedMilliseconds);
+            }
+            else
+            {
+                DisplaySummary(started, finished, swTotal.ElapsedMilliseconds);
+                DisplayPopulation();
+            }
 
             UpdateApp();
         }
@@ -720,6 +735,23 @@ namespace App.Gui
             dtSummary.Rows.Add("Last Generation", _result.LastGeneration);
             dtSummary.Rows.Add("Has Converged", (_result.HasConverged) ? "Yes" : "No");
             dtSummary.Rows.Add("Last Convergence (%)", Math.Round(_result.LastConvergence, _decimalsToRound));
+            dtSummary.Rows.Add("GA Duration (ms)", _result.Duration);
+            dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
+
+            _dgvSummary.Visible = true;
+        }
+
+        private void DisplaySummaryMultiple(DateTime started, DateTime finished, long totalDuration)
+        {
+            var dtSummary = (DataTable)_dgvSummary.DataSource;
+
+            dtSummary.Rows.Add("Setup", _setup.Name);
+            dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Solutions", _result.Results.Count);
+            dtSummary.Rows.Add("Number of Best Solution", _result.Number);
+            dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
+            dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
             dtSummary.Rows.Add("GA Duration (ms)", _result.Duration);
             dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
 

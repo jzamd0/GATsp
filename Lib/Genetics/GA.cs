@@ -81,6 +81,7 @@ namespace Lib.Genetics
             var totalRes = new GAResult
             {
                 Number = bestRes.Number,
+                Best = bestRes.Best,
                 Duration = sw.ElapsedMilliseconds,
                 Results = results,
             };

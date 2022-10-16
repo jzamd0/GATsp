@@ -31,7 +31,7 @@ namespace Lib.Genetics
                 Console.WriteLine("TSP GA Solver");
                 Console.WriteLine($"Setup:                     {setup.Name}");
                 Console.WriteLine($"Parallel:                  {setup.Parallel}");
-                Console.WriteLine($"Run Times:                 {setup.RunTimes}");
+                Console.WriteLine($"Run times:                 {setup.RunTimes}");
                 Console.WriteLine("---");
             }
 
@@ -77,11 +77,15 @@ namespace Lib.Genetics
             sw.Stop();
 
             var bestRes = results.OrderBy(i => i.Best.Fitness).First();
+            var averageBestFitness = results.Average(r => r.Best.Fitness);
+            var worstBestFitness = results.Max(r => r.Best.Fitness);
+            var fitnesses = new List<double>() { averageBestFitness, worstBestFitness };
 
             var totalRes = new GAResult
             {
                 Number = bestRes.Number,
                 Best = bestRes.Best,
+                BestFitnesses = fitnesses,
                 Duration = sw.ElapsedMilliseconds,
                 Results = results,
             };
@@ -93,7 +97,8 @@ namespace Lib.Genetics
                 Console.WriteLine($"Number:                    {bestRes.Number}");
                 Console.WriteLine($"Best tour:                 ({string.Join(", ", bestRes.Best.Values)})");
                 Console.WriteLine($"Best fitness:              {bestRes.Best.Fitness}");
-                Console.WriteLine($"Elapsed time:              {bestRes.Duration} ms");
+                Console.WriteLine($"Average best fitness:      {fitnesses[0]}");
+                Console.WriteLine($"Worst fitness:             {fitnesses[1]}");
                 Console.WriteLine($"Elapsed total time:        {totalRes.Duration} ms");
                 Console.WriteLine($"---");
                 Console.WriteLine();
@@ -123,7 +128,8 @@ namespace Lib.Genetics
 
             if (verbose.Enabled)
             {
-                Console.WriteLine($"Best tour:                 {result.Best.Fitness} ({string.Join(", ", result.Best.Values)})");
+                Console.WriteLine($"Best tour:                 ({string.Join(", ", result.Best.Values)})");
+                Console.WriteLine($"Best fitness:              {result.Best.Fitness}");
                 Console.WriteLine($"Elapsed time:              {result.Duration} ms");
                 Console.WriteLine("---");
                 Console.WriteLine();

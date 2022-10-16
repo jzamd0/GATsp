@@ -755,9 +755,10 @@ namespace App.Gui
             dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
             dtSummary.Rows.Add("Solutions", _result.Results.Count);
-            dtSummary.Rows.Add("Number of Best Solution", _result.Number);
+            dtSummary.Rows.Add("Result with Best Fitness", _result.Number);
             dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
             dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
+            dtSummary.Rows.Add("Average Best Fitness", Math.Round(_result.BestFitnesses[0], _decimalsToRound));
             dtSummary.Rows.Add("GA Duration (ms)", _result.Duration);
             dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
 

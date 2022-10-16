@@ -57,7 +57,8 @@ namespace App.Gui
             this._tabSummary = new System.Windows.Forms.TabPage();
             this._dgvSummary = new System.Windows.Forms.DataGridView();
             this._tabResults = new System.Windows.Forms.TabPage();
-            this._tabPopulation = new System.Windows.Forms.TabPage();
+            this._dgvResults = new System.Windows.Forms.DataGridView();
+            this._tabPopulations = new System.Windows.Forms.TabPage();
             this._dgvPopulations = new System.Windows.Forms.DataGridView();
             this._tabFitnesses = new System.Windows.Forms.TabPage();
             this._dgvFitnesses = new System.Windows.Forms.DataGridView();
@@ -95,7 +96,6 @@ namespace App.Gui
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this._dgvResults = new System.Windows.Forms.DataGridView();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -127,12 +127,12 @@ namespace App.Gui
             this._tabSummary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvSummary)).BeginInit();
             this._tabResults.SuspendLayout();
-            this._tabPopulation.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dgvResults)).BeginInit();
+            this._tabPopulations.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvPopulations)).BeginInit();
             this._tabFitnesses.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvFitnesses)).BeginInit();
             this._menuStripMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._dgvResults)).BeginInit();
             this.SuspendLayout();
             // 
             // _pnlMain
@@ -448,7 +448,7 @@ namespace App.Gui
             // 
             this._tabControlResults.Controls.Add(this._tabSummary);
             this._tabControlResults.Controls.Add(this._tabResults);
-            this._tabControlResults.Controls.Add(this._tabPopulation);
+            this._tabControlResults.Controls.Add(this._tabPopulations);
             this._tabControlResults.Controls.Add(this._tabFitnesses);
             this._tabControlResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabControlResults.Location = new System.Drawing.Point(0, 0);
@@ -497,16 +497,34 @@ namespace App.Gui
             this._tabResults.Text = "Results";
             this._tabResults.UseVisualStyleBackColor = true;
             // 
-            // _tabPopulation
+            // _dgvResults
             // 
-            this._tabPopulation.Controls.Add(this._dgvPopulations);
-            this._tabPopulation.Location = new System.Drawing.Point(4, 24);
-            this._tabPopulation.Name = "_tabPopulation";
-            this._tabPopulation.Padding = new System.Windows.Forms.Padding(3);
-            this._tabPopulation.Size = new System.Drawing.Size(576, 99);
-            this._tabPopulation.TabIndex = 1;
-            this._tabPopulation.Text = "Population";
-            this._tabPopulation.UseVisualStyleBackColor = true;
+            this._dgvResults.AllowUserToAddRows = false;
+            this._dgvResults.AllowUserToDeleteRows = false;
+            this._dgvResults.AllowUserToResizeRows = false;
+            this._dgvResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvResults.BackgroundColor = System.Drawing.Color.White;
+            this._dgvResults.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._dgvResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._dgvResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dgvResults.Location = new System.Drawing.Point(3, 3);
+            this._dgvResults.Name = "_dgvResults";
+            this._dgvResults.ReadOnly = true;
+            this._dgvResults.RowHeadersVisible = false;
+            this._dgvResults.RowTemplate.Height = 25;
+            this._dgvResults.Size = new System.Drawing.Size(570, 93);
+            this._dgvResults.TabIndex = 1;
+            // 
+            // _tabPopulations
+            // 
+            this._tabPopulations.Controls.Add(this._dgvPopulations);
+            this._tabPopulations.Location = new System.Drawing.Point(4, 24);
+            this._tabPopulations.Name = "_tabPopulations";
+            this._tabPopulations.Padding = new System.Windows.Forms.Padding(3);
+            this._tabPopulations.Size = new System.Drawing.Size(576, 99);
+            this._tabPopulations.TabIndex = 1;
+            this._tabPopulations.Text = "Population";
+            this._tabPopulations.UseVisualStyleBackColor = true;
             // 
             // _dgvPopulations
             // 
@@ -820,24 +838,6 @@ namespace App.Gui
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
             // 
-            // _dgvResults
-            // 
-            this._dgvResults.AllowUserToAddRows = false;
-            this._dgvResults.AllowUserToDeleteRows = false;
-            this._dgvResults.AllowUserToResizeRows = false;
-            this._dgvResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this._dgvResults.BackgroundColor = System.Drawing.Color.White;
-            this._dgvResults.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this._dgvResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._dgvResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dgvResults.Location = new System.Drawing.Point(3, 3);
-            this._dgvResults.Name = "_dgvResults";
-            this._dgvResults.ReadOnly = true;
-            this._dgvResults.RowHeadersVisible = false;
-            this._dgvResults.RowTemplate.Height = 25;
-            this._dgvResults.Size = new System.Drawing.Size(570, 93);
-            this._dgvResults.TabIndex = 1;
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -886,13 +886,13 @@ namespace App.Gui
             this._tabSummary.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._dgvSummary)).EndInit();
             this._tabResults.ResumeLayout(false);
-            this._tabPopulation.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this._dgvResults)).EndInit();
+            this._tabPopulations.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._dgvPopulations)).EndInit();
             this._tabFitnesses.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._dgvFitnesses)).EndInit();
             this._menuStripMain.ResumeLayout(false);
             this._menuStripMain.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._dgvResults)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -960,7 +960,7 @@ namespace App.Gui
         private System.Windows.Forms.TabControl _tabControlResults;
         private System.Windows.Forms.TabPage _tabSummary;
         private System.Windows.Forms.DataGridView _dgvSummary;
-        private System.Windows.Forms.TabPage _tabPopulation;
+        private System.Windows.Forms.TabPage _tabPopulations;
         private System.Windows.Forms.DataGridView _dgvPopulations;
         private System.Windows.Forms.TabPage _tabFitnesses;
         private System.Windows.Forms.DataGridView _dgvFitnesses;

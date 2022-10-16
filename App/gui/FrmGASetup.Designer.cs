@@ -48,6 +48,10 @@ namespace App.Gui
             this._cbxSelectionType = new System.Windows.Forms.ComboBox();
             this._lblName = new System.Windows.Forms.Label();
             this._tbxName = new System.Windows.Forms.TextBox();
+            this._lblRunTimes = new System.Windows.Forms.Label();
+            this._chxMultipleGA = new System.Windows.Forms.CheckBox();
+            this._chxParallelGA = new System.Windows.Forms.CheckBox();
+            this._tbxRunTimes = new System.Windows.Forms.TextBox();
             this._tablePanelMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -77,10 +81,14 @@ namespace App.Gui
             this._tablePanelMain.Controls.Add(this._cbxSelectionType, 1, 20);
             this._tablePanelMain.Controls.Add(this._lblName, 1, 1);
             this._tablePanelMain.Controls.Add(this._tbxName, 1, 2);
+            this._tablePanelMain.Controls.Add(this._lblRunTimes, 1, 32);
+            this._tablePanelMain.Controls.Add(this._chxMultipleGA, 1, 28);
+            this._tablePanelMain.Controls.Add(this._chxParallelGA, 1, 30);
+            this._tablePanelMain.Controls.Add(this._tbxRunTimes, 1, 33);
             this._tablePanelMain.Dock = System.Windows.Forms.DockStyle.Top;
             this._tablePanelMain.Location = new System.Drawing.Point(0, 0);
             this._tablePanelMain.Name = "_tablePanelMain";
-            this._tablePanelMain.RowCount = 28;
+            this._tablePanelMain.RowCount = 35;
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -109,7 +117,14 @@ namespace App.Gui
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-            this._tablePanelMain.Size = new System.Drawing.Size(153, 496);
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this._tablePanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this._tablePanelMain.Size = new System.Drawing.Size(153, 620);
             this._tablePanelMain.TabIndex = 0;
             // 
             // _lblPopulationSize
@@ -279,6 +294,44 @@ namespace App.Gui
             this._tbxName.Size = new System.Drawing.Size(137, 23);
             this._tbxName.TabIndex = 18;
             // 
+            // _lblRunTimes
+            // 
+            this._lblRunTimes.AutoSize = true;
+            this._lblRunTimes.Location = new System.Drawing.Point(8, 566);
+            this._lblRunTimes.Name = "_lblRunTimes";
+            this._lblRunTimes.Size = new System.Drawing.Size(62, 15);
+            this._lblRunTimes.TabIndex = 19;
+            this._lblRunTimes.Text = "Run Times";
+            // 
+            // _chxMultipleGA
+            // 
+            this._chxMultipleGA.AutoSize = true;
+            this._chxMultipleGA.Location = new System.Drawing.Point(8, 499);
+            this._chxMultipleGA.Name = "_chxMultipleGA";
+            this._chxMultipleGA.Size = new System.Drawing.Size(137, 19);
+            this._chxMultipleGA.TabIndex = 20;
+            this._chxMultipleGA.Text = "Enable Multiple Runs";
+            this._chxMultipleGA.UseVisualStyleBackColor = true;
+            this._chxMultipleGA.CheckedChanged += new System.EventHandler(this._chxMultipleGA_CheckedChanged);
+            // 
+            // _chxParallelGA
+            // 
+            this._chxParallelGA.AutoSize = true;
+            this._chxParallelGA.Location = new System.Drawing.Point(8, 534);
+            this._chxParallelGA.Name = "_chxParallelGA";
+            this._chxParallelGA.Size = new System.Drawing.Size(131, 19);
+            this._chxParallelGA.TabIndex = 21;
+            this._chxParallelGA.Text = "Enable Parallel Runs";
+            this._chxParallelGA.UseVisualStyleBackColor = true;
+            // 
+            // _tbxRunTimes
+            // 
+            this._tbxRunTimes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._tbxRunTimes.Location = new System.Drawing.Point(8, 584);
+            this._tbxRunTimes.Name = "_tbxRunTimes";
+            this._tbxRunTimes.Size = new System.Drawing.Size(137, 23);
+            this._tbxRunTimes.TabIndex = 22;
+            // 
             // FrmGASetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -319,5 +372,9 @@ namespace App.Gui
         private System.Windows.Forms.ComboBox _cbxSelectionType;
         private System.Windows.Forms.Label _lblName;
         private System.Windows.Forms.TextBox _tbxName;
+        private System.Windows.Forms.Label _lblRunTimes;
+        private System.Windows.Forms.CheckBox _chxMultipleGA;
+        private System.Windows.Forms.CheckBox _chxParallelGA;
+        private System.Windows.Forms.TextBox _tbxRunTimes;
     }
 }

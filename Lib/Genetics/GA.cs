@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lib.Genetics
 {
@@ -12,14 +13,110 @@ namespace Lib.Genetics
         public static readonly int MinPopulationSize = 4;
         public static readonly int MinGenotypeSize = 4;
         public static readonly int MinNodes = 2;
+        public static readonly int MinMultipleRuns = 1;
 
         protected int TourStart { get; set; }
         protected int TourEnd { get; set; }
         protected int TourRange { get; set; }
 
+        public GAResult SolveMultiple(GASetup setup, double[][] distances, bool verbose = false)
+        {
+            if (setup.RunTimes < MinMultipleRuns)
+            {
+                throw new ArgumentOutOfRangeException($"Number of runs must be greater than {MinGenerations - 1}.", nameof(setup.RunTimes));
+            }
+
+            if (verbose)
+            {
+                Console.WriteLine("TSP GA Solver");
+                Console.WriteLine($"Setup:                     {setup.Name}");
+                Console.WriteLine($"Parallel:                  {setup.Parallel}");
+                Console.WriteLine($"Run times:                 {setup.RunTimes}");
+                Console.WriteLine("---");
+            }
+
+            var results = new List<GAResult>();
+            var sw = new Stopwatch();
+
+            sw.Start();
+            if (!setup.Parallel)
+            {
+                for (var i = 0; i < setup.RunTimes; i++)
+                {
+                    var res = new GA().SolveMeasured(setup, distances);
+                    res.Number = i;
+
+                    if (verbose)
+                    {
+                        var numWithPad = $"{i}:".PadRight(5, ' ');
+                        Console.WriteLine($"Best fit. for iter. {numWithPad} {res.Best.Fitness} ({res.Duration} ms)");
+                    }
+
+                    results.Add(res);
+                }
+            }
+            else
+            {
+                Parallel.For(0, setup.RunTimes, t =>
+                {
+                    var res = new GA().SolveMeasured(setup, distances);
+                    res.Number = t;
+
+                    if (verbose)
+                    {
+                        var numWithPad = $"{t}:".PadRight(5, ' ');
+                        Console.WriteLine($"Best fit. for thread {numWithPad} {res.Best.Fitness} ({res.Duration} ms)");
+                    }
+
+                    lock (results)
+                    {
+                        results.Add(res);
+                    }
+                });
+            }
+            sw.Stop();
+
+            var bestRes = results.OrderBy(i => i.Best.Fitness).First();
+            var averageBestFitness = results.Average(r => r.Best.Fitness);
+            var worstBestFitness = results.Max(r => r.Best.Fitness);
+            var fitnesses = new List<double>() { averageBestFitness, worstBestFitness };
+
+            var totalRes = new GAResult
+            {
+                Number = bestRes.Number,
+                Best = bestRes.Best,
+                BestFitnesses = fitnesses,
+                Duration = sw.ElapsedMilliseconds,
+                Results = results,
+            };
+
+            if (verbose)
+            {
+                Console.WriteLine($"---");
+                Console.WriteLine($"Summary for best result");
+                Console.WriteLine($"Number:                    {bestRes.Number}");
+                Console.WriteLine($"Best tour:                 ({string.Join(", ", bestRes.Best.Values)})");
+                Console.WriteLine($"Best fitness:              {bestRes.Best.Fitness}");
+                Console.WriteLine($"Average best fitness:      {fitnesses[0]}");
+                Console.WriteLine($"Worst fitness:             {fitnesses[1]}");
+                Console.WriteLine($"Elapsed total time:        {totalRes.Duration} ms");
+                Console.WriteLine($"---");
+                Console.WriteLine();
+            }
+
+            return totalRes;
+        }
+
         public GAResult SolveMeasured(GASetup setup, double[][] distances, GAVerboseOptions verbose = null)
         {
             verbose = ConfigureVerboseOptions(verbose);
+
+            if (verbose.Enabled)
+            {
+                Console.WriteLine("TSP GA Solver");
+                Console.WriteLine($"Setup:                     {setup.Name}");
+                Console.WriteLine("---");
+            }
 
             var sw = new Stopwatch();
 
@@ -29,21 +126,19 @@ namespace Lib.Genetics
 
             result.Duration = sw.ElapsedMilliseconds;
 
-            if (verbose.Result)
-            {
-                Console.WriteLine($"Result:                    {result.Best.Fitness} ({string.Join(", ", result.Best.Values)})");
-                Console.WriteLine($"Elapsed time:              {result.Duration} ms");
-                Console.WriteLine("---");
-            }
             if (verbose.Enabled)
             {
+                Console.WriteLine($"Best tour:                 ({string.Join(", ", result.Best.Values)})");
+                Console.WriteLine($"Best fitness:              {result.Best.Fitness}");
+                Console.WriteLine($"Elapsed time:              {result.Duration} ms");
+                Console.WriteLine("---");
                 Console.WriteLine();
             }
 
             return result;
         }
 
-        public GAResult Solve(GASetup setup, double[][] distances, GAVerboseOptions verbose = null)
+        public GAResult Solve(GASetup setup, double[][] distances, GAVerboseOptions verbose)
         {
             if (setup.Generations < MinGenerations)
             {
@@ -65,8 +160,10 @@ namespace Lib.Genetics
             {
                 throw new ArgumentNullException($"Distances cannot be null or empty", nameof(distances));
             }
-
-            verbose = ConfigureVerboseOptions(verbose);
+            if (verbose == null)
+            {
+                throw new ArgumentNullException($"Verbose options cannot be null", nameof(verbose));
+            }
 
             TourStart = 1;
             TourEnd = setup.GenotypeSize - 1;
@@ -469,11 +566,11 @@ namespace Lib.Genetics
         {
             if (verbose == null || !verbose.Enabled)
             {
-                verbose = new GAVerboseOptions(false, false, false, false, false, false);
+                verbose = new GAVerboseOptions(false, false, false, false, false);
             }
             else if (verbose.All)
             {
-                verbose = new GAVerboseOptions(true, true, true, true, true, true);
+                verbose = new GAVerboseOptions(true, true, true, true, true);
             }
 
             return verbose;

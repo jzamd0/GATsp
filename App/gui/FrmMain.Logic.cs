@@ -68,7 +68,7 @@ namespace App.Gui
 
         private void SetConfiguration()
         {
-            _verbose = new GAVerboseOptions(false, false, false, false, false, false);
+            _verbose = new GAVerboseOptions(false, false, false, false, false);
             _decimalsToRound = 3;
 
             _canvas = new CanvasOptions();
@@ -381,15 +381,30 @@ namespace App.Gui
             dtSummary.Columns.Add("Values", typeof(string));
             _dgvSummary.DataSource = dtSummary;
 
-            var dtInitialPopulation = new DataTable();
-            dtInitialPopulation.Columns.Add("Path", typeof(string));
-            dtInitialPopulation.Columns.Add("Fitness", typeof(double));
-            _dgvInitialPopulation.DataSource = dtInitialPopulation;
+            var dtResults = new DataTable();
+            dtResults.Columns.Add("No.", typeof(int));
+            dtResults.Columns.Add("Best Tour", typeof(string));
+            dtResults.Columns.Add("Best Fitness", typeof(double));
+            dtResults.Columns.Add("Last Generation", typeof(int));
+            dtResults.Columns.Add("Has Converged", typeof(string));
+            dtResults.Columns.Add("Last Convergence (%)", typeof(double));
+            dtResults.Columns.Add("Duration (ms)", typeof(long));
+            _dgvResults.DataSource = dtResults;
 
-            var dtLastPopulation = new DataTable();
-            dtLastPopulation.Columns.Add("Path", typeof(string));
-            dtLastPopulation.Columns.Add("Fitness", typeof(double));
-            _dgvLastPopulation.DataSource = dtLastPopulation;
+            var dtPopulations = new DataTable();
+            dtPopulations.Columns.Add("No.", typeof(int));
+            dtPopulations.Columns.Add("First Tour", typeof(string));
+            dtPopulations.Columns.Add("First Fitness", typeof(double));
+            dtPopulations.Columns.Add("Last Tour", typeof(string));
+            dtPopulations.Columns.Add("Last Fitness", typeof(double));
+            _dgvPopulations.DataSource = dtPopulations;
+
+            var dtFitnesses = new DataTable();
+            dtFitnesses.Columns.Add("Generation", typeof(int));
+            dtFitnesses.Columns.Add("Avg. Fit.", typeof(double));
+            dtFitnesses.Columns.Add("Best Fit.", typeof(double));
+            dtFitnesses.Columns.Add("Convergence (%)", typeof(double));
+            _dgvFitnesses.DataSource = dtFitnesses;
 
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
@@ -430,10 +445,11 @@ namespace App.Gui
         private void ClearResult()
         {
             ((DataTable)_dgvSummary.DataSource).Rows.Clear();
-            ((DataTable)_dgvInitialPopulation.DataSource).Rows.Clear();
-            ((DataTable)_dgvLastPopulation.DataSource).Rows.Clear();
-            _tablePanelPopulation.Visible = false;
+            ((DataTable)_dgvPopulations.DataSource).Rows.Clear();
             _dgvSummary.Visible = false;
+            _dgvResults.Visible = false;
+            _dgvPopulations.Visible = false;
+            _dgvFitnesses.Visible = false;
 
             _shortestPath = null;
             _result = null;
@@ -643,7 +659,15 @@ namespace App.Gui
             GenerateDistances();
             setup.GenotypeSize = _graph.Nodes.Count + 1;
 
-            var res = new GA().SolveMeasured(setup, _distances, _verbose);
+            GAResult res;
+            if (setup.Multiple)
+            {
+                res = new GA().SolveMultiple(setup, _distances, _verbose.Enabled);
+            }
+            else
+            {
+                res = new GA().SolveMeasured(setup, _distances, _verbose);
+            }
             swTotal.Stop();
             var finished = DateTime.Now;
 
@@ -651,8 +675,17 @@ namespace App.Gui
             _result = res;
             _shortestPath = Helper.MapToPath(_graph.Nodes, _result.Best.Values);
 
-            DisplaySummary(started, finished, swTotal.ElapsedMilliseconds);
-            DisplayPopulation();
+            if (setup.Multiple)
+            {
+                DisplaySummaryMultiple(started, finished, swTotal.ElapsedMilliseconds);
+                DisplayResults();
+            }
+            else
+            {
+                DisplaySummary(started, finished, swTotal.ElapsedMilliseconds);
+                DisplayPopulation();
+                DisplayFitnesses();
+            }
 
             UpdateApp();
         }
@@ -726,21 +759,70 @@ namespace App.Gui
             _dgvSummary.Visible = true;
         }
 
+        private void DisplayResults()
+        {
+            var dtResults = (DataTable)_dgvResults.DataSource;
+            for (var i = 0; i < _result.Results.Count; i++)
+            {
+                var number = _result.Results[i].Number;
+                var bestTour = string.Join(", ", Helper.MapToPath(_graph.Nodes, _result.Results[i].Best.Values).Select(n => n.Name));
+                var bestFitness = Math.Round(_result.Results[i].Best.Fitness, _decimalsToRound);
+                var lastGeneration = _result.Results[i].LastGeneration;
+                var hasConverged = (_result.Results[i].HasConverged) ? "Yes" : "No";
+                var lastConvergence = _result.Results[i].LastConvergence;
+                var duration = _result.Results[i].Duration;
+                dtResults.Rows.Add(number, bestTour, bestFitness, lastGeneration, hasConverged, lastConvergence, duration);
+            }
+
+            _dgvResults.Visible = true;
+        }
+
+        private void DisplaySummaryMultiple(DateTime started, DateTime finished, long totalDuration)
+        {
+            var dtSummary = (DataTable)_dgvSummary.DataSource;
+
+            dtSummary.Rows.Add("Setup", _setup.Name);
+            dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Results", _result.Results.Count);
+            dtSummary.Rows.Add("Result with Best Fitness", _result.Number);
+            dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
+            dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
+            dtSummary.Rows.Add("Average Best Fitness", Math.Round(_result.BestFitnesses[0], _decimalsToRound));
+            dtSummary.Rows.Add("GA Duration (ms)", _result.Duration);
+            dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
+
+            _dgvSummary.Visible = true;
+        }
+
         private void DisplayPopulation()
         {
-            var dtInitialPopulation = (DataTable)_dgvInitialPopulation.DataSource;
-            foreach (var ind in _result.InitialPopulation)
+            var dtPopulations = (DataTable)_dgvPopulations.DataSource;
+            for (var i = 0; i < _result.LastGeneration; i++)
             {
-                dtInitialPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_graph.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+                var firstTour = string.Join(", ", _result.InitialPopulation[i].Values);
+                var firstFit = Math.Round(_result.InitialPopulation[i].Fitness, _decimalsToRound);
+                var lastTour = string.Join(", ", _result.LastPopulation[i].Values);
+                var lastFit = Math.Round(_result.LastPopulation[i].Fitness, _decimalsToRound);
+                dtPopulations.Rows.Add(i, firstTour, firstFit, lastTour, lastFit);
             }
 
-            var dtLastPopulation = (DataTable)_dgvLastPopulation.DataSource;
-            foreach (var ind in _result.LastPopulation)
+            _dgvPopulations.Visible = true;
+        }
+
+        private void DisplayFitnesses()
+        {
+            var dtFitnesses = (DataTable)_dgvFitnesses.DataSource;
+            for (var i = 0; i < _result.LastGeneration; i++)
             {
-                dtLastPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_graph.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+                var generation = i;
+                var avgFit = Math.Round(_result.AverageFitnesses[i], _decimalsToRound);
+                var bestFit = Math.Round(_result.BestFitnesses[i], _decimalsToRound);
+                var convergence = Math.Round(_result.Convergences[i], _decimalsToRound);
+                dtFitnesses.Rows.Add(generation, avgFit, bestFit, convergence);
             }
 
-            _tablePanelPopulation.Visible = true;
+            _dgvFitnesses.Visible = true;
         }
 
         private void PrintTo(string message, bool? debug = false)

@@ -40,7 +40,6 @@ namespace App.Gui
             this._chxVerboseGeneration = new System.Windows.Forms.CheckBox();
             this._chxVerboseCrossover = new System.Windows.Forms.CheckBox();
             this._chxVerboseMutation = new System.Windows.Forms.CheckBox();
-            this._chxVerboseResult = new System.Windows.Forms.CheckBox();
             this._chxVerboseAll = new System.Windows.Forms.CheckBox();
             this._tablePanelMain.SuspendLayout();
             this._tablePanelActions.SuspendLayout();
@@ -132,12 +131,11 @@ namespace App.Gui
             this._tablePanelPreferences.Controls.Add(this._chxVerboseGeneration, 0, 4);
             this._tablePanelPreferences.Controls.Add(this._chxVerboseCrossover, 0, 5);
             this._tablePanelPreferences.Controls.Add(this._chxVerboseMutation, 0, 6);
-            this._tablePanelPreferences.Controls.Add(this._chxVerboseResult, 0, 7);
             this._tablePanelPreferences.Controls.Add(this._chxVerboseAll, 0, 3);
             this._tablePanelPreferences.Dock = System.Windows.Forms.DockStyle.Top;
             this._tablePanelPreferences.Location = new System.Drawing.Point(0, 0);
             this._tablePanelPreferences.Name = "_tablePanelPreferences";
-            this._tablePanelPreferences.RowCount = 8;
+            this._tablePanelPreferences.RowCount = 7;
             this._tablePanelPreferences.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelPreferences.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this._tablePanelPreferences.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -145,8 +143,8 @@ namespace App.Gui
             this._tablePanelPreferences.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelPreferences.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tablePanelPreferences.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this._tablePanelPreferences.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this._tablePanelPreferences.Size = new System.Drawing.Size(244, 170);
+            this._tablePanelPreferences.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this._tablePanelPreferences.Size = new System.Drawing.Size(244, 145);
             this._tablePanelPreferences.TabIndex = 0;
             // 
             // _lblVerbose
@@ -164,9 +162,9 @@ namespace App.Gui
             this._chxVerboseEnabled.AutoSize = true;
             this._chxVerboseEnabled.Location = new System.Drawing.Point(3, 23);
             this._chxVerboseEnabled.Name = "_chxVerboseEnabled";
-            this._chxVerboseEnabled.Size = new System.Drawing.Size(205, 19);
+            this._chxVerboseEnabled.Size = new System.Drawing.Size(226, 19);
             this._chxVerboseEnabled.TabIndex = 4;
-            this._chxVerboseEnabled.Text = "Enable verbose output on console";
+            this._chxVerboseEnabled.Text = "Show verbose information on console";
             this._chxVerboseEnabled.UseVisualStyleBackColor = true;
             this._chxVerboseEnabled.Click += new System.EventHandler(this._chxVerboseEnabled_Click);
             // 
@@ -175,9 +173,9 @@ namespace App.Gui
             this._chxVerboseGeneration.AutoSize = true;
             this._chxVerboseGeneration.Location = new System.Drawing.Point(3, 73);
             this._chxVerboseGeneration.Name = "_chxVerboseGeneration";
-            this._chxVerboseGeneration.Size = new System.Drawing.Size(182, 19);
+            this._chxVerboseGeneration.Size = new System.Drawing.Size(199, 19);
             this._chxVerboseGeneration.TabIndex = 5;
-            this._chxVerboseGeneration.Text = "Enable verbose on generation";
+            this._chxVerboseGeneration.Text = "Show information for generation";
             this._chxVerboseGeneration.UseVisualStyleBackColor = true;
             this._chxVerboseGeneration.Click += new System.EventHandler(this._chxVerboseGeneration_Click);
             // 
@@ -186,9 +184,9 @@ namespace App.Gui
             this._chxVerboseCrossover.AutoSize = true;
             this._chxVerboseCrossover.Location = new System.Drawing.Point(3, 98);
             this._chxVerboseCrossover.Name = "_chxVerboseCrossover";
-            this._chxVerboseCrossover.Size = new System.Drawing.Size(175, 19);
+            this._chxVerboseCrossover.Size = new System.Drawing.Size(192, 19);
             this._chxVerboseCrossover.TabIndex = 7;
-            this._chxVerboseCrossover.Text = "Enable verbose on crossover";
+            this._chxVerboseCrossover.Text = "Show information for crossover";
             this._chxVerboseCrossover.UseVisualStyleBackColor = true;
             this._chxVerboseCrossover.Click += new System.EventHandler(this._chxVerboseCrossover_Click);
             // 
@@ -197,23 +195,11 @@ namespace App.Gui
             this._chxVerboseMutation.AutoSize = true;
             this._chxVerboseMutation.Location = new System.Drawing.Point(3, 123);
             this._chxVerboseMutation.Name = "_chxVerboseMutation";
-            this._chxVerboseMutation.Size = new System.Drawing.Size(174, 19);
+            this._chxVerboseMutation.Size = new System.Drawing.Size(191, 19);
             this._chxVerboseMutation.TabIndex = 8;
-            this._chxVerboseMutation.Text = "Enable verbose on mutation";
+            this._chxVerboseMutation.Text = "Show information for mutation";
             this._chxVerboseMutation.UseVisualStyleBackColor = true;
             this._chxVerboseMutation.Click += new System.EventHandler(this._chxVerboseMutation_Click);
-            // 
-            // _chxVerboseResult
-            // 
-            this._chxVerboseResult.AutoSize = true;
-            this._chxVerboseResult.Dock = System.Windows.Forms.DockStyle.Left;
-            this._chxVerboseResult.Location = new System.Drawing.Point(3, 148);
-            this._chxVerboseResult.Name = "_chxVerboseResult";
-            this._chxVerboseResult.Size = new System.Drawing.Size(154, 19);
-            this._chxVerboseResult.TabIndex = 9;
-            this._chxVerboseResult.Text = "Enable verbose on result";
-            this._chxVerboseResult.UseVisualStyleBackColor = true;
-            this._chxVerboseResult.Click += new System.EventHandler(this._chxVerboseResult_Click);
             // 
             // _chxVerboseAll
             // 
@@ -221,9 +207,9 @@ namespace App.Gui
             this._chxVerboseAll.Dock = System.Windows.Forms.DockStyle.Left;
             this._chxVerboseAll.Location = new System.Drawing.Point(3, 48);
             this._chxVerboseAll.Name = "_chxVerboseAll";
-            this._chxVerboseAll.Size = new System.Drawing.Size(159, 19);
+            this._chxVerboseAll.Size = new System.Drawing.Size(180, 19);
             this._chxVerboseAll.TabIndex = 10;
-            this._chxVerboseAll.Text = "Enable all verbose output";
+            this._chxVerboseAll.Text = "Show all verbose information";
             this._chxVerboseAll.ThreeState = true;
             this._chxVerboseAll.UseVisualStyleBackColor = true;
             this._chxVerboseAll.Click += new System.EventHandler(this._chxVerboseAll_Click);
@@ -265,7 +251,6 @@ namespace App.Gui
         private System.Windows.Forms.CheckBox _chxVerboseGeneration;
         private System.Windows.Forms.CheckBox _chxVerboseCrossover;
         private System.Windows.Forms.CheckBox _chxVerboseMutation;
-        private System.Windows.Forms.CheckBox _chxVerboseResult;
         private System.Windows.Forms.CheckBox _chxVerboseAll;
     }
 }

@@ -4,7 +4,7 @@ namespace Lib.Genetics
 {
     public class GAResult
     {
-        public string SetupId { get; set; }
+        public int Number { get; set; }
         public Individual Best { get; set; }
         public Individual[] InitialPopulation { get; set; }
         public Individual[] LastPopulation { get; set; }
@@ -14,15 +14,17 @@ namespace Lib.Genetics
         public List<double> AverageFitnesses { get; set; }
         public List<double> BestFitnesses { get; set; }
         public List<double> Convergences { get; set; }
-        public long Duration { get; internal set; }
+        public long Duration { get; set; }
+        public List<GAResult> Results { get; set; }
 
         public GAResult()
         {
+            Results = new List<GAResult>();
         }
 
-        public GAResult(string setupId, Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, List<double> averageFitnesses, List<double> bestFitnesses, List<double> convergences, long duration)
+        public GAResult(Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, List<double> averageFitnesses, List<double> bestFitnesses, List<double> convergences, long duration, int number = 0, List<GAResult> results = null)
         {
-            SetupId = setupId;
+            Number = number;
             Best = best;
             InitialPopulation = initialPopulation;
             LastPopulation = lastPopulation;
@@ -33,6 +35,7 @@ namespace Lib.Genetics
             BestFitnesses = bestFitnesses;
             Convergences = convergences;
             Duration = duration;
+            Results = (results.IsNullOrEmpty()) ? new List<GAResult>() : results;
         }
     }
 }

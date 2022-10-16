@@ -51,7 +51,7 @@ namespace App.Gui
             _mniClearDistances.Enabled = false;
             _mniClearNodes.Enabled = false;
 
-            _tablePanelPopulation.Visible = false;
+            _dgvPopulations.Visible = false;
             _dgvSummary.Visible = false;
         }
 

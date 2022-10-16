@@ -381,15 +381,13 @@ namespace App.Gui
             dtSummary.Columns.Add("Values", typeof(string));
             _dgvSummary.DataSource = dtSummary;
 
-            var dtInitialPopulation = new DataTable();
-            dtInitialPopulation.Columns.Add("Path", typeof(string));
-            dtInitialPopulation.Columns.Add("Fitness", typeof(double));
-            _dgvInitialPopulation.DataSource = dtInitialPopulation;
-
-            var dtLastPopulation = new DataTable();
-            dtLastPopulation.Columns.Add("Path", typeof(string));
-            dtLastPopulation.Columns.Add("Fitness", typeof(double));
-            _dgvLastPopulation.DataSource = dtLastPopulation;
+            var dtPopulations = new DataTable();
+            dtPopulations.Columns.Add("No.", typeof(int));
+            dtPopulations.Columns.Add("First Tour", typeof(string));
+            dtPopulations.Columns.Add("First Fitness", typeof(double));
+            dtPopulations.Columns.Add("Last Tour", typeof(string));
+            dtPopulations.Columns.Add("Last Fitness", typeof(double));
+            _dgvPopulations.DataSource = dtPopulations;
 
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
@@ -430,9 +428,8 @@ namespace App.Gui
         private void ClearResult()
         {
             ((DataTable)_dgvSummary.DataSource).Rows.Clear();
-            ((DataTable)_dgvInitialPopulation.DataSource).Rows.Clear();
-            ((DataTable)_dgvLastPopulation.DataSource).Rows.Clear();
-            _tablePanelPopulation.Visible = false;
+            ((DataTable)_dgvPopulations.DataSource).Rows.Clear();
+            _dgvPopulations.Visible = false;
             _dgvSummary.Visible = false;
 
             _shortestPath = null;
@@ -760,19 +757,17 @@ namespace App.Gui
 
         private void DisplayPopulation()
         {
-            var dtInitialPopulation = (DataTable)_dgvInitialPopulation.DataSource;
-            foreach (var ind in _result.InitialPopulation)
+            var dtPopulations = (DataTable)_dgvPopulations.DataSource;
+            for (var i = 0; i < _result.LastGeneration; i++)
             {
-                dtInitialPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_graph.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
+                var firstTour = string.Join(", ", _result.InitialPopulation[i].Values);
+                var firstFit = Math.Round(_result.InitialPopulation[i].Fitness, _decimalsToRound);
+                var lastTour = string.Join(", ", _result.LastPopulation[i].Values);
+                var lastFit = Math.Round(_result.LastPopulation[i].Fitness, _decimalsToRound);
+                dtPopulations.Rows.Add(i, firstTour, firstFit, lastTour, lastFit);
             }
 
-            var dtLastPopulation = (DataTable)_dgvLastPopulation.DataSource;
-            foreach (var ind in _result.LastPopulation)
-            {
-                dtLastPopulation.Rows.Add(string.Join(", ", Helper.MapToPath(_graph.Nodes, ind.Values).Select(n => n.Name)), Math.Round(ind.Fitness, _decimalsToRound));
-            }
-
-            _tablePanelPopulation.Visible = true;
+            _dgvPopulations.Visible = true;
         }
 
         private void PrintTo(string message, bool? debug = false)

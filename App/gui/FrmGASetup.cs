@@ -11,7 +11,6 @@ namespace App.Gui
         private static readonly string _defaultSetupName = "default";
 
         private static readonly string _messageWarningValidNumber = "Please enter a valid number.";
-        private static readonly string _messageWarningPositiveNumber = "Please enter a positive number.";
         private static readonly string _messageWarningRatesInterval = "Rate values must be between 0 and 1.";
 
         public FrmGASetup()
@@ -26,6 +25,9 @@ namespace App.Gui
             _tbxName.Text = _defaultSetupName;
             _tbxPopulationSize.Text = $"{GA.MinPopulationSize}";
             _tbxGenerations.Text = $"{GA.MinGenerations}";
+
+            _chxParallelGA.Enabled = false;
+            _tbxRunTimes.Enabled = false;
 
             ChangeCrossoverTypeStatus();
             ChangeMutationTypeStatus();
@@ -80,6 +82,9 @@ namespace App.Gui
             _cbxSelectionType.SelectedValue = setup.SelectionType;
             _cbxCrossoverType.SelectedValue = setup.CrossoverType;
             _cbxMutationType.SelectedValue = setup.MutationType;
+            _chxMultipleGA.Checked = setup.Multiple;
+            _chxParallelGA.Checked = setup.Parallel;
+            _tbxRunTimes.Text = setup.RunTimes.ToString();
         }
 
         public (bool Valid, string Message) ValidateGASetup()
@@ -104,11 +109,9 @@ namespace App.Gui
             {
                 return (false, _messageWarningValidNumber);
             }
-
-            // check for negative numbers
-            if (popSize < 0 || generations < 0 || px < 0 || pm < 0 || pe < 0)
+            if (!double.TryParse(_tbxRunTimes.Text, out double runTimes))
             {
-                return (false, _messageWarningPositiveNumber);
+                return (false, _messageWarningValidNumber);
             }
 
             if (popSize < GA.MinPopulationSize)
@@ -122,6 +125,10 @@ namespace App.Gui
             if (popSize % 2 != 0)
             {
                 return (false, "Population size must be even");
+            }
+            if (runTimes < GA.MinMultipleRuns)
+            {
+                return (false, $"Number of runs must be greather than {GA.MinMultipleRuns - 1}.");
             }
 
             // check for rate interval
@@ -144,10 +151,16 @@ namespace App.Gui
                 MutationRate = double.Parse(_tbxMutationRate.Text),
                 ElitismRate = double.Parse(_tbxElitismRate.Text),
                 SelectionType = (SelectionType)_cbxSelectionType.SelectedValue,
+                Multiple = _chxMultipleGA.Checked,
             };
 
             setup.CrossoverType = (setup.CrossoverRate == 0) ? CrossoverType.None : (CrossoverType)_cbxCrossoverType.SelectedValue;
             setup.MutationType = (setup.MutationRate == 0) ? MutationType.None : (MutationType)_cbxMutationType.SelectedValue;
+            if (setup.Multiple)
+            {
+                setup.Parallel = _chxParallelGA.Checked;
+                setup.RunTimes = int.Parse(_tbxRunTimes.Text);
+            }
 
             return setup;
         }
@@ -155,14 +168,17 @@ namespace App.Gui
         public void ClearGASetup()
         {
             _tbxName.Text = _defaultSetupName;
-            _tbxPopulationSize.Text = $"{GA.MinPopulationSize}";
-            _tbxGenerations.Text = $"{GA.MinGenerations}";
+            _tbxPopulationSize.Text = GA.MinPopulationSize.ToString();
+            _tbxGenerations.Text = GA.MinGenerations.ToString();
             _tbxCrossoverRate.Text = "0.0";
             _tbxMutationRate.Text = "0.0";
             _tbxElitismRate.Text = "0.0";
             _cbxSelectionType.SelectedIndex = 0;
             _cbxCrossoverType.SelectedIndex = 0;
             _cbxMutationType.SelectedIndex = 0;
+            _chxMultipleGA.Checked = false;
+            _chxParallelGA.Checked = false;
+            _tbxRunTimes.Text = GA.MinMultipleRuns.ToString();
         }
 
         private void _tbxCrossoverRate_TextChanged(object sender, EventArgs e)
@@ -185,6 +201,13 @@ namespace App.Gui
         {
             var valid = double.TryParse(_tbxMutationRate.Text, out var mutationRate);
             _cbxMutationType.Enabled = valid && mutationRate > 0;
+        }
+
+        private void _chxMultipleGA_CheckedChanged(object sender, EventArgs e)
+        {
+            _chxParallelGA.Enabled = _chxMultipleGA.Checked;
+            _tbxRunTimes.Enabled = _chxMultipleGA.Checked;
+
         }
     }
 }

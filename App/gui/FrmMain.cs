@@ -52,6 +52,7 @@ namespace App.Gui
             _mniClearNodes.Enabled = false;
 
             _dgvPopulations.Visible = false;
+            _dgvResults.Visible = false;
             _dgvFitnesses.Visible = false;
             _dgvSummary.Visible = false;
         }

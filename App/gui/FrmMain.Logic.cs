@@ -381,6 +381,16 @@ namespace App.Gui
             dtSummary.Columns.Add("Values", typeof(string));
             _dgvSummary.DataSource = dtSummary;
 
+            var dtResults = new DataTable();
+            dtResults.Columns.Add("No.", typeof(int));
+            dtResults.Columns.Add("Best Tour", typeof(string));
+            dtResults.Columns.Add("Best Fitness", typeof(double));
+            dtResults.Columns.Add("Last Generation", typeof(int));
+            dtResults.Columns.Add("Has Converged", typeof(string));
+            dtResults.Columns.Add("Last Convergence (%)", typeof(double));
+            dtResults.Columns.Add("Duration (ms)", typeof(long));
+            _dgvResults.DataSource = dtResults;
+
             var dtPopulations = new DataTable();
             dtPopulations.Columns.Add("No.", typeof(int));
             dtPopulations.Columns.Add("First Tour", typeof(string));
@@ -437,6 +447,7 @@ namespace App.Gui
             ((DataTable)_dgvSummary.DataSource).Rows.Clear();
             ((DataTable)_dgvPopulations.DataSource).Rows.Clear();
             _dgvSummary.Visible = false;
+            _dgvResults.Visible = false;
             _dgvPopulations.Visible = false;
             _dgvFitnesses.Visible = false;
 
@@ -667,6 +678,7 @@ namespace App.Gui
             if (setup.Multiple)
             {
                 DisplaySummaryMultiple(started, finished, swTotal.ElapsedMilliseconds);
+                DisplayResults();
             }
             else
             {
@@ -745,6 +757,24 @@ namespace App.Gui
             dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
 
             _dgvSummary.Visible = true;
+        }
+
+        private void DisplayResults()
+        {
+            var dtResults = (DataTable)_dgvResults.DataSource;
+            for (var i = 0; i < _result.Results.Count; i++)
+            {
+                var number = _result.Results[i].Number;
+                var bestTour = string.Join(", ", Helper.MapToPath(_graph.Nodes, _result.Results[i].Best.Values).Select(n => n.Name));
+                var bestFitness = Math.Round(_result.Results[i].Best.Fitness, _decimalsToRound);
+                var lastGeneration = _result.Results[i].LastGeneration;
+                var hasConverged = (_result.Results[i].HasConverged) ? "Yes" : "No";
+                var lastConvergence = _result.Results[i].LastConvergence;
+                var duration = _result.Results[i].Duration;
+                dtResults.Rows.Add(number, bestTour, bestFitness, lastGeneration, hasConverged, lastConvergence, duration);
+            }
+
+            _dgvResults.Visible = true;
         }
 
         private void DisplaySummaryMultiple(DateTime started, DateTime finished, long totalDuration)

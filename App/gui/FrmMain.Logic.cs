@@ -389,6 +389,13 @@ namespace App.Gui
             dtPopulations.Columns.Add("Last Fitness", typeof(double));
             _dgvPopulations.DataSource = dtPopulations;
 
+            var dtFitnesses = new DataTable();
+            dtFitnesses.Columns.Add("Generation", typeof(int));
+            dtFitnesses.Columns.Add("Avg. Fit.", typeof(double));
+            dtFitnesses.Columns.Add("Best Fit.", typeof(double));
+            dtFitnesses.Columns.Add("Convergence", typeof(double));
+            _dgvFitnesses.DataSource = dtFitnesses;
+
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
             SetColumnWidth(_dgvCoordinates, _coordinatesViewMinWidth);
@@ -429,8 +436,9 @@ namespace App.Gui
         {
             ((DataTable)_dgvSummary.DataSource).Rows.Clear();
             ((DataTable)_dgvPopulations.DataSource).Rows.Clear();
-            _dgvPopulations.Visible = false;
             _dgvSummary.Visible = false;
+            _dgvPopulations.Visible = false;
+            _dgvFitnesses.Visible = false;
 
             _shortestPath = null;
             _result = null;
@@ -664,6 +672,7 @@ namespace App.Gui
             {
                 DisplaySummary(started, finished, swTotal.ElapsedMilliseconds);
                 DisplayPopulation();
+                DisplayFitnesses();
             }
 
             UpdateApp();
@@ -768,6 +777,21 @@ namespace App.Gui
             }
 
             _dgvPopulations.Visible = true;
+        }
+
+        private void DisplayFitnesses()
+        {
+            var dtFitnesses = (DataTable)_dgvFitnesses.DataSource;
+            for (var i = 0; i < _result.LastGeneration; i++)
+            {
+                var generation = i;
+                var avgFit = Math.Round(_result.AverageFitnesses[i], _decimalsToRound);
+                var bestFit = Math.Round(_result.BestFitnesses[i], _decimalsToRound);
+                var convergence = Math.Round(_result.Convergences[i], _decimalsToRound);
+                dtFitnesses.Rows.Add(generation, avgFit, bestFit, convergence);
+            }
+
+            _dgvFitnesses.Visible = true;
         }
 
         private void PrintTo(string message, bool? debug = false)

@@ -445,7 +445,9 @@ namespace App.Gui
         private void ClearResult()
         {
             ((DataTable)_dgvSummary.DataSource).Rows.Clear();
+            ((DataTable)_dgvResults.DataSource).Rows.Clear();
             ((DataTable)_dgvPopulations.DataSource).Rows.Clear();
+            ((DataTable)_dgvFitnesses.DataSource).Rows.Clear();
             _dgvSummary.Visible = false;
             _dgvResults.Visible = false;
             _dgvPopulations.Visible = false;
@@ -769,7 +771,7 @@ namespace App.Gui
                 var bestFitness = Math.Round(_result.Results[i].Best.Fitness, _decimalsToRound);
                 var lastGeneration = _result.Results[i].LastGeneration;
                 var hasConverged = (_result.Results[i].HasConverged) ? "Yes" : "No";
-                var lastConvergence = _result.Results[i].LastConvergence;
+                var lastConvergence = Math.Round(_result.Results[i].LastConvergence, _decimalsToRound);
                 var duration = _result.Results[i].Duration;
                 dtResults.Rows.Add(number, bestTour, bestFitness, lastGeneration, hasConverged, lastConvergence, duration);
             }

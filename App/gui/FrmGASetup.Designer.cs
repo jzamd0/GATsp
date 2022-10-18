@@ -292,7 +292,7 @@ namespace App.Gui
             this._tbxName.Location = new System.Drawing.Point(8, 28);
             this._tbxName.Name = "_tbxName";
             this._tbxName.Size = new System.Drawing.Size(137, 23);
-            this._tbxName.TabIndex = 18;
+            this._tbxName.TabIndex = 4;
             // 
             // _lblRunTimes
             // 

@@ -43,7 +43,7 @@ namespace Lib.Genetics
             {
                 for (var i = 0; i < setup.RunTimes; i++)
                 {
-                    var res = new GA().SolveMeasured(setup, distances);
+                    var res = new GA().Solve(setup, distances);
                     res.Number = i;
 
                     if (verbose)
@@ -59,7 +59,7 @@ namespace Lib.Genetics
             {
                 Parallel.For(0, setup.RunTimes, t =>
                 {
-                    var res = new GA().SolveMeasured(setup, distances);
+                    var res = new GA().Solve(setup, distances);
                     res.Number = t;
 
                     if (verbose)
@@ -107,8 +107,10 @@ namespace Lib.Genetics
             return totalRes;
         }
 
-        public GAResult SolveMeasured(GASetup setup, double[][] distances, GAVerboseOptions verbose = null)
+        public GAResult Solve(GASetup setup, double[][] distances, GAVerboseOptions verbose = null)
         {
+            ValidateGAParameters(setup, distances);
+
             verbose = ConfigureVerboseOptions(verbose);
 
             if (verbose.Enabled)
@@ -121,7 +123,7 @@ namespace Lib.Genetics
             var sw = new Stopwatch();
 
             sw.Start();
-            var result = new GA().Solve(setup, distances, verbose);
+            var result = new GA().SolveGA(setup, distances, verbose);
             sw.Stop();
 
             result.Duration = sw.ElapsedMilliseconds;
@@ -138,7 +140,7 @@ namespace Lib.Genetics
             return result;
         }
 
-        public GAResult Solve(GASetup setup, double[][] distances, GAVerboseOptions verbose)
+        protected void ValidateGAParameters(GASetup setup, double[][] distances)
         {
             if (setup.Generations < MinGenerations)
             {
@@ -160,11 +162,10 @@ namespace Lib.Genetics
             {
                 throw new ArgumentNullException($"Distances cannot be null or empty", nameof(distances));
             }
-            if (verbose == null)
-            {
-                throw new ArgumentNullException($"Verbose options cannot be null", nameof(verbose));
-            }
+        }
 
+        protected GAResult SolveGA(GASetup setup, double[][] distances, GAVerboseOptions verbose)
+        {
             TourStart = 1;
             TourEnd = setup.GenotypeSize - 1;
             TourRange = TourEnd - TourStart;
@@ -260,16 +261,18 @@ namespace Lib.Genetics
             TourEnd = default(int);
             TourRange = default(int);
 
-            var result = new GAResult();
-            result.Best = best;
-            result.InitialPopulation = initialPopulation;
-            result.LastPopulation = population;
-            result.LastGeneration = generation;
-            result.LastConvergence = convergence;
-            result.HasConverged = hasConverged;
-            result.AverageFitnesses = averageFitnesses;
-            result.BestFitnesses = bestFitnesses;
-            result.Convergences = convergences;
+            var result = new GAResult
+            {
+                Best = best,
+                InitialPopulation = initialPopulation,
+                LastPopulation = population,
+                LastGeneration = generation,
+                LastConvergence = convergence,
+                HasConverged = hasConverged,
+                AverageFitnesses = averageFitnesses,
+                BestFitnesses = bestFitnesses,
+                Convergences = convergences
+            };
 
             return result;
         }

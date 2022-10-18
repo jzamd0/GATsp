@@ -668,7 +668,7 @@ namespace App.Gui
             }
             else
             {
-                res = new GA().SolveMeasured(setup, _distances, _verbose);
+                res = new GA().Solve(setup, _distances, _verbose);
             }
             swTotal.Stop();
             var finished = DateTime.Now;

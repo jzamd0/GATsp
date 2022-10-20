@@ -21,6 +21,8 @@ namespace Lib.Genetics
 
         public GAResult SolveMultiple(GASetup setup, double[][] distances, bool verbose = false)
         {
+            ValidateGAParameters(setup, distances);
+
             if (setup.RunTimes < MinMultipleRuns)
             {
                 throw new ArgumentOutOfRangeException($"Number of runs must be greater than {MinGenerations - 1}.", nameof(setup.RunTimes));
@@ -43,7 +45,7 @@ namespace Lib.Genetics
             {
                 for (var i = 0; i < setup.RunTimes; i++)
                 {
-                    var res = new GA().Solve(setup, distances);
+                    var res = new GA().SolveOptimized(setup, distances);
                     res.Number = i;
 
                     if (verbose)
@@ -59,7 +61,7 @@ namespace Lib.Genetics
             {
                 Parallel.For(0, setup.RunTimes, t =>
                 {
-                    var res = new GA().Solve(setup, distances);
+                    var res = new GA().SolveOptimized(setup, distances);
                     res.Number = t;
 
                     if (verbose)
@@ -164,6 +166,32 @@ namespace Lib.Genetics
             }
         }
 
+        protected Individual[] ApplyOperators(GASetup setup, Individual[] population, Individual[] newPopulation, GAVerboseOptions verbose)
+        {
+            if (setup.SelectionType == SelectionType.Tournament)
+            {
+                newPopulation = SelectPopulation(population, setup.PopulationSize);
+            }
+            else if (setup.SelectionType == SelectionType.None)
+            {
+                newPopulation = CopyPopulation(population, setup.PopulationSize);
+            }
+            if (setup.CrossoverRate > 0 && setup.CrossoverType != CrossoverType.None)
+            {
+                newPopulation = CrossoverPopulation(newPopulation, setup.PopulationSize, setup.GenotypeSize, setup.CrossoverRate, setup.CrossoverType, verbose.Crossover);
+            }
+            if (setup.MutationRate > 0 && setup.MutationType != MutationType.None)
+            {
+                newPopulation = MutatePopulation(newPopulation, setup.PopulationSize, setup.GenotypeSize, setup.MutationRate, setup.MutationType, verbose.Mutation);
+            }
+            if (setup.ElitismRate > 0)
+            {
+                newPopulation = ReplacePopulationWithElite(newPopulation, setup.PopulationSize, population, setup.ElitismRate);
+            }
+
+            return newPopulation;
+        }
+
         protected GAResult SolveGA(GASetup setup, double[][] distances, GAVerboseOptions verbose)
         {
             TourStart = 1;
@@ -232,26 +260,7 @@ namespace Lib.Genetics
                     break;
                 }
 
-                if (setup.SelectionType == SelectionType.Tournament)
-                {
-                    newPopulation = SelectPopulation(population, setup.PopulationSize);
-                }
-                else if (setup.SelectionType == SelectionType.None)
-                {
-                    newPopulation = CopyPopulation(population, setup.PopulationSize);
-                }
-                if (setup.CrossoverRate > 0 && setup.CrossoverType != CrossoverType.None)
-                {
-                    newPopulation = CrossoverPopulation(newPopulation, setup.PopulationSize, setup.GenotypeSize, setup.CrossoverRate, setup.CrossoverType, verbose.Crossover);
-                }
-                if (setup.MutationRate > 0 && setup.MutationType != MutationType.None)
-                {
-                    newPopulation = MutatePopulation(newPopulation, setup.PopulationSize, setup.GenotypeSize, setup.MutationRate, setup.MutationType, verbose.Mutation);
-                }
-                if (setup.ElitismRate > 0)
-                {
-                    newPopulation = ReplacePopulationWithElite(newPopulation, setup.PopulationSize, population, setup.ElitismRate);
-                }
+                newPopulation = ApplyOperators(setup, population, newPopulation, verbose);
                 population = CopyPopulation(newPopulation, setup.PopulationSize);
 
                 generation += 1;
@@ -272,6 +281,79 @@ namespace Lib.Genetics
                 AverageFitnesses = averageFitnesses,
                 BestFitnesses = bestFitnesses,
                 Convergences = convergences
+            };
+
+            return result;
+        }
+
+        protected GAResult SolveOptimized(GASetup setup, double[][] distances)
+        {
+            var sw = new Stopwatch();
+
+            sw.Start();
+            var result = new GA().SolveGAOptimized(setup, distances);
+            sw.Stop();
+
+            result.Duration = sw.ElapsedMilliseconds;
+
+            return result;
+        }
+
+        protected GAResult SolveGAOptimized(GASetup setup, double[][] distances)
+        {
+            var options = new GAVerboseOptions(false, false, false, false, false);
+
+            TourStart = 1;
+            TourEnd = setup.GenotypeSize - 1;
+            TourRange = TourEnd - TourStart;
+
+            int generation = 0;
+
+            Individual[] newPopulation = null;
+
+            Individual best = null;
+            double convergence = 0.0;
+            bool hasConverged = false;
+
+            var population = InitializePopulation(setup.PopulationSize, setup.GenotypeSize);
+            population = GenerateInitialPopulation(population, setup.PopulationSize);
+
+            while (true)
+            {
+                population = GenerateFitness(population, distances, setup.PopulationSize, setup.GenotypeSize);
+                best = GetBestIndividual(population, setup.PopulationSize);
+
+                // get convergence for best individual from population
+                convergence = GetPopulationConvergence(population, setup.PopulationSize, best);
+
+                // stop algorithm when all individuals from the population are the same
+                hasConverged = HasPopulationConverged(population);
+                if (hasConverged)
+                {
+                    break;
+                }
+
+                if (generation == setup.Generations)
+                {
+                    break;
+                }
+
+                newPopulation = ApplyOperators(setup, population, newPopulation, options);
+                population = CopyPopulation(newPopulation, setup.PopulationSize);
+
+                generation += 1;
+            }
+
+            TourStart = default(int);
+            TourEnd = default(int);
+            TourRange = default(int);
+
+            var result = new GAResult
+            {
+                Best = best,
+                LastGeneration = generation,
+                LastConvergence = convergence,
+                HasConverged = hasConverged,
             };
 
             return result;

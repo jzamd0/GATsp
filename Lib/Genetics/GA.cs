@@ -18,6 +18,77 @@ namespace Lib.Genetics
         protected int TourStart { get; set; }
         protected int TourEnd { get; set; }
         protected int TourRange { get; set; }
+        
+        private void SetTour(int genotypeSize)
+        {
+            TourStart = 1;
+            TourEnd = genotypeSize - 1;
+            TourRange = TourEnd - TourStart;
+        }
+
+        private void ClearTour()
+        {
+            TourStart = 0;
+            TourEnd = 0;
+            TourRange = 0;
+        }
+
+        public GAResult SolveMultipleSetups(List<GASetup> setups, double[][] distances, bool verbose = false)
+        {
+            foreach (var setup in setups)
+            {
+                ValidateGAParameters(setup, distances);
+
+                if (setup.RunTimes < MinMultipleRuns)
+                {
+                    throw new ArgumentOutOfRangeException($"Number of runs must be greater than {MinGenerations - 1}.", nameof(setup.RunTimes));
+                }
+            }
+
+            if (verbose)
+            {
+                Console.WriteLine("TSP GA Solver");
+                Console.WriteLine($"Setups:                    {setups.Count}");
+                Console.WriteLine("---");
+            }
+
+            var results = new List<GAResult>();
+            var sw = new Stopwatch();
+
+            sw.Start();
+            for (var i = 0; i < setups.Count; i++)
+            {
+                var res = SolveMultiple(setups[i], distances, verbose);
+                res.Number = i;
+                
+                results.Add(res);
+            }
+            sw.Stop();
+
+            var bestRes = results.OrderBy(i => i.Best.Fitness).First();
+
+            var totalRes = new GAResult
+            {
+                Number = bestRes.Number,
+                Best = bestRes.Best,
+                Duration = sw.ElapsedMilliseconds,
+                Results = results,
+            };
+
+            if (verbose)
+            {
+                Console.WriteLine($"---");
+                Console.WriteLine($"Summary for best result");
+                Console.WriteLine($"Number:                    {bestRes.Number}");
+                Console.WriteLine($"Best tour:                 ({string.Join(", ", bestRes.Best.Values)})");
+                Console.WriteLine($"Best fitness:              {bestRes.Best.Fitness}");
+                Console.WriteLine($"Elapsed total time:        {totalRes.Duration} ms");
+                Console.WriteLine($"---");
+                Console.WriteLine();
+            }
+
+            return totalRes;
+        }
 
         public GAResult SolveMultiple(GASetup setup, double[][] distances, bool verbose = false)
         {
@@ -194,9 +265,7 @@ namespace Lib.Genetics
 
         protected GAResult SolveGA(GASetup setup, double[][] distances, GAVerboseOptions verbose)
         {
-            TourStart = 1;
-            TourEnd = setup.GenotypeSize - 1;
-            TourRange = TourEnd - TourStart;
+            SetTour(setup.GenotypeSize);
 
             int generation = 0;
 
@@ -266,9 +335,7 @@ namespace Lib.Genetics
                 generation += 1;
             }
 
-            TourStart = default(int);
-            TourEnd = default(int);
-            TourRange = default(int);
+            ClearTour();
 
             var result = new GAResult
             {
@@ -303,9 +370,7 @@ namespace Lib.Genetics
         {
             var options = new GAVerboseOptions(false, false, false, false, false);
 
-            TourStart = 1;
-            TourEnd = setup.GenotypeSize - 1;
-            TourRange = TourEnd - TourStart;
+            SetTour(setup.GenotypeSize);
 
             int generation = 0;
 
@@ -344,9 +409,7 @@ namespace Lib.Genetics
                 generation += 1;
             }
 
-            TourStart = default(int);
-            TourEnd = default(int);
-            TourRange = default(int);
+            ClearTour();
 
             var result = new GAResult
             {

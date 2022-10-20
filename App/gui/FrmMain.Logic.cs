@@ -393,7 +393,7 @@ namespace App.Gui
         private void SetDataTables()
         {
             var dtNodes = new DataTable();
-            dtNodes.Columns.Add("Id", typeof(string));
+            dtNodes.Columns.Add("Id", typeof(int));
             dtNodes.Columns.Add("Name", typeof(string));
             _dgvNodes.DataSource = dtNodes;
 
@@ -404,6 +404,7 @@ namespace App.Gui
             _dgvEdges.DataSource = dtEdges;
 
             var dtCoordinates = new DataTable();
+            dtCoordinates.Columns.Add("Id", typeof(int));
             dtCoordinates.Columns.Add("Node", typeof(string));
             dtCoordinates.Columns.Add("X", typeof(int));
             dtCoordinates.Columns.Add("Y", typeof(int));
@@ -444,6 +445,9 @@ namespace App.Gui
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
             SetColumnWidth(_dgvCoordinates, _coordinatesViewMinWidth);
+
+            _dgvNodes.Columns["Id"].Visible = false;
+            _dgvCoordinates.Columns["Id"].Visible = false;
         }
 
         private void SetColumnWidth(DataGridView dgv, int width)
@@ -737,7 +741,7 @@ namespace App.Gui
             foreach (var node in _graph.Nodes)
             {
                 dtNodes.Rows.Add(node.Id, node.Name);
-                dtCoordinates.Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+                dtCoordinates.Rows.Add(node.Id, node.Name, node.Coord.X, node.Coord.Y);
             }
         }
 

@@ -59,6 +59,7 @@ namespace Lib.Genetics
             for (var i = 0; i < setups.Count; i++)
             {
                 var res = SolveMultiple(setups[i], distances, verbose);
+                res.SetupId = setups[i].Id;
                 res.Number = i;
                 
                 results.Add(res);
@@ -79,6 +80,7 @@ namespace Lib.Genetics
             {
                 Console.WriteLine($"---");
                 Console.WriteLine($"Summary for best result");
+                Console.WriteLine($"Best setup:                {setups.Where(s => s.Id == bestRes.SetupId).FirstOrDefault().Name}");
                 Console.WriteLine($"Number:                    {bestRes.Number}");
                 Console.WriteLine($"Best tour:                 ({string.Join(", ", bestRes.Best.Values)})");
                 Console.WriteLine($"Best fitness:              {bestRes.Best.Fitness}");
@@ -156,6 +158,7 @@ namespace Lib.Genetics
 
             var totalRes = new GAResult
             {
+                SetupId = setup.Id,
                 Number = bestRes.Number,
                 Best = bestRes.Best,
                 BestFitnesses = fitnesses,
@@ -199,6 +202,7 @@ namespace Lib.Genetics
             var result = new GA().SolveGA(setup, distances, verbose);
             sw.Stop();
 
+            result.SetupId = setup.Id;
             result.Duration = sw.ElapsedMilliseconds;
 
             if (verbose.Enabled)

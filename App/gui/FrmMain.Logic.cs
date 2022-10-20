@@ -335,6 +335,40 @@ namespace App.Gui
                 }
             }
         }
+
+        private void ExportResultsToJson()
+        {
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export Results To JSON";
+                exportDialog.Filter = "JSON (*.json)|*.json";
+                exportDialog.DefaultExt = "json";
+                exportDialog.AddExtension = true;
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            WriteIndented = true,
+                        };
+                        var json = JsonSerializer.Serialize(_result, typeof(GAResult), options);
+
+                        var fullFileName = exportDialog.FileName;
+                        File.WriteAllText(fullFileName, json);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+
+        }
         #endregion
 
         private void SetWindowTitle(string file)
@@ -348,6 +382,7 @@ namespace App.Gui
             _mniSolveGA.Enabled = _graph.Nodes.Count >= _minNodesToSolveTsp;
 
             _mniExportTspToDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
+            _mniExportResultsToJson.Enabled = _result != null;
             _mniGenerateDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
             _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
             _mniClearNodes.Enabled = !_graph.Nodes.IsNullOrEmpty();

@@ -43,6 +43,7 @@ namespace App.Gui
 
             _mniExportTspToDistances.Enabled = false;
             _mniExportTspToGraph.Enabled = false;
+            _mniExportResultsToJson.Enabled = false;
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
             _mniSolveGA.Enabled = false;
@@ -113,6 +114,11 @@ namespace App.Gui
         private void _mniExportTspToGraph_Click(object sender, System.EventArgs e)
         {
             ExportGraphToImage();
+        }
+
+        private void _mniExportResultsToJson_Click(object sender, System.EventArgs e)
+        {
+            ExportResultsToJson();
         }
 
         private void _mniExit_Click(object sender, System.EventArgs e)

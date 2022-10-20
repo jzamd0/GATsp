@@ -96,6 +96,7 @@ namespace App.Gui
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportResultsToJson = new System.Windows.Forms.ToolStripMenuItem();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -690,7 +691,8 @@ namespace App.Gui
             // 
             this._mniExportTsp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._mniExportTspToDistances,
-            this._mniExportTspToGraph});
+            this._mniExportTspToGraph,
+            this._mniExportResultsToJson});
             this._mniExportTsp.Name = "_mniExportTsp";
             this._mniExportTsp.Size = new System.Drawing.Size(195, 22);
             this._mniExportTsp.Text = "Export";
@@ -698,14 +700,14 @@ namespace App.Gui
             // _mniExportTspToDistances
             // 
             this._mniExportTspToDistances.Name = "_mniExportTspToDistances";
-            this._mniExportTspToDistances.Size = new System.Drawing.Size(133, 22);
+            this._mniExportTspToDistances.Size = new System.Drawing.Size(180, 22);
             this._mniExportTspToDistances.Text = "Distances...";
             this._mniExportTspToDistances.Click += new System.EventHandler(this._mniExportTspToDistances_Click);
             // 
             // _mniExportTspToGraph
             // 
             this._mniExportTspToGraph.Name = "_mniExportTspToGraph";
-            this._mniExportTspToGraph.Size = new System.Drawing.Size(133, 22);
+            this._mniExportTspToGraph.Size = new System.Drawing.Size(180, 22);
             this._mniExportTspToGraph.Text = "Graph...";
             this._mniExportTspToGraph.Click += new System.EventHandler(this._mniExportTspToGraph_Click);
             // 
@@ -838,6 +840,13 @@ namespace App.Gui
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
             // 
+            // _mniExportResultsToJson
+            // 
+            this._mniExportResultsToJson.Name = "_mniExportResultsToJson";
+            this._mniExportResultsToJson.Size = new System.Drawing.Size(180, 22);
+            this._mniExportResultsToJson.Text = "Results...";
+            this._mniExportResultsToJson.Click += new System.EventHandler(this._mniExportResultsToJson_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -966,6 +975,7 @@ namespace App.Gui
         private System.Windows.Forms.DataGridView _dgvFitnesses;
         private System.Windows.Forms.TabPage _tabResults;
         private System.Windows.Forms.DataGridView _dgvResults;
+        private System.Windows.Forms.ToolStripMenuItem _mniExportResultsToJson;
     }
 }
 

@@ -79,6 +79,7 @@ namespace App.Gui
             this._mniExportTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToDistances = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToGraph = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportResultsToJson = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExitSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniExit = new System.Windows.Forms.ToolStripMenuItem();
             this._menuView = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,7 +97,6 @@ namespace App.Gui
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniExportResultsToJson = new System.Windows.Forms.ToolStripMenuItem();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -248,11 +248,12 @@ namespace App.Gui
             this._dgvNodes.Dock = System.Windows.Forms.DockStyle.Fill;
             this._dgvNodes.Location = new System.Drawing.Point(3, 3);
             this._dgvNodes.Name = "_dgvNodes";
-            this._dgvNodes.ReadOnly = true;
             this._dgvNodes.RowHeadersVisible = false;
             this._dgvNodes.RowTemplate.Height = 25;
             this._dgvNodes.Size = new System.Drawing.Size(236, 128);
             this._dgvNodes.TabIndex = 0;
+            this._dgvNodes.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this._dgvNodes_CellEndEdit);
+            this._dgvNodes.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this._dgvNodes_CellValidating);
             // 
             // _statusNodes
             // 
@@ -700,16 +701,23 @@ namespace App.Gui
             // _mniExportTspToDistances
             // 
             this._mniExportTspToDistances.Name = "_mniExportTspToDistances";
-            this._mniExportTspToDistances.Size = new System.Drawing.Size(180, 22);
+            this._mniExportTspToDistances.Size = new System.Drawing.Size(133, 22);
             this._mniExportTspToDistances.Text = "Distances...";
             this._mniExportTspToDistances.Click += new System.EventHandler(this._mniExportTspToDistances_Click);
             // 
             // _mniExportTspToGraph
             // 
             this._mniExportTspToGraph.Name = "_mniExportTspToGraph";
-            this._mniExportTspToGraph.Size = new System.Drawing.Size(180, 22);
+            this._mniExportTspToGraph.Size = new System.Drawing.Size(133, 22);
             this._mniExportTspToGraph.Text = "Graph...";
             this._mniExportTspToGraph.Click += new System.EventHandler(this._mniExportTspToGraph_Click);
+            // 
+            // _mniExportResultsToJson
+            // 
+            this._mniExportResultsToJson.Name = "_mniExportResultsToJson";
+            this._mniExportResultsToJson.Size = new System.Drawing.Size(133, 22);
+            this._mniExportResultsToJson.Text = "Results...";
+            this._mniExportResultsToJson.Click += new System.EventHandler(this._mniExportResultsToJson_Click);
             // 
             // _mniExitSep
             // 
@@ -839,13 +847,6 @@ namespace App.Gui
             this._mniAbout.Size = new System.Drawing.Size(107, 22);
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
-            // 
-            // _mniExportResultsToJson
-            // 
-            this._mniExportResultsToJson.Name = "_mniExportResultsToJson";
-            this._mniExportResultsToJson.Size = new System.Drawing.Size(180, 22);
-            this._mniExportResultsToJson.Text = "Results...";
-            this._mniExportResultsToJson.Click += new System.EventHandler(this._mniExportResultsToJson_Click);
             // 
             // FrmMain
             // 

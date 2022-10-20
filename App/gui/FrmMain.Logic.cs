@@ -446,8 +446,7 @@ namespace App.Gui
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
             SetColumnWidth(_dgvCoordinates, _coordinatesViewMinWidth);
 
-            _dgvNodes.Columns["Id"].Visible = false;
-            _dgvCoordinates.Columns["Id"].Visible = false;
+            _dgvNodes.Columns["Id"].ReadOnly = true;
         }
 
         private void SetColumnWidth(DataGridView dgv, int width)
@@ -544,6 +543,16 @@ namespace App.Gui
 
             ((DataTable)_dgvNodes.DataSource).Rows.Add(node.Id, node.Name);
             ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+
+            UpdateApp();
+        }
+
+        private void RenameNode(int id, string name)
+        {
+            _graph.Nodes.Find(n => n.Id == id).Name = name;
+
+            var rows = ((DataTable)_dgvCoordinates.DataSource).Select($"Id = {id}").FirstOrDefault();
+            rows["Node"] = name;
 
             UpdateApp();
         }

@@ -254,5 +254,25 @@ namespace App.Gui
             }
         }
         #endregion
+
+        private void _dgvNodes_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (e.FormattedValue == null || e.FormattedValue.ToString().IsNullOrEmpty())
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
+        private void _dgvNodes_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var id = int.Parse(_dgvNodes.Rows[e.RowIndex].Cells["Id"].Value.ToString());
+            var name = _dgvNodes.Rows[e.RowIndex].Cells["Name"].Value.ToString();
+
+            if (_graph.Nodes.Find(n => n.Id == id).Name != name)
+            {
+                RenameNode(id, name);
+            }
+        }
     }
 }

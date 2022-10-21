@@ -93,7 +93,7 @@ namespace App.Gui
             }
             catch (Exception ex) when (ex is ArgumentException || ex is FormatException)
             {
-                MessageBox.Show("Something went wrong. Make sure the values are separated by comma and are valid. Also, make sure all of the fields have at least one value.");
+                MessageBox.Show("Something went wrong. Make sure the values are separated by comma and are valid. Also, make sure all of the fields have at least one value. Run times has only one value");
             }
         }
         private void _btnCancel_Click(object sender, System.EventArgs e)

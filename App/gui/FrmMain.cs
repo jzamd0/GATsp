@@ -49,10 +49,13 @@ namespace App.Gui
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
             _mniSolveGA.Enabled = false;
+            _mniSolveGASetups.Enabled = false;
             _mniClearGAResult.Enabled = false;
             _mniGenerateDistances.Enabled = false;
             _mniClearDistances.Enabled = false;
             _mniClearNodes.Enabled = false;
+            _mniExportResultsSetupsToCsv.Enabled = false;
+            _mniExportTimesSetupsToCsv.Enabled = false;
 
             _dgvPopulations.Visible = false;
             _dgvResults.Visible = false;
@@ -123,6 +126,16 @@ namespace App.Gui
         private void _mniExportResultsToJson_Click(object sender, System.EventArgs e)
         {
             ExportResultsToJson();
+        }
+
+        private void _mniExportResultsSetupsToCsv_Click(object sender, EventArgs e)
+        {
+            ExportResultsTimesToCsv();
+        }
+
+        private void _mniExportTimesSetupsToCsv_Click(object sender, EventArgs e)
+        {
+            ExportTimesSetupsCsv();
         }
 
         private void _mniExit_Click(object sender, System.EventArgs e)

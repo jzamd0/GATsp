@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -357,9 +358,18 @@ namespace App.Gui
                         var options = new JsonSerializerOptions
                         {
                             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                            WriteIndented = true,
+                            //WriteIndented = true,
                         };
-                        var json = JsonSerializer.Serialize(_result, typeof(GAResult), options);
+                        var json = string.Empty;
+
+                        if (_results != null)
+                        {
+                            json = JsonSerializer.Serialize(_results, typeof(GAResult), options);
+                        }
+                        else
+                        {
+                            json = JsonSerializer.Serialize(_result, typeof(GAResult), options);
+                        }
 
                         var fullFileName = exportDialog.FileName;
                         File.WriteAllText(fullFileName, json);
@@ -371,6 +381,82 @@ namespace App.Gui
                 }
             }
 
+        }
+
+        private void ExportResultsTimesToCsv()
+        {
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export Results (Setups) To CSV";
+                exportDialog.Filter = "CSV (*.csv)|*.csv";
+                exportDialog.DefaultExt = "csv";
+                exportDialog.AddExtension = true;
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var dtRS = (DataTable)_dgvResultsSetups.DataSource;
+                        var res = new List<string>();
+
+                        var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes));
+                        res.Add($"Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}, Average, Best");
+
+                        foreach (DataRow r in dtRS.Rows)
+                        {
+                            var s = string.Join(", ", r.ItemArray.Select(r => r.ToString()));
+                            res.Add(s);
+                        }
+
+                        var fullFileName = exportDialog.FileName;
+                        File.WriteAllLines(fullFileName, res);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+        }
+
+        private void ExportTimesSetupsCsv()
+        {
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export Times (Setups) To CSV";
+                exportDialog.Filter = "CSV (*.csv)|*.csv";
+                exportDialog.DefaultExt = "csv";
+                exportDialog.AddExtension = true;
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var dtRT = (DataTable)_dgvTimesSetups.DataSource;
+                        var res = new List<string>();
+
+                        var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes));
+                        res.Add($"Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}, Average, Total");
+
+                        foreach (DataRow r in dtRT.Rows)
+                        {
+                            var s = string.Join(", ", r.ItemArray.Select(r => r.ToString()));
+                            res.Add(s);
+                        }
+
+                        var fullFileName = exportDialog.FileName;
+                        File.WriteAllLines(fullFileName, res);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
         }
         #endregion
 
@@ -385,12 +471,16 @@ namespace App.Gui
             _mniSolveGA.Enabled = _graph.Nodes.Count >= _minNodesToSolveTsp;
 
             _mniExportTspToDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
-            _mniExportResultsToJson.Enabled = _result != null;
+            _mniExportResultsToJson.Enabled = _result != null || _results != null;
             _mniGenerateDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
             _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
             _mniClearNodes.Enabled = !_graph.Nodes.IsNullOrEmpty();
             _mniClearGAResult.Enabled = _result != null || _results != null;
             _mniExportTspToGraph.Enabled = _graph.Nodes.Count >= _minNodesToGraph;
+
+            _mniSolveGASetups.Enabled = _graph.Nodes.Count >= _minNodesToSolveTsp;
+            _mniExportResultsSetupsToCsv.Enabled = _results != null;
+            _mniExportTimesSetupsToCsv.Enabled = _results != null;
         }
 
         private void SetDataTables()

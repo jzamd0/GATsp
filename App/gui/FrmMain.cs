@@ -1,6 +1,8 @@
 ﻿using Lib;
 using Lib.Genetics;
 using Lib.Tsp;
+using System;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -43,18 +45,24 @@ namespace App.Gui
 
             _mniExportTspToDistances.Enabled = false;
             _mniExportTspToGraph.Enabled = false;
+            _mniExportResultsToJson.Enabled = false;
             _mniViewSetup.Checked = !_splitTsp.Panel1Collapsed;
             _mniViewResults.Checked = !_splitMain.Panel2Collapsed;
             _mniSolveGA.Enabled = false;
+            _mniSolveGASetups.Enabled = false;
             _mniClearGAResult.Enabled = false;
             _mniGenerateDistances.Enabled = false;
             _mniClearDistances.Enabled = false;
             _mniClearNodes.Enabled = false;
+            _mniExportResultsSetupsToCsv.Enabled = false;
+            _mniExportTimesSetupsToCsv.Enabled = false;
 
             _dgvPopulations.Visible = false;
             _dgvResults.Visible = false;
             _dgvFitnesses.Visible = false;
             _dgvSummary.Visible = false;
+            _dgvResultsSetups.Visible = false;
+            _dgvTimesSetups.Visible = false;
         }
 
         #region Menu File
@@ -115,6 +123,21 @@ namespace App.Gui
             ExportGraphToImage();
         }
 
+        private void _mniExportResultsToJson_Click(object sender, System.EventArgs e)
+        {
+            ExportResultsToJson();
+        }
+
+        private void _mniExportResultsSetupsToCsv_Click(object sender, EventArgs e)
+        {
+            ExportResultsTimesToCsv();
+        }
+
+        private void _mniExportTimesSetupsToCsv_Click(object sender, EventArgs e)
+        {
+            ExportTimesSetupsCsv();
+        }
+
         private void _mniExit_Click(object sender, System.EventArgs e)
         {
             this.Close();
@@ -152,6 +175,131 @@ namespace App.Gui
 
             var setup = _frmGASetup.GetGASetup();
             SolveGA(setup);
+        }
+
+        private void _mniSolveGASetups_Click(object sender, System.EventArgs e)
+        {
+            using (var frmMultipleSetups = new FrmMultipleSetups())
+            {
+                var res = frmMultipleSetups.ShowDialog();
+                var setups = frmMultipleSetups.Setups;
+
+                if (setups != null)
+                {
+                    GenerateDistances();
+
+                    setups.ForEach(s =>
+                    {
+                        s.GenotypeSize = _distances.Length + 1;
+                    });
+
+                    var confirm = MessageBox.Show($"{setups.Count} setup(s) are going to be processed. Do you want to continue?", "TSP GA Solver", MessageBoxButtons.YesNo);
+                    if (confirm != DialogResult.Yes)
+                    {
+                        return;
+                    }
+
+                    var results = new GA().SolveMultipleSetups(setups, _distances, _verbose.Enabled);
+
+                    var times = setups.First().RunTimes;
+                    var dtRS = new DataTable();
+                    var dtRT = new DataTable();
+
+                    var cols = new DataColumn[]
+                    {
+                        new DataColumn("Population", typeof(int)),
+                        new DataColumn("Generation", typeof(int)),
+                        new DataColumn("Crossover Rate", typeof(double)),
+                        new DataColumn("Mutation Rate", typeof(double)),
+                        new DataColumn("Elitism Rate", typeof(double)),
+                        new DataColumn("Crossover Op.", typeof(string)),
+                        new DataColumn("Mutation Op.", typeof(string)),
+                    };
+
+                    foreach (var col in cols)
+                    {
+                        dtRS.Columns.Add(col.ColumnName, col.DataType);
+                        dtRT.Columns.Add(col.ColumnName, col.DataType);
+                    }
+
+                    for (var i = 0; i < times; i++)
+                    {
+                        dtRS.Columns.Add(i.ToString(), typeof(double));
+                        dtRT.Columns.Add(i.ToString(), typeof(long));
+                    }
+
+                    dtRS.Columns.Add("Average", typeof(double));
+                    dtRS.Columns.Add("Best", typeof(double));
+                    dtRT.Columns.Add("Average", typeof(long));
+                    dtRT.Columns.Add("Total", typeof(long));
+
+                    for (var i = 0; i < results.Results.Count; i++)
+                    {
+                        // result from setups
+                        var result = results.Results[i];
+                        var selSetup = setups.Where(s => s.Id == result.SetupId).FirstOrDefault();
+
+                        var dr = dtRS.NewRow();
+                        dr["Population"] = selSetup.PopulationSize;
+                        dr["Generation"] = selSetup.Generations;
+                        dr["Crossover Rate"] = selSetup.CrossoverRate;
+                        dr["Mutation Rate"] = selSetup.MutationRate;
+                        dr["Elitism Rate"] = selSetup.ElitismRate;
+                        dr["Crossover Op."] = selSetup.CrossoverType;
+                        dr["Mutation Op."] = selSetup.MutationType;
+
+                        for (var j = 0; j < times; j++)
+                        {
+                            dr[j.ToString()] = result.Results[j].Best.Fitness;
+                        }
+
+                        dr["Average"] = result.BestFitnesses[0];
+                        dr["Best"] = result.Best.Fitness;
+                        dtRS.Rows.Add(dr);
+
+                        var drT = dtRT.NewRow();
+                        drT["Population"] = selSetup.PopulationSize;
+                        drT["Generation"] = selSetup.Generations;
+                        drT["Crossover Rate"] = selSetup.CrossoverRate;
+                        drT["Mutation Rate"] = selSetup.MutationRate;
+                        drT["Elitism Rate"] = selSetup.ElitismRate;
+                        drT["Crossover Op."] = selSetup.CrossoverType;
+                        drT["Mutation Op."] = selSetup.MutationType;
+
+                        for (var j = 0; j < times; j++)
+                        {
+                            drT[j.ToString()] = result.Results[j].Duration;
+                        }
+
+                        drT["Average"] = result.Results.Average(i => i.Duration);
+                        drT["Total"] = result.Duration;
+                        dtRT.Rows.Add(drT);
+                    }
+
+                    // set shortest path
+                    _shortestPath = Helper.MapToPath(_graph.Nodes, results.Best.Values);
+
+                    var dtSummary = (DataTable)_dgvSummary.DataSource;
+
+                    dtSummary.Rows.Add("Setups", setups.Count);
+                    dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
+                    dtSummary.Rows.Add("Best Fitness", Math.Round(results.Best.Fitness, _decimalsToRound));
+                    dtSummary.Rows.Add("Number", results.Number);
+                    dtSummary.Rows.Add("GA Duration (ms)", results.Duration);
+
+                    _dgvResultsSetups.DataSource = dtRS;
+                    _dgvTimesSetups.DataSource = dtRT;
+
+                    _dgvResultsSetups.Visible = true;
+                    _dgvTimesSetups.Visible = true;
+                    _dgvSummary.Visible = true;
+
+                    _setups = setups;
+                    _results = results;
+
+                    UpdateApp();
+                }
+            }
         }
 
         private void _mniClearGASetup_Click(object sender, System.EventArgs e)
@@ -248,5 +396,25 @@ namespace App.Gui
             }
         }
         #endregion
+
+        private void _dgvNodes_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (e.FormattedValue == null || e.FormattedValue.ToString().IsNullOrEmpty())
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
+        private void _dgvNodes_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var id = int.Parse(_dgvNodes.Rows[e.RowIndex].Cells["Id"].Value.ToString());
+            var name = _dgvNodes.Rows[e.RowIndex].Cells["Name"].Value.ToString();
+
+            if (_graph.Nodes.Find(n => n.Id == id).Name != name)
+            {
+                RenameNode(id, name);
+            }
+        }
     }
 }

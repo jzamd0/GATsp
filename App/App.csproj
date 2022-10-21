@@ -13,4 +13,10 @@
     <ProjectReference Include="..\Lib\Lib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Gui\FrmMultipleSetups.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

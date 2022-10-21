@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -38,6 +39,9 @@ namespace App.Gui
         private double[][] _distances { get; set; }
         private Edge<Node>[] _edges { get; set; }
         private List<Node> _shortestPath { get; set; }
+
+        private GAResult _results { get; set; }
+        private List<GASetup> _setups { get; set; }
 
         private int _distancesViewMinWidth { get; set; }
         private int _edgesViewMinWidth { get; set; }
@@ -335,6 +339,125 @@ namespace App.Gui
                 }
             }
         }
+
+        private void ExportResultsToJson()
+        {
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export Results To JSON";
+                exportDialog.Filter = "JSON (*.json)|*.json";
+                exportDialog.DefaultExt = "json";
+                exportDialog.AddExtension = true;
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            //WriteIndented = true,
+                        };
+                        var json = string.Empty;
+
+                        if (_results != null)
+                        {
+                            json = JsonSerializer.Serialize(_results, typeof(GAResult), options);
+                        }
+                        else
+                        {
+                            json = JsonSerializer.Serialize(_result, typeof(GAResult), options);
+                        }
+
+                        var fullFileName = exportDialog.FileName;
+                        File.WriteAllText(fullFileName, json);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+
+        }
+
+        private void ExportResultsTimesToCsv()
+        {
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export Results (Setups) To CSV";
+                exportDialog.Filter = "CSV (*.csv)|*.csv";
+                exportDialog.DefaultExt = "csv";
+                exportDialog.AddExtension = true;
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var dtRS = (DataTable)_dgvResultsSetups.DataSource;
+                        var res = new List<string>();
+
+                        var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes));
+                        res.Add($"Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}, Average, Best");
+
+                        foreach (DataRow r in dtRS.Rows)
+                        {
+                            var s = string.Join(", ", r.ItemArray.Select(r => r.ToString()));
+                            res.Add(s);
+                        }
+
+                        var fullFileName = exportDialog.FileName;
+                        File.WriteAllLines(fullFileName, res);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+        }
+
+        private void ExportTimesSetupsCsv()
+        {
+            using (var exportDialog = new SaveFileDialog())
+            {
+                exportDialog.InitialDirectory = _lastLocation;
+                exportDialog.Title = "Export Times (Setups) To CSV";
+                exportDialog.Filter = "CSV (*.csv)|*.csv";
+                exportDialog.DefaultExt = "csv";
+                exportDialog.AddExtension = true;
+                exportDialog.RestoreDirectory = true;
+
+                if (exportDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var dtRT = (DataTable)_dgvTimesSetups.DataSource;
+                        var res = new List<string>();
+
+                        var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes));
+                        res.Add($"Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}, Average, Total");
+
+                        foreach (DataRow r in dtRT.Rows)
+                        {
+                            var s = string.Join(", ", r.ItemArray.Select(r => r.ToString()));
+                            res.Add(s);
+                        }
+
+                        var fullFileName = exportDialog.FileName;
+                        File.WriteAllLines(fullFileName, res);
+                    }
+                    catch (Exception ex) when (ex is IOException)
+                    {
+                        PrintTo(ex.Message, true);
+                    }
+                }
+            }
+        }
         #endregion
 
         private void SetWindowTitle(string file)
@@ -348,17 +471,22 @@ namespace App.Gui
             _mniSolveGA.Enabled = _graph.Nodes.Count >= _minNodesToSolveTsp;
 
             _mniExportTspToDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
+            _mniExportResultsToJson.Enabled = _result != null || _results != null;
             _mniGenerateDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
             _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
             _mniClearNodes.Enabled = !_graph.Nodes.IsNullOrEmpty();
-            _mniClearGAResult.Enabled = _result != null;
+            _mniClearGAResult.Enabled = _result != null || _results != null;
             _mniExportTspToGraph.Enabled = _graph.Nodes.Count >= _minNodesToGraph;
+
+            _mniSolveGASetups.Enabled = _graph.Nodes.Count >= _minNodesToSolveTsp;
+            _mniExportResultsSetupsToCsv.Enabled = _results != null;
+            _mniExportTimesSetupsToCsv.Enabled = _results != null;
         }
 
         private void SetDataTables()
         {
             var dtNodes = new DataTable();
-            dtNodes.Columns.Add("Id", typeof(string));
+            dtNodes.Columns.Add("Id", typeof(int));
             dtNodes.Columns.Add("Name", typeof(string));
             _dgvNodes.DataSource = dtNodes;
 
@@ -369,6 +497,7 @@ namespace App.Gui
             _dgvEdges.DataSource = dtEdges;
 
             var dtCoordinates = new DataTable();
+            dtCoordinates.Columns.Add("Id", typeof(int));
             dtCoordinates.Columns.Add("Node", typeof(string));
             dtCoordinates.Columns.Add("X", typeof(int));
             dtCoordinates.Columns.Add("Y", typeof(int));
@@ -409,6 +538,8 @@ namespace App.Gui
             SetColumnWidth(_dgvEdges, _edgesViewMinWidth);
             SetColumnWidth(_dgvNodes, _nodesViewMinWidth);
             SetColumnWidth(_dgvCoordinates, _coordinatesViewMinWidth);
+
+            _dgvNodes.Columns["Id"].ReadOnly = true;
         }
 
         private void SetColumnWidth(DataGridView dgv, int width)
@@ -440,6 +571,7 @@ namespace App.Gui
             _frmGASetup.ClearGASetup();
 
             _setup = null;
+            _setups = null;
         }
 
         private void ClearResult()
@@ -448,13 +580,19 @@ namespace App.Gui
             ((DataTable)_dgvResults.DataSource).Rows.Clear();
             ((DataTable)_dgvPopulations.DataSource).Rows.Clear();
             ((DataTable)_dgvFitnesses.DataSource).Rows.Clear();
+            _dgvResultsSetups.DataSource = null;
+            _dgvTimesSetups.DataSource = null;
+
             _dgvSummary.Visible = false;
             _dgvResults.Visible = false;
             _dgvPopulations.Visible = false;
             _dgvFitnesses.Visible = false;
+            _dgvResultsSetups.Visible = false;
+            _dgvTimesSetups.Visible = false;
 
             _shortestPath = null;
             _result = null;
+            _results = null;
         }
 
         private void UpdateApp()
@@ -505,6 +643,16 @@ namespace App.Gui
 
             ((DataTable)_dgvNodes.DataSource).Rows.Add(node.Id, node.Name);
             ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+
+            UpdateApp();
+        }
+
+        private void RenameNode(int id, string name)
+        {
+            _graph.Nodes.Find(n => n.Id == id).Name = name;
+
+            var rows = ((DataTable)_dgvCoordinates.DataSource).Select($"Id = {id}").FirstOrDefault();
+            rows["Node"] = name;
 
             UpdateApp();
         }
@@ -702,7 +850,7 @@ namespace App.Gui
             foreach (var node in _graph.Nodes)
             {
                 dtNodes.Rows.Add(node.Id, node.Name);
-                dtCoordinates.Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+                dtCoordinates.Rows.Add(node.Id, node.Name, node.Coord.X, node.Coord.Y);
             }
         }
 

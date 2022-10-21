@@ -62,6 +62,10 @@ namespace App.Gui
             this._dgvPopulations = new System.Windows.Forms.DataGridView();
             this._tabFitnesses = new System.Windows.Forms.TabPage();
             this._dgvFitnesses = new System.Windows.Forms.DataGridView();
+            this._tabResultsSetups = new System.Windows.Forms.TabPage();
+            this._dgvResultsSetups = new System.Windows.Forms.DataGridView();
+            this._tabTimesSetups = new System.Windows.Forms.TabPage();
+            this._dgvTimesSetups = new System.Windows.Forms.DataGridView();
             this._statusMain = new System.Windows.Forms.StatusStrip();
             this._menuStripMain = new System.Windows.Forms.MenuStrip();
             this._menuFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,6 +83,7 @@ namespace App.Gui
             this._mniExportTsp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToDistances = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToGraph = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportResultsToJson = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExitSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniExit = new System.Windows.Forms.ToolStripMenuItem();
             this._menuView = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,6 +91,7 @@ namespace App.Gui
             this._mniViewResults = new System.Windows.Forms.ToolStripMenuItem();
             this._menuGA = new System.Windows.Forms.ToolStripMenuItem();
             this._mniSolveGA = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniSolveGASetups = new System.Windows.Forms.ToolStripMenuItem();
             this._mniClearGASetupSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniClearGASetup = new System.Windows.Forms.ToolStripMenuItem();
             this._mniClearGAResult = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,6 +102,8 @@ namespace App.Gui
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportResultsSetupsToCsv = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportTimesSetupsToCsv = new System.Windows.Forms.ToolStripMenuItem();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -132,6 +140,10 @@ namespace App.Gui
             ((System.ComponentModel.ISupportInitialize)(this._dgvPopulations)).BeginInit();
             this._tabFitnesses.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._dgvFitnesses)).BeginInit();
+            this._tabResultsSetups.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dgvResultsSetups)).BeginInit();
+            this._tabTimesSetups.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dgvTimesSetups)).BeginInit();
             this._menuStripMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -247,11 +259,12 @@ namespace App.Gui
             this._dgvNodes.Dock = System.Windows.Forms.DockStyle.Fill;
             this._dgvNodes.Location = new System.Drawing.Point(3, 3);
             this._dgvNodes.Name = "_dgvNodes";
-            this._dgvNodes.ReadOnly = true;
             this._dgvNodes.RowHeadersVisible = false;
             this._dgvNodes.RowTemplate.Height = 25;
             this._dgvNodes.Size = new System.Drawing.Size(236, 128);
             this._dgvNodes.TabIndex = 0;
+            this._dgvNodes.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this._dgvNodes_CellEndEdit);
+            this._dgvNodes.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this._dgvNodes_CellValidating);
             // 
             // _statusNodes
             // 
@@ -450,6 +463,8 @@ namespace App.Gui
             this._tabControlResults.Controls.Add(this._tabResults);
             this._tabControlResults.Controls.Add(this._tabPopulations);
             this._tabControlResults.Controls.Add(this._tabFitnesses);
+            this._tabControlResults.Controls.Add(this._tabResultsSetups);
+            this._tabControlResults.Controls.Add(this._tabTimesSetups);
             this._tabControlResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabControlResults.Location = new System.Drawing.Point(0, 0);
             this._tabControlResults.Name = "_tabControlResults";
@@ -573,6 +588,64 @@ namespace App.Gui
             this._dgvFitnesses.Size = new System.Drawing.Size(570, 93);
             this._dgvFitnesses.TabIndex = 2;
             // 
+            // _tabResultsSetups
+            // 
+            this._tabResultsSetups.Controls.Add(this._dgvResultsSetups);
+            this._tabResultsSetups.Location = new System.Drawing.Point(4, 24);
+            this._tabResultsSetups.Name = "_tabResultsSetups";
+            this._tabResultsSetups.Padding = new System.Windows.Forms.Padding(3);
+            this._tabResultsSetups.Size = new System.Drawing.Size(576, 99);
+            this._tabResultsSetups.TabIndex = 4;
+            this._tabResultsSetups.Text = "Results (Setups)";
+            this._tabResultsSetups.UseVisualStyleBackColor = true;
+            // 
+            // _dgvResultsSetups
+            // 
+            this._dgvResultsSetups.AllowUserToAddRows = false;
+            this._dgvResultsSetups.AllowUserToDeleteRows = false;
+            this._dgvResultsSetups.AllowUserToResizeRows = false;
+            this._dgvResultsSetups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvResultsSetups.BackgroundColor = System.Drawing.Color.White;
+            this._dgvResultsSetups.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._dgvResultsSetups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._dgvResultsSetups.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dgvResultsSetups.Location = new System.Drawing.Point(3, 3);
+            this._dgvResultsSetups.Name = "_dgvResultsSetups";
+            this._dgvResultsSetups.ReadOnly = true;
+            this._dgvResultsSetups.RowHeadersVisible = false;
+            this._dgvResultsSetups.RowTemplate.Height = 25;
+            this._dgvResultsSetups.Size = new System.Drawing.Size(570, 93);
+            this._dgvResultsSetups.TabIndex = 3;
+            // 
+            // _tabTimesSetups
+            // 
+            this._tabTimesSetups.Controls.Add(this._dgvTimesSetups);
+            this._tabTimesSetups.Location = new System.Drawing.Point(4, 24);
+            this._tabTimesSetups.Name = "_tabTimesSetups";
+            this._tabTimesSetups.Padding = new System.Windows.Forms.Padding(3);
+            this._tabTimesSetups.Size = new System.Drawing.Size(576, 99);
+            this._tabTimesSetups.TabIndex = 5;
+            this._tabTimesSetups.Text = "Times (Setups)";
+            this._tabTimesSetups.UseVisualStyleBackColor = true;
+            // 
+            // _dgvTimesSetups
+            // 
+            this._dgvTimesSetups.AllowUserToAddRows = false;
+            this._dgvTimesSetups.AllowUserToDeleteRows = false;
+            this._dgvTimesSetups.AllowUserToResizeRows = false;
+            this._dgvTimesSetups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvTimesSetups.BackgroundColor = System.Drawing.Color.White;
+            this._dgvTimesSetups.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this._dgvTimesSetups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._dgvTimesSetups.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dgvTimesSetups.Location = new System.Drawing.Point(3, 3);
+            this._dgvTimesSetups.Name = "_dgvTimesSetups";
+            this._dgvTimesSetups.ReadOnly = true;
+            this._dgvTimesSetups.RowHeadersVisible = false;
+            this._dgvTimesSetups.RowTemplate.Height = 25;
+            this._dgvTimesSetups.Size = new System.Drawing.Size(570, 93);
+            this._dgvTimesSetups.TabIndex = 4;
+            // 
             // _statusMain
             // 
             this._statusMain.Location = new System.Drawing.Point(0, 339);
@@ -690,7 +763,10 @@ namespace App.Gui
             // 
             this._mniExportTsp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._mniExportTspToDistances,
-            this._mniExportTspToGraph});
+            this._mniExportTspToGraph,
+            this._mniExportResultsToJson,
+            this._mniExportResultsSetupsToCsv,
+            this._mniExportTimesSetupsToCsv});
             this._mniExportTsp.Name = "_mniExportTsp";
             this._mniExportTsp.Size = new System.Drawing.Size(195, 22);
             this._mniExportTsp.Text = "Export";
@@ -698,16 +774,23 @@ namespace App.Gui
             // _mniExportTspToDistances
             // 
             this._mniExportTspToDistances.Name = "_mniExportTspToDistances";
-            this._mniExportTspToDistances.Size = new System.Drawing.Size(133, 22);
+            this._mniExportTspToDistances.Size = new System.Drawing.Size(180, 22);
             this._mniExportTspToDistances.Text = "Distances...";
             this._mniExportTspToDistances.Click += new System.EventHandler(this._mniExportTspToDistances_Click);
             // 
             // _mniExportTspToGraph
             // 
             this._mniExportTspToGraph.Name = "_mniExportTspToGraph";
-            this._mniExportTspToGraph.Size = new System.Drawing.Size(133, 22);
+            this._mniExportTspToGraph.Size = new System.Drawing.Size(180, 22);
             this._mniExportTspToGraph.Text = "Graph...";
             this._mniExportTspToGraph.Click += new System.EventHandler(this._mniExportTspToGraph_Click);
+            // 
+            // _mniExportResultsToJson
+            // 
+            this._mniExportResultsToJson.Name = "_mniExportResultsToJson";
+            this._mniExportResultsToJson.Size = new System.Drawing.Size(180, 22);
+            this._mniExportResultsToJson.Text = "Results...";
+            this._mniExportResultsToJson.Click += new System.EventHandler(this._mniExportResultsToJson_Click);
             // 
             // _mniExitSep
             // 
@@ -751,6 +834,7 @@ namespace App.Gui
             // 
             this._menuGA.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._mniSolveGA,
+            this._mniSolveGASetups,
             this._mniClearGASetupSep,
             this._mniClearGASetup,
             this._mniClearGAResult});
@@ -765,6 +849,13 @@ namespace App.Gui
             this._mniSolveGA.Size = new System.Drawing.Size(148, 22);
             this._mniSolveGA.Text = "Solve";
             this._mniSolveGA.Click += new System.EventHandler(this._mniSolveGA_Click);
+            // 
+            // _mniSolveGASetups
+            // 
+            this._mniSolveGASetups.Name = "_mniSolveGASetups";
+            this._mniSolveGASetups.Size = new System.Drawing.Size(148, 22);
+            this._mniSolveGASetups.Text = "Solve (Setups)";
+            this._mniSolveGASetups.Click += new System.EventHandler(this._mniSolveGASetups_Click);
             // 
             // _mniClearGASetupSep
             // 
@@ -838,6 +929,20 @@ namespace App.Gui
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
             // 
+            // _mniExportResultsSetupsToCsv
+            // 
+            this._mniExportResultsSetupsToCsv.Name = "_mniExportResultsSetupsToCsv";
+            this._mniExportResultsSetupsToCsv.Size = new System.Drawing.Size(180, 22);
+            this._mniExportResultsSetupsToCsv.Text = "Results (Setups)...";
+            this._mniExportResultsSetupsToCsv.Click += new System.EventHandler(this._mniExportResultsSetupsToCsv_Click);
+            // 
+            // _mniExportTimesSetupsToCsv
+            // 
+            this._mniExportTimesSetupsToCsv.Name = "_mniExportTimesSetupsToCsv";
+            this._mniExportTimesSetupsToCsv.Size = new System.Drawing.Size(180, 22);
+            this._mniExportTimesSetupsToCsv.Text = "Times (Setups)...";
+            this._mniExportTimesSetupsToCsv.Click += new System.EventHandler(this._mniExportTimesSetupsToCsv_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -891,6 +996,10 @@ namespace App.Gui
             ((System.ComponentModel.ISupportInitialize)(this._dgvPopulations)).EndInit();
             this._tabFitnesses.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._dgvFitnesses)).EndInit();
+            this._tabResultsSetups.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this._dgvResultsSetups)).EndInit();
+            this._tabTimesSetups.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this._dgvTimesSetups)).EndInit();
             this._menuStripMain.ResumeLayout(false);
             this._menuStripMain.PerformLayout();
             this.ResumeLayout(false);
@@ -966,6 +1075,14 @@ namespace App.Gui
         private System.Windows.Forms.DataGridView _dgvFitnesses;
         private System.Windows.Forms.TabPage _tabResults;
         private System.Windows.Forms.DataGridView _dgvResults;
+        private System.Windows.Forms.ToolStripMenuItem _mniExportResultsToJson;
+        private System.Windows.Forms.TabPage _tabResultsSetups;
+        private System.Windows.Forms.DataGridView _dgvResultsSetups;
+        private System.Windows.Forms.ToolStripMenuItem _mniSolveGASetups;
+        private System.Windows.Forms.TabPage _tabTimesSetups;
+        private System.Windows.Forms.DataGridView _dgvTimesSetups;
+        private System.Windows.Forms.ToolStripMenuItem _mniExportResultsSetupsToCsv;
+        private System.Windows.Forms.ToolStripMenuItem _mniExportTimesSetupsToCsv;
     }
 }
 

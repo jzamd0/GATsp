@@ -39,6 +39,9 @@ namespace App.Gui
         private Edge<Node>[] _edges { get; set; }
         private List<Node> _shortestPath { get; set; }
 
+        private GAResult _results { get; set; }
+        private List<GASetup> _setups { get; set; }
+
         private int _distancesViewMinWidth { get; set; }
         private int _edgesViewMinWidth { get; set; }
         private int _nodesViewMinWidth { get; set; }
@@ -386,7 +389,7 @@ namespace App.Gui
             _mniGenerateDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
             _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
             _mniClearNodes.Enabled = !_graph.Nodes.IsNullOrEmpty();
-            _mniClearGAResult.Enabled = _result != null;
+            _mniClearGAResult.Enabled = _result != null || _results != null;
             _mniExportTspToGraph.Enabled = _graph.Nodes.Count >= _minNodesToGraph;
         }
 
@@ -478,6 +481,7 @@ namespace App.Gui
             _frmGASetup.ClearGASetup();
 
             _setup = null;
+            _setups = null;
         }
 
         private void ClearResult()
@@ -486,13 +490,19 @@ namespace App.Gui
             ((DataTable)_dgvResults.DataSource).Rows.Clear();
             ((DataTable)_dgvPopulations.DataSource).Rows.Clear();
             ((DataTable)_dgvFitnesses.DataSource).Rows.Clear();
+            _dgvResultsSetups.DataSource = null;
+            _dgvTimesSetups.DataSource = null;
+
             _dgvSummary.Visible = false;
             _dgvResults.Visible = false;
             _dgvPopulations.Visible = false;
             _dgvFitnesses.Visible = false;
+            _dgvResultsSetups.Visible = false;
+            _dgvTimesSetups.Visible = false;
 
             _shortestPath = null;
             _result = null;
+            _results = null;
         }
 
         private void UpdateApp()

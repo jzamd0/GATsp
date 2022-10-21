@@ -84,6 +84,8 @@ namespace App.Gui
             this._mniExportTspToDistances = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportTspToGraph = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExportResultsToJson = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportResultsSetupsToCsv = new System.Windows.Forms.ToolStripMenuItem();
+            this._mniExportTimesSetupsToCsv = new System.Windows.Forms.ToolStripMenuItem();
             this._mniExitSep = new System.Windows.Forms.ToolStripSeparator();
             this._mniExit = new System.Windows.Forms.ToolStripMenuItem();
             this._menuView = new System.Windows.Forms.ToolStripMenuItem();
@@ -102,8 +104,6 @@ namespace App.Gui
             this._mniClearNodes = new System.Windows.Forms.ToolStripMenuItem();
             this._menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this._mniAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniExportResultsSetupsToCsv = new System.Windows.Forms.ToolStripMenuItem();
-            this._mniExportTimesSetupsToCsv = new System.Windows.Forms.ToolStripMenuItem();
             this._pnlMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._splitMain)).BeginInit();
             this._splitMain.Panel1.SuspendLayout();
@@ -385,7 +385,7 @@ namespace App.Gui
             this._dgvDistances.AllowUserToAddRows = false;
             this._dgvDistances.AllowUserToDeleteRows = false;
             this._dgvDistances.AllowUserToResizeRows = false;
-            this._dgvDistances.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvDistances.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this._dgvDistances.BackgroundColor = System.Drawing.Color.White;
             this._dgvDistances.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this._dgvDistances.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -604,7 +604,7 @@ namespace App.Gui
             this._dgvResultsSetups.AllowUserToAddRows = false;
             this._dgvResultsSetups.AllowUserToDeleteRows = false;
             this._dgvResultsSetups.AllowUserToResizeRows = false;
-            this._dgvResultsSetups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvResultsSetups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this._dgvResultsSetups.BackgroundColor = System.Drawing.Color.White;
             this._dgvResultsSetups.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this._dgvResultsSetups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -633,7 +633,7 @@ namespace App.Gui
             this._dgvTimesSetups.AllowUserToAddRows = false;
             this._dgvTimesSetups.AllowUserToDeleteRows = false;
             this._dgvTimesSetups.AllowUserToResizeRows = false;
-            this._dgvTimesSetups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this._dgvTimesSetups.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this._dgvTimesSetups.BackgroundColor = System.Drawing.Color.White;
             this._dgvTimesSetups.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this._dgvTimesSetups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -774,23 +774,37 @@ namespace App.Gui
             // _mniExportTspToDistances
             // 
             this._mniExportTspToDistances.Name = "_mniExportTspToDistances";
-            this._mniExportTspToDistances.Size = new System.Drawing.Size(180, 22);
+            this._mniExportTspToDistances.Size = new System.Drawing.Size(166, 22);
             this._mniExportTspToDistances.Text = "Distances...";
             this._mniExportTspToDistances.Click += new System.EventHandler(this._mniExportTspToDistances_Click);
             // 
             // _mniExportTspToGraph
             // 
             this._mniExportTspToGraph.Name = "_mniExportTspToGraph";
-            this._mniExportTspToGraph.Size = new System.Drawing.Size(180, 22);
+            this._mniExportTspToGraph.Size = new System.Drawing.Size(166, 22);
             this._mniExportTspToGraph.Text = "Graph...";
             this._mniExportTspToGraph.Click += new System.EventHandler(this._mniExportTspToGraph_Click);
             // 
             // _mniExportResultsToJson
             // 
             this._mniExportResultsToJson.Name = "_mniExportResultsToJson";
-            this._mniExportResultsToJson.Size = new System.Drawing.Size(180, 22);
+            this._mniExportResultsToJson.Size = new System.Drawing.Size(166, 22);
             this._mniExportResultsToJson.Text = "Results...";
             this._mniExportResultsToJson.Click += new System.EventHandler(this._mniExportResultsToJson_Click);
+            // 
+            // _mniExportResultsSetupsToCsv
+            // 
+            this._mniExportResultsSetupsToCsv.Name = "_mniExportResultsSetupsToCsv";
+            this._mniExportResultsSetupsToCsv.Size = new System.Drawing.Size(166, 22);
+            this._mniExportResultsSetupsToCsv.Text = "Results (Setups)...";
+            this._mniExportResultsSetupsToCsv.Click += new System.EventHandler(this._mniExportResultsSetupsToCsv_Click);
+            // 
+            // _mniExportTimesSetupsToCsv
+            // 
+            this._mniExportTimesSetupsToCsv.Name = "_mniExportTimesSetupsToCsv";
+            this._mniExportTimesSetupsToCsv.Size = new System.Drawing.Size(166, 22);
+            this._mniExportTimesSetupsToCsv.Text = "Times (Setups)...";
+            this._mniExportTimesSetupsToCsv.Click += new System.EventHandler(this._mniExportTimesSetupsToCsv_Click);
             // 
             // _mniExitSep
             // 
@@ -928,20 +942,6 @@ namespace App.Gui
             this._mniAbout.Size = new System.Drawing.Size(107, 22);
             this._mniAbout.Text = "About";
             this._mniAbout.Click += new System.EventHandler(this._mniAbout_Click);
-            // 
-            // _mniExportResultsSetupsToCsv
-            // 
-            this._mniExportResultsSetupsToCsv.Name = "_mniExportResultsSetupsToCsv";
-            this._mniExportResultsSetupsToCsv.Size = new System.Drawing.Size(180, 22);
-            this._mniExportResultsSetupsToCsv.Text = "Results (Setups)...";
-            this._mniExportResultsSetupsToCsv.Click += new System.EventHandler(this._mniExportResultsSetupsToCsv_Click);
-            // 
-            // _mniExportTimesSetupsToCsv
-            // 
-            this._mniExportTimesSetupsToCsv.Name = "_mniExportTimesSetupsToCsv";
-            this._mniExportTimesSetupsToCsv.Size = new System.Drawing.Size(180, 22);
-            this._mniExportTimesSetupsToCsv.Text = "Times (Setups)...";
-            this._mniExportTimesSetupsToCsv.Click += new System.EventHandler(this._mniExportTimesSetupsToCsv_Click);
             // 
             // FrmMain
             // 

@@ -250,11 +250,11 @@ namespace App.Gui
 
                         for (var j = 0; j < times; j++)
                         {
-                            dr[j.ToString()] = result.Results[j].Best.Fitness;
+                            dr[j.ToString()] = Math.Round(result.Results[j].Best.Fitness, _decimalsToRound);
                         }
 
-                        dr["Average"] = result.BestFitnesses[0];
-                        dr["Best"] = result.Best.Fitness;
+                        dr["Average"] = Math.Round(result.BestFitnesses[0], _decimalsToRound);
+                        dr["Best"] = Math.Round(result.Best.Fitness, _decimalsToRound);
                         dtRS.Rows.Add(dr);
 
                         var drT = dtRT.NewRow();

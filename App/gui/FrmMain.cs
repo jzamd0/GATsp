@@ -33,6 +33,7 @@ namespace App.Gui
             _minNodesToGraph = 1;
 
             _canOverwriteDraw = false;
+            _solvedFromSetups = false;
 
             SetConfiguration();
             SetDataTables();
@@ -130,7 +131,7 @@ namespace App.Gui
 
         private void _mniExportResultsSetupsToCsv_Click(object sender, EventArgs e)
         {
-            ExportResultsTimesToCsv();
+            ExportResultsSetupsToCsv();
         }
 
         private void _mniExportTimesSetupsToCsv_Click(object sender, EventArgs e)
@@ -186,6 +187,8 @@ namespace App.Gui
 
                 if (setups != null)
                 {
+                    ClearResult();
+
                     GenerateDistances();
 
                     setups.ForEach(s =>
@@ -207,13 +210,14 @@ namespace App.Gui
 
                     var cols = new DataColumn[]
                     {
+                        new DataColumn("Number", typeof(int)),
                         new DataColumn("Population", typeof(int)),
                         new DataColumn("Generation", typeof(int)),
                         new DataColumn("Crossover Rate", typeof(double)),
                         new DataColumn("Mutation Rate", typeof(double)),
                         new DataColumn("Elitism Rate", typeof(double)),
-                        new DataColumn("Crossover Op.", typeof(string)),
-                        new DataColumn("Mutation Op.", typeof(string)),
+                        new DataColumn("Crossover Op", typeof(string)),
+                        new DataColumn("Mutation Op", typeof(string)),
                     };
 
                     foreach (var col in cols)
@@ -224,8 +228,8 @@ namespace App.Gui
 
                     for (var i = 0; i < times; i++)
                     {
-                        dtRS.Columns.Add(i.ToString(), typeof(double));
-                        dtRT.Columns.Add(i.ToString(), typeof(long));
+                        dtRS.Columns.Add("R " + i.ToString(), typeof(double));
+                        dtRT.Columns.Add("R " + i.ToString(), typeof(long));
                     }
 
                     dtRS.Columns.Add("Average", typeof(double));
@@ -240,17 +244,18 @@ namespace App.Gui
                         var selSetup = setups.Where(s => s.Id == result.SetupId).FirstOrDefault();
 
                         var dr = dtRS.NewRow();
+                        dr["Number"] = i;
                         dr["Population"] = selSetup.PopulationSize;
                         dr["Generation"] = selSetup.Generations;
                         dr["Crossover Rate"] = selSetup.CrossoverRate;
                         dr["Mutation Rate"] = selSetup.MutationRate;
                         dr["Elitism Rate"] = selSetup.ElitismRate;
-                        dr["Crossover Op."] = selSetup.CrossoverType;
-                        dr["Mutation Op."] = selSetup.MutationType;
+                        dr["Crossover Op"] = selSetup.CrossoverType;
+                        dr["Mutation Op"] = selSetup.MutationType;
 
                         for (var j = 0; j < times; j++)
                         {
-                            dr[j.ToString()] = Math.Round(result.Results[j].Best.Fitness, _decimalsToRound);
+                            dr["R " + j.ToString()] = Math.Round(result.Results[j].Best.Fitness, _decimalsToRound);
                         }
 
                         dr["Average"] = Math.Round(result.BestFitnesses[0], _decimalsToRound);
@@ -258,17 +263,18 @@ namespace App.Gui
                         dtRS.Rows.Add(dr);
 
                         var drT = dtRT.NewRow();
+                        drT["Number"] = i;
                         drT["Population"] = selSetup.PopulationSize;
                         drT["Generation"] = selSetup.Generations;
                         drT["Crossover Rate"] = selSetup.CrossoverRate;
                         drT["Mutation Rate"] = selSetup.MutationRate;
                         drT["Elitism Rate"] = selSetup.ElitismRate;
-                        drT["Crossover Op."] = selSetup.CrossoverType;
-                        drT["Mutation Op."] = selSetup.MutationType;
+                        drT["Crossover Op"] = selSetup.CrossoverType;
+                        drT["Mutation Op"] = selSetup.MutationType;
 
                         for (var j = 0; j < times; j++)
                         {
-                            drT[j.ToString()] = result.Results[j].Duration;
+                            drT["R " + j.ToString()] = result.Results[j].Duration;
                         }
 
                         drT["Average"] = result.Results.Average(i => i.Duration);
@@ -281,11 +287,13 @@ namespace App.Gui
 
                     var dtSummary = (DataTable)_dgvSummary.DataSource;
 
+                    dtSummary.Rows.Add("Started", results.Started.ToString("yyyy-mm-dd HH:mm:ss"));
+                    dtSummary.Rows.Add("Finished", results.Finished.ToString("yyyy-mm-dd HH:mm:ss"));
                     dtSummary.Rows.Add("Setups", setups.Count);
                     dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
                     dtSummary.Rows.Add("Best Fitness", Math.Round(results.Best.Fitness, _decimalsToRound));
                     dtSummary.Rows.Add("Number", results.Number);
-                    dtSummary.Rows.Add("GA Duration (ms)", results.Duration);
+                    dtSummary.Rows.Add("Duration (ms)", results.Duration);
 
                     _dgvResultsSetups.DataSource = dtRS;
                     _dgvTimesSetups.DataSource = dtRT;
@@ -294,8 +302,9 @@ namespace App.Gui
                     _dgvTimesSetups.Visible = true;
                     _dgvSummary.Visible = true;
 
+                    _result = results;
                     _setups = setups;
-                    _results = results;
+                    _solvedFromSetups = true;
 
                     UpdateApp();
                 }

@@ -18,7 +18,7 @@ namespace Lib.Genetics
         protected int TourStart { get; set; }
         protected int TourEnd { get; set; }
         protected int TourRange { get; set; }
-        
+
         private void SetTour(int genotypeSize)
         {
             TourStart = 1;
@@ -62,7 +62,7 @@ namespace Lib.Genetics
                 var res = SolveMultiple(setups[i], distances, verbose);
                 res.SetupId = setups[i].Id;
                 res.Number = i;
-                
+
                 results.Add(res);
             }
             sw.Stop();

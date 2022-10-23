@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -360,9 +359,9 @@ namespace App.Gui
                             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                             //WriteIndented = true,
                         };
-                        
+
                         var json = JsonSerializer.Serialize(_result, typeof(GAResult), options);
-                        
+
                         var fullFileName = exportDialog.FileName;
                         File.WriteAllText(fullFileName, json);
                     }
@@ -634,7 +633,7 @@ namespace App.Gui
             _graph.Nodes.Add(node);
 
             ((DataTable)_dgvNodes.DataSource).Rows.Add(node.Id, node.Name);
-            ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+            ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Id, node.Name, node.Coord.X, node.Coord.Y);
 
             UpdateApp();
         }
@@ -794,8 +793,6 @@ namespace App.Gui
         {
             ClearResult();
 
-            var started = DateTime.Now;
-
             GenerateDistances();
             setup.GenotypeSize = _graph.Nodes.Count + 1;
 
@@ -808,7 +805,6 @@ namespace App.Gui
             {
                 res = new GA().Solve(setup, _distances, _verbose);
             }
-            var finished = DateTime.Now;
 
             _setup = setup;
             _result = res;
@@ -885,8 +881,8 @@ namespace App.Gui
             var dtSummary = (DataTable)_dgvSummary.DataSource;
 
             dtSummary.Rows.Add("Setup", _setup.Name);
-            dtSummary.Rows.Add("Started", _result.Started.ToString("yyyy-mm-dd HH:mm:ss"));
-            dtSummary.Rows.Add("Finished", _result.Finished.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Started", _result.Started.ToString("yyyy-MM-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Finished", _result.Finished.ToString("yyyy-MM-dd HH:mm:ss"));
             dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
             dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
             dtSummary.Rows.Add("Last Generation", _result.LastGeneration);
@@ -920,8 +916,8 @@ namespace App.Gui
             var dtSummary = (DataTable)_dgvSummary.DataSource;
 
             dtSummary.Rows.Add("Setup", _setup.Name);
-            dtSummary.Rows.Add("Started", _result.Started.ToString("yyyy-mm-dd HH:mm:ss"));
-            dtSummary.Rows.Add("Finished", _result.Finished.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Started", _result.Started.ToString("yyyy-MM-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Finished", _result.Finished.ToString("yyyy-MM-dd HH:mm:ss"));
             dtSummary.Rows.Add("Results", _result.Results.Count);
             dtSummary.Rows.Add("Result with Best Fitness", _result.Number);
             dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));

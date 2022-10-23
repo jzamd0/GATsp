@@ -287,8 +287,8 @@ namespace App.Gui
 
                     var dtSummary = (DataTable)_dgvSummary.DataSource;
 
-                    dtSummary.Rows.Add("Started", results.Started.ToString("yyyy-mm-dd HH:mm:ss"));
-                    dtSummary.Rows.Add("Finished", results.Finished.ToString("yyyy-mm-dd HH:mm:ss"));
+                    dtSummary.Rows.Add("Started", results.Started.ToString("yyyy-MM-dd HH:mm:ss"));
+                    dtSummary.Rows.Add("Finished", results.Finished.ToString("yyyy-MM-dd HH:mm:ss"));
                     dtSummary.Rows.Add("Setups", setups.Count);
                     dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
                     dtSummary.Rows.Add("Best Fitness", Math.Round(results.Best.Fitness, _decimalsToRound));

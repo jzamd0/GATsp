@@ -18,7 +18,7 @@ namespace Lib.Genetics
         protected int TourStart { get; set; }
         protected int TourEnd { get; set; }
         protected int TourRange { get; set; }
-        
+
         private void SetTour(int genotypeSize)
         {
             TourStart = 1;
@@ -52,6 +52,7 @@ namespace Lib.Genetics
                 Console.WriteLine("---");
             }
 
+            var started = DateTime.Now;
             var results = new List<GAResult>();
             var sw = new Stopwatch();
 
@@ -61,7 +62,7 @@ namespace Lib.Genetics
                 var res = SolveMultiple(setups[i], distances, verbose);
                 res.SetupId = setups[i].Id;
                 res.Number = i;
-                
+
                 results.Add(res);
             }
             sw.Stop();
@@ -70,6 +71,8 @@ namespace Lib.Genetics
 
             var totalRes = new GAResult
             {
+                Started = started,
+                Finished = DateTime.Now,
                 Number = bestRes.Number,
                 Best = bestRes.Best,
                 Duration = sw.ElapsedMilliseconds,
@@ -110,6 +113,7 @@ namespace Lib.Genetics
                 Console.WriteLine("---");
             }
 
+            var started = DateTime.Now;
             var results = new List<GAResult>();
             var sw = new Stopwatch();
 
@@ -158,6 +162,8 @@ namespace Lib.Genetics
 
             var totalRes = new GAResult
             {
+                Started = started,
+                Finished = DateTime.Now,
                 SetupId = setup.Id,
                 Number = bestRes.Number,
                 Best = bestRes.Best,
@@ -196,14 +202,17 @@ namespace Lib.Genetics
                 Console.WriteLine("---");
             }
 
+            var started = DateTime.Now;
             var sw = new Stopwatch();
 
             sw.Start();
             var result = new GA().SolveGA(setup, distances, verbose);
             sw.Stop();
 
+            result.Started = started;
             result.SetupId = setup.Id;
             result.Duration = sw.ElapsedMilliseconds;
+            result.Finished = DateTime.Now;
 
             if (verbose.Enabled)
             {

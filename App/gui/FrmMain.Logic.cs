@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -40,7 +39,6 @@ namespace App.Gui
         private Edge<Node>[] _edges { get; set; }
         private List<Node> _shortestPath { get; set; }
 
-        private GAResult _results { get; set; }
         private List<GASetup> _setups { get; set; }
 
         private int _distancesViewMinWidth { get; set; }
@@ -57,6 +55,7 @@ namespace App.Gui
 
         // program flags
         private bool _canOverwriteDraw { get; set; }
+        private bool _solvedFromSetups { get; set; }
 
         // program options
         private GAVerboseOptions _verbose { get; set; }
@@ -360,16 +359,8 @@ namespace App.Gui
                             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                             //WriteIndented = true,
                         };
-                        var json = string.Empty;
 
-                        if (_results != null)
-                        {
-                            json = JsonSerializer.Serialize(_results, typeof(GAResult), options);
-                        }
-                        else
-                        {
-                            json = JsonSerializer.Serialize(_result, typeof(GAResult), options);
-                        }
+                        var json = JsonSerializer.Serialize(_result, typeof(GAResult), options);
 
                         var fullFileName = exportDialog.FileName;
                         File.WriteAllText(fullFileName, json);
@@ -383,7 +374,7 @@ namespace App.Gui
 
         }
 
-        private void ExportResultsTimesToCsv()
+        private void ExportResultsSetupsToCsv()
         {
             using (var exportDialog = new SaveFileDialog())
             {
@@ -401,12 +392,12 @@ namespace App.Gui
                         var dtRS = (DataTable)_dgvResultsSetups.DataSource;
                         var res = new List<string>();
 
-                        var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes));
-                        res.Add($"Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}, Average, Best");
+                        var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes).Select(i => "R " + i));
+                        res.Add($"Number, Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Op, Mutation Op, {times}");
 
                         foreach (DataRow r in dtRS.Rows)
                         {
-                            var s = string.Join(", ", r.ItemArray.Select(r => r.ToString()));
+                            var s = string.Join(", ", r.ItemArray.Take(r.ItemArray.Length - 2).Select(r => r.ToString()));
                             res.Add(s);
                         }
 
@@ -440,11 +431,11 @@ namespace App.Gui
                         var res = new List<string>();
 
                         var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes));
-                        res.Add($"Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}, Average, Total");
+                        res.Add($"Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}");
 
                         foreach (DataRow r in dtRT.Rows)
                         {
-                            var s = string.Join(", ", r.ItemArray.Select(r => r.ToString()));
+                            var s = string.Join(", ", r.ItemArray.Take(r.ItemArray.Length - 2).Select(r => r.ToString()));
                             res.Add(s);
                         }
 
@@ -471,16 +462,16 @@ namespace App.Gui
             _mniSolveGA.Enabled = _graph.Nodes.Count >= _minNodesToSolveTsp;
 
             _mniExportTspToDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
-            _mniExportResultsToJson.Enabled = _result != null || _results != null;
+            _mniExportResultsToJson.Enabled = _result != null;
             _mniGenerateDistances.Enabled = _graph.Nodes.Count >= _minNodesToDistances;
             _mniClearDistances.Enabled = !_distances.IsNullOrEmpty();
             _mniClearNodes.Enabled = !_graph.Nodes.IsNullOrEmpty();
-            _mniClearGAResult.Enabled = _result != null || _results != null;
+            _mniClearGAResult.Enabled = _result != null;
             _mniExportTspToGraph.Enabled = _graph.Nodes.Count >= _minNodesToGraph;
 
             _mniSolveGASetups.Enabled = _graph.Nodes.Count >= _minNodesToSolveTsp;
-            _mniExportResultsSetupsToCsv.Enabled = _results != null;
-            _mniExportTimesSetupsToCsv.Enabled = _results != null;
+            _mniExportResultsSetupsToCsv.Enabled = _result != null && _solvedFromSetups;
+            _mniExportTimesSetupsToCsv.Enabled = _result != null && _solvedFromSetups;
         }
 
         private void SetDataTables()
@@ -592,7 +583,7 @@ namespace App.Gui
 
             _shortestPath = null;
             _result = null;
-            _results = null;
+            _solvedFromSetups = false;
         }
 
         private void UpdateApp()
@@ -642,7 +633,7 @@ namespace App.Gui
             _graph.Nodes.Add(node);
 
             ((DataTable)_dgvNodes.DataSource).Rows.Add(node.Id, node.Name);
-            ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Name, node.Coord.X, node.Coord.Y);
+            ((DataTable)_dgvCoordinates.DataSource).Rows.Add(node.Id, node.Name, node.Coord.X, node.Coord.Y);
 
             UpdateApp();
         }
@@ -802,10 +793,6 @@ namespace App.Gui
         {
             ClearResult();
 
-            var started = DateTime.Now;
-            var swTotal = new Stopwatch();
-
-            swTotal.Start();
             GenerateDistances();
             setup.GenotypeSize = _graph.Nodes.Count + 1;
 
@@ -818,8 +805,6 @@ namespace App.Gui
             {
                 res = new GA().Solve(setup, _distances, _verbose);
             }
-            swTotal.Stop();
-            var finished = DateTime.Now;
 
             _setup = setup;
             _result = res;
@@ -827,12 +812,12 @@ namespace App.Gui
 
             if (setup.Multiple)
             {
-                DisplaySummaryMultiple(started, finished, swTotal.ElapsedMilliseconds);
+                DisplaySummaryMultiple();
                 DisplayResults();
             }
             else
             {
-                DisplaySummary(started, finished, swTotal.ElapsedMilliseconds);
+                DisplaySummary();
                 DisplayPopulation();
                 DisplayFitnesses();
             }
@@ -891,20 +876,19 @@ namespace App.Gui
             _frmGASetup.SetGASetup(_setup);
         }
 
-        private void DisplaySummary(DateTime started, DateTime finished, long totalDuration)
+        private void DisplaySummary()
         {
             var dtSummary = (DataTable)_dgvSummary.DataSource;
 
             dtSummary.Rows.Add("Setup", _setup.Name);
-            dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
-            dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Started", _result.Started.ToString("yyyy-MM-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Finished", _result.Finished.ToString("yyyy-MM-dd HH:mm:ss"));
             dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
             dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
             dtSummary.Rows.Add("Last Generation", _result.LastGeneration);
             dtSummary.Rows.Add("Has Converged", (_result.HasConverged) ? "Yes" : "No");
             dtSummary.Rows.Add("Last Convergence (%)", Math.Round(_result.LastConvergence, _decimalsToRound));
-            dtSummary.Rows.Add("GA Duration (ms)", _result.Duration);
-            dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
+            dtSummary.Rows.Add("Duration (ms)", _result.Duration);
 
             _dgvSummary.Visible = true;
         }
@@ -927,20 +911,19 @@ namespace App.Gui
             _dgvResults.Visible = true;
         }
 
-        private void DisplaySummaryMultiple(DateTime started, DateTime finished, long totalDuration)
+        private void DisplaySummaryMultiple()
         {
             var dtSummary = (DataTable)_dgvSummary.DataSource;
 
             dtSummary.Rows.Add("Setup", _setup.Name);
-            dtSummary.Rows.Add("Started", started.ToString("yyyy-mm-dd HH:mm:ss"));
-            dtSummary.Rows.Add("Finished", finished.ToString("yyyy-mm-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Started", _result.Started.ToString("yyyy-MM-dd HH:mm:ss"));
+            dtSummary.Rows.Add("Finished", _result.Finished.ToString("yyyy-MM-dd HH:mm:ss"));
             dtSummary.Rows.Add("Results", _result.Results.Count);
             dtSummary.Rows.Add("Result with Best Fitness", _result.Number);
             dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
             dtSummary.Rows.Add("Best Fitness", Math.Round(_result.Best.Fitness, _decimalsToRound));
             dtSummary.Rows.Add("Average Best Fitness", Math.Round(_result.BestFitnesses[0], _decimalsToRound));
-            dtSummary.Rows.Add("GA Duration (ms)", _result.Duration);
-            dtSummary.Rows.Add("Total Duration (ms)", totalDuration);
+            dtSummary.Rows.Add("Duration (ms)", _result.Duration);
 
             _dgvSummary.Visible = true;
         }

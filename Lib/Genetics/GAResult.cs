@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Lib.Genetics
 {
     public class GAResult
     {
+        public DateTime Started { get; set; }
+        public DateTime Finished { get; set; }
         public string SetupId { get; set; }
         public int Number { get; set; }
         public Individual Best { get; set; }
@@ -23,8 +26,10 @@ namespace Lib.Genetics
             Results = new List<GAResult>();
         }
 
-        public GAResult(Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, List<double> averageFitnesses, List<double> bestFitnesses, List<double> convergences, long duration, string setupId = null, int number = 0, List<GAResult> results = null)
+        public GAResult(Individual best, Individual[] initialPopulation, Individual[] lastPopulation, double lastGeneration, double lastConvergence, bool hasConverged, List<double> averageFitnesses, List<double> bestFitnesses, List<double> convergences, long duration, DateTime created = default, DateTime finished = default, string setupId = null, int number = 0, List<GAResult> results = null)
         {
+            Started = created;
+            Finished = finished;
             SetupId = setupId;
             Number = number;
             Best = best;

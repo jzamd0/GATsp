@@ -689,7 +689,7 @@ namespace Lib.Genetics
                     }
                     else if (mutopType == MutationType.SwitchByMask)
                     {
-                        var mask = GenerateMaskWithAlwaysOne(TourRange, rand);
+                        var mask = GenerateMask(TourRange, rand);
 
                         if (verbose)
                         {

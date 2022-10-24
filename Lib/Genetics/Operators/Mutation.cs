@@ -50,6 +50,24 @@ namespace Lib.Genetics.Operators
             return offspring;
         }
 
+        public static double[] SwitchByMask(double[] values, int genotypeSize, int[] mask)
+        {
+            var offspring = new double[genotypeSize];
+            Array.Copy(values, offspring, genotypeSize);
+            
+            for (var i = 1; i < genotypeSize; i++)
+            {
+                if (mask[i] == 1)
+                {
+                    var temp = offspring[i - 1];
+                    offspring[i - 1] = offspring[i];
+                    offspring[i] = temp;
+                }
+            }
+
+            return offspring;
+        }
+
         public static double[] Swap(double[] values, int genotypeSize, int point1, int point2)
         {
             var offspring = new double[genotypeSize];

@@ -66,5 +66,18 @@ namespace GATest
 
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void SwitchByMaskTest()
+        {
+            var values = new double[] { 1, 4, 7, 2, 5, 8, 3, 6, 9 };
+            var expected = new double[] { 4, 1, 7, 5, 8, 2, 6, 9, 3 };
+            var mask = new int[] { 0, 1, 0, 0, 1, 1, 0, 1, 1 };
+            var size = expected.Length;
+
+            var actual = Mutation.SwitchByMask(values, size, mask);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

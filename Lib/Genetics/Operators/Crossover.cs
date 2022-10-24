@@ -75,6 +75,43 @@ namespace Lib.Genetics.Operators
             return offspring;
         }
 
+        public static double[] OBX2(double[] parent1, double[] parent2, int genotypeSize, int[] mask)
+        {
+            var offspring = new double[genotypeSize];
+            var i2 = 0;
+
+            for (var i = 0; i < genotypeSize; i++)
+            {
+                if (mask[i] == 1)
+                {
+                    offspring[i] = parent1[i];
+                }
+            }
+
+            for (var i = 0; i < genotypeSize; i++)
+            {
+                if (mask[i] == 0 && !offspring.Contains(parent2[i]))
+                {
+                    offspring[i] = parent2[i];
+                }
+            }
+
+            for (var i = 0; i < genotypeSize; i++)
+            {
+                if (offspring[i] == default(int)) 
+                {
+                    while (offspring.Contains(parent2[i2]))
+                    {
+                        i2 += 1;
+                    }
+                    offspring[i] = parent2[i2];
+                    i2 += 1;
+                }
+            }
+
+            return offspring;
+        }
+
         public static double[] TPX(double[] parent1, double[] parent2, int genotypeSize, int point1, int point2)
         {
             var offspring = new double[genotypeSize];

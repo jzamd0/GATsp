@@ -79,5 +79,18 @@ namespace GATest
 
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void InsertByMaskTest()
+        {
+            var values = new double[] { 1, 4, 7, 2, 5, 8, 3, 6, 9 };
+            var expected = new double[] { 4, 1, 5, 6, 7, 8, 2, 9, 3 };
+            var mask = new int[] { -1, 0, -1, -1, 2, 4, -1, 3, 7 };
+            var size = expected.Length;
+
+            var actual = Mutation.InsertByMask(values, size, mask);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

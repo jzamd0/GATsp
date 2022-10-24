@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Lib.Genetics.Operators
 {
@@ -9,6 +10,7 @@ namespace Lib.Genetics.Operators
         Swap,
         Switch,
         SwitchByMask,
+        InsertByMask,
     }
 
     public static class Mutation
@@ -67,6 +69,23 @@ namespace Lib.Genetics.Operators
             }
 
             return offspring;
+        }
+
+        public static double[] InsertByMask(double[] values, int genotypeSize, int[] mask)
+        {
+            var offspring = values.ToList();
+
+            for (var i = 1; i < genotypeSize; i++)
+            {
+                if (mask[i] != -1)
+                {
+                    var temp = offspring[i];
+                    offspring.Remove(temp);
+                    offspring.Insert(mask[i], temp);
+                }
+            }
+
+            return offspring.ToArray();
         }
 
         public static double[] Swap(double[] values, int genotypeSize, int point1, int point2)

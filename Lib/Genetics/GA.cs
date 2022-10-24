@@ -699,7 +699,18 @@ namespace Lib.Genetics
                         values = Mutation.SwitchByMask(valuesToMutate, TourRange, mask);
 
                     }
-                    
+                    else if (mutopType == MutationType.InsertByMask)
+                    {
+                        var mask = GeneratePositionMask(TourRange, rand);
+
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Mask:                      ({string.Join(", ", mask)})");
+                        }
+
+                        values = Mutation.InsertByMask(valuesToMutate, TourRange, mask);
+                    }
+
                     if (verbose)
                     {
                         Console.WriteLine($"Mutated individual:        ({string.Join(", ", values)})");
@@ -718,24 +729,14 @@ namespace Lib.Genetics
             return mutatedPopulation;
         }
 
-        protected int[] GenerateMaskWithAlwaysOne(int range, Random rand)
+        protected int[] GeneratePositionMask(int range, Random rand)
         {
             var mask = new int[range];
-            var hasAddedOne = false;
+            mask = Util.Fill(mask, -1);
 
             for (var i = 0; i < range; i++)
             {
-                mask[i] = rand.Next(0, 2);
-
-                if (!hasAddedOne && mask[i] == 1)
-                {
-                    hasAddedOne = true;
-                }
-            }
-
-            if (!hasAddedOne)
-            {
-                mask[rand.Next(0, range)] = 1;
+                mask[i] = rand.Next(-1, i);
             }
 
             return mask;

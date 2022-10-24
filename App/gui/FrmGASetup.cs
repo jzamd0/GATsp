@@ -68,6 +68,7 @@ namespace App.Gui
                 new { Text = "Swap", Value = MutationType.Swap },
                 new { Text = "Switch", Value = MutationType.Switch },
                 new { Text = "SwitchByMask", Value = MutationType.SwitchByMask },
+                new { Text = "InsertByMark", Value = MutationType.InsertByMask },
             };
 
             _cbxMutationType.DataSource = mutationItems;

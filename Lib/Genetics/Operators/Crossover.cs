@@ -10,6 +10,7 @@ namespace Lib.Genetics.Operators
         PPX,
         TPX,
         OSX,
+        OBX2,
     }
 
     public static class Crossover
@@ -98,7 +99,7 @@ namespace Lib.Genetics.Operators
 
             for (var i = 0; i < genotypeSize; i++)
             {
-                if (offspring[i] == default(int)) 
+                if (mask[i] == 0 && offspring[i] == default(int)) 
                 {
                     while (offspring.Contains(parent2[i2]))
                     {

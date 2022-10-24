@@ -8,6 +8,7 @@ namespace Lib.Genetics.Operators
         Insert,
         Swap,
         Switch,
+        SwitchByMask,
     }
 
     public static class Mutation

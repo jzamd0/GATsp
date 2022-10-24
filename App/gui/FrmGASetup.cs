@@ -54,6 +54,7 @@ namespace App.Gui
                 new { Text = "PPX", Value = CrossoverType.PPX },
                 new { Text = "TPX", Value = CrossoverType.TPX },
                 new { Text = "OSX", Value = CrossoverType.OSX },
+                new { Text = "OBX2", Value = CrossoverType.OBX2 },
             };
 
             _cbxCrossoverType.DataSource = crossoverItems;
@@ -66,6 +67,7 @@ namespace App.Gui
                 new { Text = "Insert", Value = MutationType.Insert },
                 new { Text = "Swap", Value = MutationType.Swap },
                 new { Text = "Switch", Value = MutationType.Switch },
+                new { Text = "SwitchByMask", Value = MutationType.SwitchByMask },
             };
 
             _cbxMutationType.DataSource = mutationItems;

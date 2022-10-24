@@ -99,7 +99,7 @@ namespace Lib.Genetics.Operators
 
             for (var i = 0; i < genotypeSize; i++)
             {
-                if (mask[i] == 0 && offspring[i] == default(int)) 
+                if (mask[i] == 0 && offspring[i] == default(int))
                 {
                     while (offspring.Contains(parent2[i2]))
                     {

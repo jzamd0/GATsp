@@ -57,7 +57,7 @@ namespace Lib.Genetics.Operators
         {
             var offspring = new double[genotypeSize];
             Array.Copy(values, offspring, genotypeSize);
-            
+
             for (var i = 1; i < genotypeSize; i++)
             {
                 if (mask[i] == 1)

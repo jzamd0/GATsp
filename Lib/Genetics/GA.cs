@@ -585,8 +585,8 @@ namespace Lib.Genetics
                     }
                     else if (xopType == CrossoverType.OSX)
                     {
-                        var point1 = rand.Next(0, TourEnd - 1 - range);
-                        var point2 = rand.Next(point1 + 1 + range, TourEnd);
+                        var point1 = rand.Next(0, TourEnd - 1);
+                        var point2 = rand.Next(point1 + 1, TourEnd - 1);
 
                         if (verbose)
                         {
@@ -595,6 +595,18 @@ namespace Lib.Genetics
 
                         offspring1 = Crossover.OSX(parent1, parent2, TourRange, point1, point2);
                         offspring2 = Crossover.OSX(parent2, parent1, TourRange, point1, point2);
+                    }
+                    else if (xopType == CrossoverType.OBX2)
+                    {
+                        var mask = GenerateMask(TourRange, rand);
+
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Mask:                      ({string.Join(", ", mask)})");
+                        }
+
+                        offspring1 = Crossover.OBX2(parent1, parent2, TourRange, mask);
+                        offspring2 = Crossover.OBX2(parent2, parent1, TourRange, mask);
                     }
 
                     if (verbose)
@@ -624,42 +636,89 @@ namespace Lib.Genetics
         {
             var rand = new Random();
             var mutatedPopulation = new Individual[populationSize];
+            var range = 0;
 
             for (var i = 0; i < populationSize; i++)
             {
                 if (rand.NextDouble() <= mutationRate)
                 {
-                    var point1 = rand.Next(1, TourEnd - 1);
-                    var point2 = (mutopType != MutationType.Switch) ? rand.Next(point1 + 1, TourEnd) : 0;
+                    var valuesToMutate = Util.Extract(population[i].Values, TourStart, TourRange);
 
                     if (verbose)
                     {
-                        Console.WriteLine($"Mutation to:               {i} ({string.Join(", ", population[i].Values)})");
+                        Console.WriteLine($"Mutation to:               {i} ({string.Join(", ", valuesToMutate)})");
                         Console.WriteLine($"Operator used:             {mutopType}");
-                        Console.WriteLine($"Points:                    ({point1}, {point2})");
                     }
+
+                    var values = new double[TourRange];
 
                     if (mutopType == MutationType.Insert)
                     {
-                        var values = Mutation.Insert(population[i].Values, genotypeSize, point1, point2);
-                        mutatedPopulation[i] = new Individual(values, 0);
+                        var point1 = rand.Next(0, TourEnd - 2 - range);
+                        var point2 = rand.Next(point1 + 1 + range, TourEnd - 2);
+
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Points:                    ({point1}, {point2})");
+                        }
+
+                        values = Mutation.Insert(valuesToMutate, TourRange, point1, point2);
                     }
                     else if (mutopType == MutationType.Swap)
                     {
-                        var values = Mutation.Swap(population[i].Values, genotypeSize, point1, point2);
-                        mutatedPopulation[i] = new Individual(values, 0);
+                        var point1 = rand.Next(0, TourEnd - 2 - range);
+                        var point2 = rand.Next(point1 + 1 + range, TourEnd - 2);
+
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Points:                    ({point1}, {point2})");
+                        }
+
+                        values = Mutation.Swap(valuesToMutate, TourRange, point1, point2);
                     }
                     else if (mutopType == MutationType.Switch)
                     {
-                        var values = Mutation.Switch(population[i].Values, genotypeSize, point1);
-                        mutatedPopulation[i] = new Individual(values, 0);
+                        var point1 = rand.Next(0, TourEnd - 2);
+
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Points:                    ({point1})");
+                        }
+
+                        values = Mutation.Switch(valuesToMutate, TourRange, point1);
+                    }
+                    else if (mutopType == MutationType.SwitchByMask)
+                    {
+                        var mask = GenerateMask(TourRange, rand);
+
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Mask:                      ({string.Join(", ", mask)})");
+                        }
+
+                        values = Mutation.SwitchByMask(valuesToMutate, TourRange, mask);
+
+                    }
+                    else if (mutopType == MutationType.InsertByMask)
+                    {
+                        var mask = GeneratePositionMask(TourRange, rand);
+
+                        if (verbose)
+                        {
+                            Console.WriteLine($"Mask:                      ({string.Join(", ", mask)})");
+                        }
+
+                        values = Mutation.InsertByMask(valuesToMutate, TourRange, mask);
                     }
 
                     if (verbose)
                     {
-                        Console.WriteLine($"Mutated individual:        ({string.Join(", ", mutatedPopulation[i].Values)})");
+                        Console.WriteLine($"Mutated individual:        ({string.Join(", ", values)})");
                         Console.WriteLine("---");
                     }
+
+                    values = Util.Expand(values, genotypeSize, TourStart, 0);
+                    mutatedPopulation[i] = new Individual(values, 0);
                 }
                 else
                 {
@@ -668,6 +727,19 @@ namespace Lib.Genetics
             }
 
             return mutatedPopulation;
+        }
+
+        protected int[] GeneratePositionMask(int range, Random rand)
+        {
+            var mask = new int[range];
+            mask = Util.Fill(mask, -1);
+
+            for (var i = 0; i < range; i++)
+            {
+                mask[i] = rand.Next(-1, i);
+            }
+
+            return mask;
         }
 
         protected int[] GenerateMask(int range, Random rand)

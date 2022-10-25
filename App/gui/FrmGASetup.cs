@@ -25,6 +25,7 @@ namespace App.Gui
             _tbxName.Text = _defaultSetupName;
             _tbxPopulationSize.Text = $"{GA.MinPopulationSize}";
             _tbxGenerations.Text = $"{GA.MinGenerations}";
+            _tbxRunTimes.Text = $"{GA.MinMultipleRuns}";
 
             _chxParallelGA.Enabled = false;
             _tbxRunTimes.Enabled = false;

@@ -6,7 +6,7 @@ The genetic algorithm uses different operators for crossover and mutation,
 and other parameters that can be set for the user.
 
 The program was designed to compare results between different parameters
-for a genetic algorithm, and to demostrate an application to solve a problem
+for a genetic algorithm, and to demonstrate an application to solve a problem
 in a more effective an efficient way.
 
 ## Requirements

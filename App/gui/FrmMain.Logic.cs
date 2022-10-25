@@ -286,9 +286,10 @@ namespace App.Gui
                     try
                     {
                         var res = GetDistances(_graph.Nodes);
+                        var headers = new string[] { string.Join(", ", _graph.Nodes.Select(n => n.Name)) };
 
                         var fullFileName = exportDialog.FileName;
-                        var values = Helper.ConvertToCsv(res.Distances);
+                        var values = headers.Concat(Helper.ConvertToCsv(res.Distances));
                         File.WriteAllLines(fullFileName, values);
                     }
                     catch (Exception ex) when (ex is IOException)

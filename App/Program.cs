@@ -15,7 +15,17 @@ namespace App
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmMain());
+
+            try
+            {
+                Application.Run(new FrmMain());
+            }
+            catch (Exception ex)
+            {
+                var message = $"An error has ocurred and the application crashed.\n{ex.Message}\n{ex.StackTrace}";
+                Console.Error.WriteLine(message);
+                MessageBox.Show(message, "TSP GA Solver", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -408,7 +408,22 @@ namespace App.Gui
 
         private void _dgvNodes_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
-            if (e.FormattedValue == null || e.FormattedValue.ToString().IsNullOrEmpty())
+            if (e.FormattedValue == null)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            var value = e.FormattedValue.ToString();
+
+            if (value.IsNullOrEmpty())
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            // if name already exists for another node
+            if (value != _dgvNodes.Rows[e.RowIndex].Cells["Name"].Value.ToString() && _graph.Nodes.Any(n => n.Name == value))
             {
                 e.Cancel = true;
                 return;

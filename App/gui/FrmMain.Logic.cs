@@ -431,8 +431,8 @@ namespace App.Gui
                         var dtRT = (DataTable)_dgvTimesSetups.DataSource;
                         var res = new List<string>();
 
-                        var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes));
-                        res.Add($"Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}");
+                        var times = string.Join(", ", Enumerable.Range(0, _setups.First().RunTimes).Select(i => "R " + i));
+                        res.Add($"Number, Population, Generation, Crossover Rate, Mutation Rate, Elitism Rate, Crossover Operator, Mutation Operator, {times}");
 
                         foreach (DataRow r in dtRT.Rows)
                         {

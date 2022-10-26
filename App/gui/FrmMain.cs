@@ -290,6 +290,7 @@ namespace App.Gui
                     dtSummary.Rows.Add("Started", results.Started.ToString("yyyy-MM-dd HH:mm:ss"));
                     dtSummary.Rows.Add("Finished", results.Finished.ToString("yyyy-MM-dd HH:mm:ss"));
                     dtSummary.Rows.Add("Setups", setups.Count);
+                    dtSummary.Rows.Add("Best Setup", setups.Where(s => s.Id == results.Results.Where(r => r.Number == results.Number).FirstOrDefault().SetupId).FirstOrDefault().Name);
                     dtSummary.Rows.Add("Best Tour", string.Join(", ", _shortestPath.Select(n => n.Name).ToArray()));
                     dtSummary.Rows.Add("Best Fitness", Math.Round(results.Best.Fitness, _decimalsToRound));
                     dtSummary.Rows.Add("Number", results.Number);
